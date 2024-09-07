@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #f4f4f4;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .pagination a,
+        .pagination span {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .pagination a:hover {
+            background-color: #e9ecef;
+        }
+
+        .pagination .disabled {
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .pagination .disabled a {
+            pointer-events: none;
+        }
+
+        .modal-content {
+            padding: 20px;
+        }
+
+        .modal-body input {
+            margin-bottom: 10px;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: 10px;
+        }
+
+        .modal-body .form-group input {
+            width: 100%;
+        }
+
+        .btn-add-row {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Product List</h1>
+
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>品號</th>
+                <th>品名</th>
+                <th>規格</th>
+                <th>單位</th>
+                <th>科別</th>
+                <th>見苗天數</th>
+                <th>育苗天數</th>
+                <th>栽培天數</th>
+                <th>見苗孔數</th>
+                <th>育苗孔數</th>
+                <th>栽培孔數</th>
+                <th>種植狀態</th>
+                <th>適用季節</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${products.content}">
+                <td th:text="${product.productNo}"></td>
+                <td th:text="${product.productName}"></td>
+                <td th:text="${product.specs}"></td>
+                <td th:text="${product.unit}"></td>
+                <td th:text="${product.family}"></td>
+                <td th:text="${product.sDays}"></td>
+                <td th:text="${product.gDays}"></td>
+                <td th:text="${product.pDays}"></td>
+                <td th:text="${product.sHole}"></td>
+                <td th:text="${product.gHole}"></td>
+                <td th:text="${product.pHole}"></td>
+                <td th:text="${product.status}"></td>
+                <td th:text="${product.type}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProductModal">
+        Add Product
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Add Products</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <div id="productRows">
+                            <!-- Dynamic rows will be added here -->
+                        </div>
+                        <button type="button" class="btn btn-success btn-add-row" onclick="addProductRow()">+ Add Row</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitProducts()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        <a th:if="${products.hasPrevious()}"
+            th:href="@{/product(page=${products.number - 1}, size=${products.size})}">Previous</a>
+        <span>Page [[${products.number + 1}]] of [[${products.totalPages}]]</span>
+        <a th:if="${products.hasNext()}"
+            th:href="@{/product(page=${products.number + 1}, size=${products.size})}">Next</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        let rowCount = 0;
+
+        function addProductRow() {
+            rowCount++;
+            const rowHtml = `
+                <div class="form-group">
+                    <label>品號</label>
+                    <input type="text" class="form-control" name="productNo_${rowCount}" placeholder="品號">
+                </div>
+                <div class="form-group">
+                    <label>品名</label>
+                    <input type="text" class="form-control" name="productName_${rowCount}" placeholder="品名">
+                </div>
+                <div class="form-group">
+                    <label>規格</label>
+                    <input type="text" class="form-control" name="specs_${rowCount}" placeholder="規格">
+                </div>
+                <div class="form-group">
+                    <label>單位</label>
+                    <input type="text" class="form-control" name="unit_${rowCount}" placeholder="單位">
+                </div>
+                <div class="form-group">
+                    <label>科別</label>
+                    <input type="text" class="form-control" name="family_${rowCount}" placeholder="科別">
+                </div>
+                <div class="form-group">
+                    <label>見苗天數</label>
+                    <input type="text" class="form-control" name="sDays_${rowCount}" placeholder="見苗天數">
+                </div>
+                <div class="form-group">
+                    <label>育苗天數</label>
+                    <input type="text" class="form-control" name="gDays_${rowCount}" placeholder="育苗天數">
+                </div>
+                <div class="form-group">
+                    <label>栽培天數</label>
+                    <input type="text" class="form-control" name="pDays_${rowCount}" placeholder="栽培天數">
+                </div>
+                <div class="form-group">
+                    <label>見苗孔數</label>
+                    <input type="text" class="form-control" name="sHole_${rowCount}" placeholder="見苗孔數">
+                </div>
+                <div class="form-group">
+                    <label>育苗孔數</label>
+                    <input type="text" class="form-control" name="gHole_${rowCount}" placeholder="育苗孔數">
+                </div>
+                <div class="form-group">
+                    <label>栽培孔數</label>
+                    <input type="text" class="form-control" name="pHole_${rowCount}" placeholder="栽培孔數">
+                </div>
+                <div class="form-group">
+                    <label>種植狀態</label>
+                    <input type="text" class="form-control" name="status_${rowCount}" placeholder="種植狀態">
+                </div>
+                <div class="form-group">
+                    <label>適用季節</label>
+                    <input type="text" class="form-control" name="type_${rowCount}" placeholder="適用季節">
+                </div>
+                <hr>
+            `;
+            document.getElementById('productRows').insertAdjacentHTML('beforeend', rowHtml);
+        }
+
+        function submitProducts() {
+            const form = document.getElementById('productForm');
+            const formData = new FormData(form);
+            const data = {};
+
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            // Log data to console for demonstration purposes
+            console.log(data);
+
+            // Here you would send the data to your server, e.g.:
+            // fetch('/product/add', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(data),
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     console.log('Success:', data);
+            // })
+            // .catch(error => {
+            //     console.error('Error:', error);
+            // });
+
+            // Close the modal
+            $('#addProductModal').modal('hide');
+        }
+    </script>
+</body>
+</html>
