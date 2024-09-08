@@ -6,12 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.yesHealth.web.modules.product.domain.entity.Product;
 import com.yesHealth.web.modules.product.domain.entity.ProductService;
 
 @Controller
+@RequestMapping("module/products")
 public class ProductController {
 	private final ProductService productService;
 
@@ -21,8 +23,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/product")
-	public String loginPage(Model model, 
-			@RequestParam(value = "page", defaultValue = "0") Integer page,
+	public String loginPage(Model model, @RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "size", defaultValue = "10") Integer size) {
 
 		Pageable pageable = PageRequest.of(page, size);
@@ -31,6 +32,6 @@ public class ProductController {
 
 		model.addAttribute("products", products);
 
-		return "module/product/product";
+		return "module/products/product";
 	}
 }
