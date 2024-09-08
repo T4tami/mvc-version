@@ -30,7 +30,7 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(requests -> requests
 						.antMatchers("/login", "/register/**", "/css/**", "/js/**").permitAll().anyRequest().authenticated())
-				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("//module/products/product").loginProcessingUrl("/login")
+				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/module/products/product").loginProcessingUrl("/login")
 						.failureUrl("/login?error=true").permitAll())
 				.logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll());
 		return http.build();

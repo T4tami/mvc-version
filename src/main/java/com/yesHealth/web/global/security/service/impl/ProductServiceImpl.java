@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.yesHealth.web.modules.product.domain.entity.Product;
-import com.yesHealth.web.modules.product.domain.entity.ProductService;
 import com.yesHealth.web.modules.product.domain.repository.ProductRepository;
+import com.yesHealth.web.modules.product.domain.service.ProductService;
 @Service
 public class ProductServiceImpl implements ProductService {
 	private ProductRepository productRepository;

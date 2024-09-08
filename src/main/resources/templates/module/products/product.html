@@ -162,10 +162,10 @@
     <!-- Pagination controls -->
     <div class="pagination">
         <a th:if="${products.hasPrevious()}"
-            th:href="@{/product(page=${products.number - 1}, size=${products.size})}">Previous</a>
+            th:href="@{/module/products/product(page=${products.number - 1}, size=${products.size})}">Previous</a>
         <span>Page [[${products.number + 1}]] of [[${products.totalPages}]]</span>
         <a th:if="${products.hasNext()}"
-            th:href="@{/product(page=${products.number + 1}, size=${products.size})}">Next</a>
+            th:href="@{/module/products/product(page=${products.number + 1}, size=${products.size})}">Next</a>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

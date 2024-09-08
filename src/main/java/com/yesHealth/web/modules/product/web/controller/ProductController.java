@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.yesHealth.web.modules.product.domain.entity.Product;
-import com.yesHealth.web.modules.product.domain.entity.ProductService;
+import com.yesHealth.web.modules.product.domain.service.ProductService;
 
 @Controller
 @RequestMapping("module/products")
@@ -23,8 +23,8 @@ public class ProductController {
 	}
 
 	@GetMapping("/product")
-	public String loginPage(Model model, @RequestParam(value = "page", defaultValue = "0") Integer page,
-			@RequestParam(value = "size", defaultValue = "10") Integer size) {
+	public String loginPage(Model model, @RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer size) {
 
 		Pageable pageable = PageRequest.of(page, size);
 

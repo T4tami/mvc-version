@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>產品計劃</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 20px;
+	background-color: #f8f9fa;
+}
+
+h1 {
+	color: #333;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+}
+
+table, th, td {
+	border: 1px solid #ddd;
+}
+
+th, td {
+	padding: 12px;
+	text-align: left;
+}
+
+thead {
+	background-color: #f4f4f4;
+}
+
+.pagination {
+	display: flex;
+	justify-content: center;
+	list-style-type: none;
+	padding: 0;
+}
+
+.pagination a, .pagination span {
+	display: inline-block;
+	padding: 10px 15px;
+	margin: 0 5px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	text-decoration: none;
+	color: #007bff;
+}
+
+.pagination a:hover {
+	background-color: #e9ecef;
+}
+
+.pagination .disabled {
+	color: #6c757d;
+	cursor: not-allowed;
+}
+
+.pagination .disabled a {
+	pointer-events: none;
+}
+
+.modal-content {
+	padding: 20px;
+}
+
+.modal-body input {
+	margin-bottom: 10px;
+}
+
+.modal-body .form-group {
+	margin-bottom: 10px;
+}
+
+.modal-body .form-group input {
+	width: 100%;
+}
+
+.btn-add-row {
+	margin-top: 10px;
+}
+</style>
+<body>
+	<header>
+		<h1>產品計劃</h1>
+	</header>
+	<main>
+		<form method="get" action="/module/plans/plan">
+			<div class="date-filter">
+				<label for="StartDate">採收開始日期:</label> <input type="date"
+					id="hStartDate" name="hStartDate" value="${hStartDate}">
+				<label for="endDate">採收結束日期:</label> <input type="date" id="hEndDate"
+					name="hEndDate" value="${hEndDate}">
+				<button type="submit">搜尋</button>
+			</div>
+		</form>
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>製造商編號</th>
+					<th>產品</th>
+					<th>預估 S 板數量</th>
+					<th>預估 G 板數量</th>
+					<th>預估 P 板數量</th>
+					<th>預估播種日期</th>
+					<th>預估灌溉日期</th>
+					<th>預估轉移 G 日期</th>
+					<th>預估轉移 P 日期</th>
+					<th>預估收穫日期</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="plan : ${plans.content}">
+					<td th:text="${plan.id}"></td>
+					<td th:text="${plan.manuNo}"></td>
+					<td th:text="${plan.product.productName}"></td>
+					<td th:text="${plan.estSBoardCount}"></td>
+					<td th:text="${plan.estGBoardCount}"></td>
+					<td th:text="${plan.estPBoardCount}"></td>
+					<td th:text="${#dates.format(plan.estSeedingDate, 'yyyy-MM-dd')}"></td>
+					<td th:text="${#dates.format(plan.estWateringDate, 'yyyy-MM-dd')}"></td>
+					<td th:text="${#dates.format(plan.estTransGDate, 'yyyy-MM-dd')}"></td>
+					<td th:text="${#dates.format(plan.estTransPDate, 'yyyy-MM-dd')}"></td>
+					<td th:text="${#dates.format(plan.estHarvestDate, 'yyyy-MM-dd')}"></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="pagination">
+			<span th:if="${plans.hasPrevious()}"> <a
+				th:href="@{/module/plans/plan(page=${plans.number - 1}, size=${plans.size})}">上一頁</a>
+			</span> <span th:if="${plans.hasNext()}"> <a
+				th:href="@{/module/plans/plan(page=${plans.number + 1}, size=${plans.size})}">下一頁</a>
+			</span>
+		</div>
+	</main>
+
+	<footer>
+		<p>&copy; 2024 我的公司</p>
+	</footer>
+</body>
+</html>
