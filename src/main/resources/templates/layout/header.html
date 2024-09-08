@@ -1,0 +1,34 @@
+<!-- fragments/header.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Header</title>
+<link rel="stylesheet" th:href="@{/css/header.css}" />
+</head>
+<body>
+	<header th:fragment="header">
+		<div class="header-container">
+			<!-- 大頭貼 -->
+			<div class="profile-picture">
+				<img src="" alt="Profile Picture" />
+			</div>
+
+			<!-- 首頁 Logo -->
+			<div class="logo">
+				<a th:href="@{/index}"> <img src="" alt="Logo" />
+				</a>
+			</div>
+
+			<!-- 登入/登出按鈕 -->
+			<div class="auth-buttons">
+				<span th:if="${user == null}"> <!-- 如果未登入 --> <a
+					th:href="@{/login}">登入</a>
+				</span> <span th:if="${user == null}"> <!-- 如果已登入 --> <a
+					th:href="@{/logout}">登出</a>
+				</span>
+			</div>
+		</div>
+	</header>
+</body>
+</html>

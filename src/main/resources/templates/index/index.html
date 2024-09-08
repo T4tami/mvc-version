@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Website</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+header {
+	background-color: #333;
+	color: #fff;
+	padding: 1em;
+	text-align: center;
+}
+
+.main-container {
+	display: flex;
+}
+
+.navigator {
+	width: 250px;
+	background-color: #f4f4f4;
+	padding: 1em;
+	border-right: 1px solid #ddd;
+	position: relative;
+}
+
+.toggle-btn {
+	display: none;
+}
+
+.nav-list {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.nav-list>li {
+	margin: 0.5em 0;
+}
+
+.nav-list>li>a {
+	text-decoration: none;
+	color: #333;
+	display: block;
+	padding: 0.5em;
+	border-radius: 4px;
+}
+
+.sub-nav {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	display: none;
+}
+
+.sub-nav li {
+	margin: 0.5em 0;
+}
+
+.sub-nav li>a {
+	padding-left: 1em;
+}
+
+footer {
+	background-color: #333;
+	color: #fff;
+	padding: 1em;
+	text-align: center;
+}
+
+.footer-content {
+	max-width: 800px;
+	margin: auto;
+}
+
+@media ( max-width : 768px) {
+	.navigator {
+		width: 100%;
+		position: absolute;
+		top: 0;
+		left: -250px;
+		transition: left 0.3s;
+	}
+	.navigator.active {
+		left: 0;
+	}
+	.toggle-btn {
+		display: block;
+		background-color: #333;
+		color: #fff;
+		border: none;
+		padding: 0.5em;
+		cursor: pointer;
+		position: absolute;
+		top: 1em;
+		left: 1em;
+	}
+}
+</style>
+<body>
+	<header>
+		<div th:replace="layout/header :: header"></div>
+	</header>
+
+	<div class="main-container">
+		<nav class="navigator">
+			<button class="toggle-btn">☰</button>
+			<ul class="nav-list">
+				<li><a href="#">Home</a></li>
+				<li><a href="#">About Us</a>
+					<ul class="sub-nav">
+						<li><a href="#">Our Team</a></li>
+						<li><a href="#">Our Story</a></li>
+					</ul></li>
+				<li><a href="#">Services</a></li>
+				<li><a href="#">Contact</a></li>
+			</ul>
+		</nav>
+
+		<main>
+			<h1>Welcome to My Website</h1>
+			<p>This is a sample page content.</p>
+		</main>
+	</div>
+
+	<footer>
+		<div class="footer-content">
+			<p>&copy; 2024 My Company. All rights reserved.</p>
+			<p>1234 Street Address, City, Country</p>
+			<p>Phone: (123) 456-7890</p>
+			<p>Email: info@mycompany.com</p>
+		</div>
+	</footer>
+</body>
+</html>

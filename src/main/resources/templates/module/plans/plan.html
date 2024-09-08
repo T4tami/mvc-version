@@ -90,13 +90,14 @@ thead {
 	<header>
 		<h1>產品計劃</h1>
 	</header>
+	 <div th:replace="layout/header :: header"></div>
 	<main>
 		<form method="get" action="/module/plans/plan">
 			<div class="date-filter">
 				<label for="StartDate">採收開始日期:</label> <input type="date"
-					id="hStartDate" name="hStartDate" value="${hStartDate}">
-				<label for="endDate">採收結束日期:</label> <input type="date" id="hEndDate"
-					name="hEndDate" value="${hEndDate}">
+					id="hStartDate" name="hStartDate" th:value="${hStartDate}">
+				<label for="endDate">採收結束日期:</label> <input type="date"
+					id="hEndDate" name="hEndDate" th:value="${hEndDate}">
 				<button type="submit">搜尋</button>
 			</div>
 		</form>
@@ -135,9 +136,9 @@ thead {
 
 		<div class="pagination">
 			<span th:if="${plans.hasPrevious()}"> <a
-				th:href="@{/module/plans/plan(page=${plans.number - 1}, size=${plans.size})}">上一頁</a>
+				th:href="@{/module/plans/plan(page=${plans.number - 1}, size=${plans.size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">上一頁</a>
 			</span> <span th:if="${plans.hasNext()}"> <a
-				th:href="@{/module/plans/plan(page=${plans.number + 1}, size=${plans.size})}">下一頁</a>
+				th:href="@{/module/plans/plan(page=${plans.number + 1}, size=${plans.size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">下一頁</a>
 			</span>
 		</div>
 	</main>
