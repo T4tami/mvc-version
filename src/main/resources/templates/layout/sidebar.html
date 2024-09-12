@@ -1,0 +1,14 @@
+<!-- fragments/header.html -->
+<div th:fragment="sidebar(menus)">
+	<div th:each="menu : ${menus}" th:if="${menu.parent == null}">
+		<!-- 顯示父菜單項目 -->
+		<div class="menu-item" th:text="${menu.name}" onclick="toggleSubMenu(event)"></div>
+		<!-- 子菜單 -->
+		<div class="submenu">
+			<!-- 遍歷子菜單項目 -->
+			<a class="menu-item" th:each="child : ${menu.children}" th:text="${child.name}"
+				th:href="@{${child.url}}"></a>
+		</div>
+	</div>
+</div>
+</div>

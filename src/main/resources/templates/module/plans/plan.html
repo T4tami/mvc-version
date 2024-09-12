@@ -1,105 +1,122 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>產品計劃</title>
-<link rel="stylesheet" href="/css/style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>產品計劃</title>
+	<link rel="stylesheet" href="/css/style.css">
 </head>
 <style>
-body {
-	font-family: Arial, sans-serif;
-	margin: 20px;
-	background-color: #f8f9fa;
-}
+	body {
+		font-family: Arial, sans-serif;
+		margin: 20px;
+		background-color: #f8f9fa;
+	}
 
-h1 {
-	color: #333;
-}
+	h1 {
+		color: #333;
+	}
 
-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-bottom: 20px;
-}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 20px;
+	}
 
-table, th, td {
-	border: 1px solid #ddd;
-}
+	table,
+	th,
+	td {
+		border: 1px solid #ddd;
+	}
 
-th, td {
-	padding: 12px;
-	text-align: left;
-}
+	th,
+	td {
+		padding: 12px;
+		text-align: left;
+	}
 
-thead {
-	background-color: #f4f4f4;
-}
+	thead {
+		background-color: #f4f4f4;
+	}
 
-.pagination {
-	display: flex;
-	justify-content: center;
-	list-style-type: none;
-	padding: 0;
-}
+	.pagination {
+		display: flex;
+		justify-content: center;
+		list-style-type: none;
+		padding: 0;
+	}
 
-.pagination a, .pagination span {
-	display: inline-block;
-	padding: 10px 15px;
-	margin: 0 5px;
-	border: 1px solid #ddd;
-	border-radius: 5px;
-	text-decoration: none;
-	color: #007bff;
-}
+	.pagination a,
+	.pagination span {
+		display: inline-block;
+		padding: 10px 15px;
+		margin: 0 5px;
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		text-decoration: none;
+		color: #007bff;
+	}
 
-.pagination a:hover {
-	background-color: #e9ecef;
-}
+	.pagination a:hover {
+		background-color: #e9ecef;
+	}
 
-.pagination .disabled {
-	color: #6c757d;
-	cursor: not-allowed;
-}
+	.pagination .disabled {
+		color: #6c757d;
+		cursor: not-allowed;
+	}
 
-.pagination .disabled a {
-	pointer-events: none;
-}
+	.pagination .disabled a {
+		pointer-events: none;
+	}
 
-.modal-content {
-	padding: 20px;
-}
+	.modal-content {
+		padding: 20px;
+	}
 
-.modal-body input {
-	margin-bottom: 10px;
-}
+	.modal-body input {
+		margin-bottom: 10px;
+	}
 
-.modal-body .form-group {
-	margin-bottom: 10px;
-}
+	.modal-body .form-group {
+		margin-bottom: 10px;
+	}
 
-.modal-body .form-group input {
-	width: 100%;
-}
+	.modal-body .form-group input {
+		width: 100%;
+	}
 
-.btn-add-row {
-	margin-top: 10px;
-}
+	.btn-add-row {
+		margin-top: 10px;
+	}
 </style>
+
 <body>
+	<div th:include="layout/header::header"></div>
 	<header>
 		<h1>產品計劃</h1>
 	</header>
-	 <div th:replace="layout/header :: header"></div>
+	<div th:replace="layout/header :: header"></div>
 	<main>
 		<form method="get" action="/module/plans/plan">
 			<div class="date-filter">
-				<label for="StartDate">採收開始日期:</label> <input type="date"
-					id="hStartDate" name="hStartDate" th:value="${hStartDate}">
-				<label for="endDate">採收結束日期:</label> <input type="date"
-					id="hEndDate" name="hEndDate" th:value="${hEndDate}">
-				<button type="submit">搜尋</button>
+				<label for="hStartDate">採收開始日期:</label>
+				<input type="date" id="hStartDate" name="hStartDate" th:value="${hStartDate}">
+
+				<label for="hEndDate">採收結束日期:</label>
+				<input type="date" id="hEndDate" name="hEndDate" th:value="${hEndDate}">
 			</div>
+
+			<div class="item-count-filter">
+				<label for="itemCount">顯示筆數:</label>
+				<select id="itemCount" name="itemCount">
+					<option th:each="option : ${options}" th:value="${option}" th:text="${option}"
+						th:selected="${option == itemCount}"></option>
+				</select>
+			</div>
+
+			<button type="submit">搜尋</button>
 		</form>
 		<table>
 			<thead>
@@ -136,9 +153,9 @@ thead {
 
 		<div class="pagination">
 			<span th:if="${plans.hasPrevious()}"> <a
-				th:href="@{/module/plans/plan(page=${plans.number - 1}, size=${plans.size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">上一頁</a>
+					th:href="@{/module/plans/plan(page=${plans.number - 1}, size=${plans.size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">上一頁</a>
 			</span> <span th:if="${plans.hasNext()}"> <a
-				th:href="@{/module/plans/plan(page=${plans.number + 1}, size=${plans.size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">下一頁</a>
+					th:href="@{/module/plans/plan(page=${plans.number + 1}, size=${plans.size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">下一頁</a>
 			</span>
 		</div>
 	</main>
@@ -147,4 +164,5 @@ thead {
 		<p>&copy; 2024 我的公司</p>
 	</footer>
 </body>
+
 </html>

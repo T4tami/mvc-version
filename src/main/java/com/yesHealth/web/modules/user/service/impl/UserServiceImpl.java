@@ -1,14 +1,22 @@
 package com.yesHealth.web.modules.user.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.yesHealth.web.modules.user.dto.RegistrationDto;
+import com.yesHealth.web.modules.user.entity.Menu;
 import com.yesHealth.web.modules.user.entity.Role;
 import com.yesHealth.web.modules.user.entity.UserEntity;
 import com.yesHealth.web.modules.user.repository.RoleRepository;
@@ -53,5 +61,20 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserEntity findByUsername(String username) {
 		return userRepository.findByUsername(username);
+	}
+
+	public List<Menu> getUserMenus() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			UserEntity user = userRepository.findByUsername(userDetails.getUsername());
+			List<Role> roles = user.getRoles();
+			Set<Menu> menus = new HashSet<>();
+			for (Role role : roles) {
+				menus.addAll(role.getMenu());
+			}
+			return new ArrayList<>(menus);
+		}
+		return Collections.emptyList();
 	}
 }

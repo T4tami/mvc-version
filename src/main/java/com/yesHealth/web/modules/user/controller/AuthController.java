@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.yesHealth.web.modules.user.dto.RegistrationDto;
+import com.yesHealth.web.modules.user.entity.Menu;
 import com.yesHealth.web.modules.user.entity.UserEntity;
 import com.yesHealth.web.modules.user.service.UserService;
+
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -27,7 +30,9 @@ public class AuthController {
 	}
 
 	@GetMapping("/index")
-	public String index() {
+	public String index(Model model) {
+		List<Menu> menus = userService.getUserMenus();
+		model.addAttribute("menus", menus);
 		return "index/index";
 	}
 

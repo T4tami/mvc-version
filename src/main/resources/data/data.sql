@@ -1,14 +1,77 @@
 --user
 INSERT INTO auth_user ( name, username, password, created_by, created_time, updated_by, updated_time) VALUES
 ( 'ADMIN', 'ADMIN', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1, getdate(), 1, getdate()),
-( '曾榻米', 'TOMMY', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate());
+( '曾榻米', 'TOMMY', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate()),
+( 'dino', 'dino', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate()),
+( '惠綺', 'winnie', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate()),
+( '阮月嬌', 'vitenem', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate()),
+( '紀雅', 'sister', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate()),
+( '光頭哥', 'bold', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate()),
+( '霉姐', 'may', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate()),
+( '小氣經理', 'jay', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate()),
+( '馬克思', 'max', '$2a$10$Zc4LmMnHXmB2e6W9IMtJMer56x4iQaRg7NHjJUYnjNNxX8kqVZtqS', 1,getdate(), 1, getdate());
 INSERT INTO auth_role ( role_name,description, created_by, created_time, updated_by, updated_time) VALUES
-( 'USER','使用者',1, getdate(), 1, getdate()),
-('ADMIN','管理員',1, getdate(), 1, getdate());
+('USER','使用者',1, getdate(), 1, getdate()),
+('ADMIN','管理員',1, getdate(), 1, getdate()),
+('TECH','技術人員',1, getdate(), 1, getdate()),
+('SEED','種苗人員',1, getdate(), 1, getdate()),
+('TRANSFER','移苗人員',1, getdate(), 1, getdate()),
+('HARVEST','採收人員',1, getdate(), 1, getdate()),
+('PRODUCT','生管人員',1, getdate(), 1, getdate()),
+('STOCK','倉管人員',1, getdate(), 1, getdate());
 INSERT INTO auth_user_role (user_id, role_id) VALUES
 (1, 2), -- ADMIN 角色是 ROLE_ADMIN
-(2, 1); -- TOMMY 角色是 ROLE_USER
+(2, 3), --  TOMMY角色是 技術人員
+(3, 7), --  dino角色是 生管人員
+(4, 5), --  惠綺角色是移苗人員
+(5, 6), --  阮月嬌角色是採收人員
+(6, 1), --  紀雅角色是採收人員
+(7, 4), --  紀雅角色是採收人員
+(8, 2), --  霉姐角色是管理員
+(9, 2), --  小氣經理角色是管理員
+(10, 8); --  小氣經理角色是管理員
 
+--menu
+INSERT INTO [dbo].[auth_menu]
+           ([name]
+           ,[order_sn]
+           ,[status]
+           ,[url]
+           ,[parent_id])
+     VALUES
+           ('管理員功能',1,'1','/admin',null),
+		   ('使用者維護',2,'1','/admin/user',1),
+		   ('生產管理',3,'1','/production',null),
+		   ('計畫排程',4,'1','/production/planing',3),
+		   ('製程管理',5,'1','/production/manufacture-info',3),
+		   ('種苗組管理',6,'1','/production/group-seed',3),
+		   ('移苗組管理',7,'1','/production/group-transfer',3),
+		   ('採收組管理',8,'1','/production/group-harvest',3),
+		   ('技術管理',9,'1','/techology',null),
+		   ('溫控管理',10,'1','/techology/temperature',9),
+		   ('水質管理',11,'1','/techology/water/quality',9),
+		   ('巡檢管理',12,'1','/techology/inspection',9),
+		   ('光照管理',13,'1','/techology/inspection',9),
+		   ('儲位管理',14,'1','/techology/inspection',9),
+		   ('庫存管理',15,'1','/stock',null),
+		   ('入庫管理',16,'1','/stock-in',15),
+		   ('出庫管理',17,'1','/stock-out',15),
+		   ('報表管理',18,'1','/report',null),
+		   ('種苗組報表管理',19,'1','/report/group-seed',18),
+		   ('移苗組報表管理',20,'1','/report/group-transfer',18),
+		   ('採收組報表管理',21,'1','/report/group-harvest',18),
+		   ('巡檢報表管理',22,'1','/report/group-techology',18);
+		   
+INSERT INTO auth_role_menu (role_id, menu_id) VALUES
+(2,1),(2,2),(2,3),(2,4),(2,5),(2,6),(2,7),(2,8),(2,9),(2,10),
+(2,11),(2,12),(2,13),(2,14),(2,15),(2,16),(2,17),(2,18),(2,19),(2,20),
+(2,21),(2,22),--管理員全部都有
+(3,3),(3,5),(3,6),(3,7),(3,8),(3,9),(3,10),(3,11),(3,12),(3,13),(3,14),(3,18),(3,19),(3,20),(3,21),(3,22),--技術
+(4,3),(4,4),(4,6),(4,18),(4,19),--種苗
+(5,3),(5,4),(5,7),(5,18),(5,20),--移苗
+(6,3),(6,4),(6,8),(6,21),--採收
+(7,3),(7,4),(7,5),(7,6),(7,7),(7,8),(7,15),(7,16),(7,17),(7,18),(7,19),(7,20),(7,21),(7,22),--生管
+(8,15),(8,16),(8,17);--倉管
 --儲位
 INSERT INTO stock (zone, stage, building, floor, position) VALUES ('S', 'S', '01', '01', 'S01-01');
 INSERT INTO stock (zone, stage, building, floor, position) VALUES ('S', 'S', '01', '02', 'S01-02');

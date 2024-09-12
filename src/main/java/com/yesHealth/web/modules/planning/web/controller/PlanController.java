@@ -14,7 +14,7 @@ import com.yesHealth.web.modules.planning.domain.service.PlanService;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 
 @Controller
-@RequestMapping("/module/plans")
+@RequestMapping("/production")
 public class PlanController {
 
 	private PlanService planService;
@@ -23,7 +23,7 @@ public class PlanController {
 		this.planService = planService;
 	}
 
-	@GetMapping("plan")
+	@GetMapping("planing")
 	public String findAll(Model model, @RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String hStartDate,
 			@RequestParam(required = false) String hEndDate) {

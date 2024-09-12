@@ -6,8 +6,6 @@
 </head>
 
 <div class="main">
-	<div th:replace="layout/navigator :: navigator"></div>
-
 	<div class="col-md-6 col-sm-12">
 		<div th:if="${param.error}" th:text="#{login.error}" class="alert alert-success">
 			Invalid username and password.
