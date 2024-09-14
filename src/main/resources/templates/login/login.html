@@ -1,37 +1,114 @@
-<html xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout}">
 
 <head>
-	<title th:text="#{login.title}"></title>
+<title th:text="#{login.title}"></title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+body {
+	background: linear-gradient(to bottom, #eaf9e8, #c8e6c9); /* 綠色漸變背景 */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin: 0;
+}
+
+.login-container {
+	display: flex;
+	align-items: center;
+	max-width: 800px;
+	width: 100%;
+	padding: 20px;
+	border-radius: 8px;
+	background: #ffffff;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+	flex: 1;
+	max-width: 200px;
+}
+
+.login-form {
+	flex: 2;
+	padding: 20px;
+}
+
+.login-container h1 {
+	margin-bottom: 20px;
+	font-size: 24px;
+	font-weight: 600;
+	color: #4a4a4a;
+}
+
+.form-group label {
+	font-weight: 500;
+}
+
+.btn-custom {
+	width: 100%;
+	padding: 10px;
+	font-size: 16px;
+}
+
+.btn-submit {
+	background: #007bff;
+	color: #ffffff;
+	border: none;
+}
+
+.btn-submit:hover {
+	background: #0056b3;
+}
+
+.btn-register {
+	background: #6c757d;
+	color: #ffffff;
+	border: none;
+}
+
+.btn-register:hover {
+	background: #5a6268;
+}
+
+.alert {
+	margin-bottom: 20px;
+	font-size: 14px;
+}
+</style>
 </head>
 
-<div class="main">
-	<div class="col-md-6 col-sm-12">
-		<div th:if="${param.error}" th:text="#{login.error}" class="alert alert-success">
-			Invalid username and password.
-		</div>
-		<div th:if="${param.logout}" th:text="#{login.logout}" class="alert alert-success">
-			You have been logged out.</div>
+<body>
+	<div class="login-container">
 		<div class="login-form">
+			<h1 th:text="#{login.title}">Login</h1>
+			<div th:if="${param.error}" th:text="#{login.error}"
+				class="alert alert-danger">Invalid username and password.</div>
+			<div th:if="${param.logout}" th:text="#{login.logout}"
+				class="alert alert-info">You have been logged out.</div>
 			<form method="post" th:action="@{/login}">
 				<div class="form-group">
-					<label th:text="#{login.username}"></label>
-					<input id="username" type="text" class="form-control" th:placeholder="#{login.username}"
-						name="username">
+					<label th:text="#{login.username}">Username</label> <input
+						id="username" type="text" class="form-control"
+						th:placeholder="#{login.username}" name="username">
 				</div>
 				<div class="form-group">
-					<label th:text="#{login.password}"></label>
-					<input id="password" type="password" class="form-control" th:placeholder="#{login.password}"
-						name="password">
+					<label th:text="#{login.password}">Password</label> <input
+						id="password" type="password" class="form-control"
+						th:placeholder="#{login.password}" name="password">
 				</div>
-				<button type="submit" value="Log in" class="btn btn-secondary" th:text="#{login.title}">Login</button>
-				<button type="button" class="btn btn-black" th:onclick="|location.href='@{/register}'|"
-					th:text="#{login.register}">還沒有帳號嗎?
-					註冊</button>
+				<button type="submit" class="btn btn-custom btn-submit"
+					th:text="#{login.title}">Login</button>
+				<button type="button" class="btn btn-custom btn-register"
+					th:onclick="|location.href='@{/register}'|"
+					th:text="#{login.register}">还没有账号吗? 注册</button>
 			</form>
 		</div>
 	</div>
-</div>
-</section>
+</body>
 
 </html>

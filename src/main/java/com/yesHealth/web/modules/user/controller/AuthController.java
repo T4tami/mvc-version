@@ -12,8 +12,11 @@ import com.yesHealth.web.modules.user.entity.Menu;
 import com.yesHealth.web.modules.user.entity.UserEntity;
 import com.yesHealth.web.modules.user.service.UserService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -25,14 +28,15 @@ public class AuthController {
 	}
 
 	@GetMapping("/login")
-	public String loginPage() {
+	public String loginPage(HttpSession session) {
+		session.setAttribute("options", new ArrayList<>(Arrays.asList(5, 10, 20, 50, 100, 200, 500, 1000)));
 		return "login/login";
 	}
 
 	@GetMapping("/index")
-	public String index(Model model) {
+	public String index(HttpSession session) {
 		List<Menu> menus = userService.getUserMenus();
-		model.addAttribute("menus", menus);
+		session.setAttribute("menus", menus);
 		return "index/index";
 	}
 

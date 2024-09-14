@@ -1,6 +1,5 @@
 package com.yesHealth.web.modules.planning.web.controller;
 
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +32,7 @@ public class PlanController {
 		model.addAttribute("plans", plans);
 		model.addAttribute("hStartDate", hStartDate != null ? hStartDate : "");
 		model.addAttribute("hEndDate", hEndDate != null ? hEndDate : "");
+		model.addAttribute("size", size != null ? size : "");
 		return "/module/plans/plan";
 	}
 

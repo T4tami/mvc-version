@@ -1,0 +1,148 @@
+/* 通用樣式 */
+body {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	/* 設置頁面高度為視窗高度 */
+}
+
+/* 主內容容器樣式 */
+.container {
+	display: flex;
+	flex: 1;
+	/* 讓容器填滿剩餘空間 */
+}
+
+/* 漢堡菜單按鈕樣式 */
+.menu-toggle {
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-right: 20px;
+	/* 按鈕與首頁圖片之間的間距 */
+}
+
+.menu-toggle div {
+	width: 20px;
+	height: 2px;
+	background-color: #333;
+	margin: 3px 0;
+	/* 條形線的間距 */
+}
+
+/* 左側菜單樣式 */
+.sidebar {
+	/* 左側菜單寬度 */
+	background-color: #f4f4f4;
+	/* 淺灰色背景 */
+	padding: 20px;
+	/* 左側菜單內邊距 */
+	box-sizing: border-box;
+	/* 包括內邊距和邊框在內的總寬度 */
+	transition: width 0.3s;
+	/* 菜單展開/收攏時的過渡效果 */
+}
+
+/* 收攏狀態的菜單樣式 */
+.sidebar.collapsed {
+	width: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+/* 主要內容區域樣式 */
+.main-content {
+	width: 70%;
+	/* 主要內容區域寬度 */
+	padding: 20px;
+	/* 主要內容區域內邊距 */
+	box-sizing: border-box;
+	/* 包括內邊距和邊框在內的總寬度 */
+}
+
+/* 菜單項目樣式 */
+.menu-item {
+	cursor: pointer;
+	/* 鼠標懸停顯示手型光標 */
+	margin: 5px 0;
+	/* 菜單項目上下間距 */
+}
+
+/* 子菜單樣式 */
+.submenu {
+	display: none;
+	/* 初始隱藏子菜單 */
+	margin-left: 10px;
+	/* 子菜單相對於父菜單的左邊距 */
+}
+
+.submenu .menu-item {
+	margin: 5px 0;
+	/* 子菜單項目上下間距 */
+}
+
+.submenu a {
+	color: inherit;
+	/* Inherits the color from its parent element */
+	text-decoration: none;
+	/* Removes underline */
+}
+/* Reset some default browser styles */
+body, html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+/* Container to hold sidebar and main content */
+.main-container {
+	display: flex; /* Use flexbox for layout */
+}
+
+/* Sidebar styles */
+.sidebar {
+	width: 18vw; /* 18% of viewport width */
+	background-color: white;
+	color: #ffffff;
+	height: 100vh;
+	overflow-y: auto;
+	padding: 10px;
+	box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+	transition: transform 0.3s ease-in-out;
+}
+
+/* Main content styles */
+.main-content {
+	flex: 1; /* Take up the remaining space */
+	padding: 20px;
+	background-color: #f8f9fa;
+	height: 100vh; /* Full height */
+	overflow-y: auto; /* Scroll if content overflows */
+}
+
+/* Responsive Design */
+@media ( max-width : 768px) {
+	.sidebar {
+		width: 100%; /* Full width on small screens */
+		position: relative; /* Change positioning for smaller screens */
+		transform: translateX(-100%);
+	}
+	.sidebar.visible {
+		transform: translateX(0);
+	}
+	.main-content {
+		margin-left: 0; /* No margin for small screens */
+	}
+}
