@@ -2,6 +2,7 @@ package com.yesHealth.web.modules.product.domain.entity;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,7 +29,8 @@ public class TransplantingRecord {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "stock_id")
 	private Stock stock;
-
+	@Column(name = "act_board_count")
 	private Integer actGBoardCount;
+	private String stage;
 	private String remark;
 }

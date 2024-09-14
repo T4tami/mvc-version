@@ -7025,3 +7025,660 @@ insert into product_schedule (manu_no,product_id,est_s_board_count,est_g_board_c
 insert into product_schedule (manu_no,product_id,est_s_board_count,est_g_board_count,est_p_board_count,est_seeding_date,est_watering_date,est_trans_g_date,est_trans_p_date,est_harvest_date) values('B511-191216013',(select id from product where product_no='BBA200801C001' and type='通用'),9,null,10,(SELECT DATEADD(DAY,44179, '1899-12-30')),(SELECT DATEADD(DAY,44181, '1899-12-30')),(SELECT DATEADD(DAY,44192, '1899-12-30')),(SELECT DATEADD(DAY,43847, '1899-12-30')),(SELECT DATEADD(DAY,43846, '1899-12-30')));
 insert into product_schedule (manu_no,product_id,est_s_board_count,est_g_board_count,est_p_board_count,est_seeding_date,est_watering_date,est_trans_g_date,est_trans_p_date,est_harvest_date) values('B511-191212019',(select id from product where product_no='BBA201102C001' and type='通用'),11,null,10,(SELECT DATEADD(DAY,44176, '1899-12-30')),(SELECT DATEADD(DAY,44177, '1899-12-30')),(SELECT DATEADD(DAY,44190, '1899-12-30')),(SELECT DATEADD(DAY,43837, '1899-12-30')),(SELECT DATEADD(DAY,43846, '1899-12-30')));
 insert into product_schedule (manu_no,product_id,est_s_board_count,est_g_board_count,est_p_board_count,est_seeding_date,est_watering_date,est_trans_g_date,est_trans_p_date,est_harvest_date) values('B511-191214018',(select id from product where product_no='BBA200701C001' and type='通用'),11,null,10,(SELECT DATEADD(DAY,44178, '1899-12-30')),(SELECT DATEADD(DAY,44178, '1899-12-30')),(SELECT DATEADD(DAY,44190, '1899-12-30')),(SELECT DATEADD(DAY,43835, '1899-12-30')),(SELECT DATEADD(DAY,43846, '1899-12-30')));
+--理想株高
+truncate table plant_growth;
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='冰山红火焰'), 1, 5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 2, 5.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 3, 6, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 4, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 5, 7, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 6, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 7, 8, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 8, 9, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 9, 10, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 10, 10.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 11, 11, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 12, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 13, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 14, 12, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 15, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 16, 13, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 17, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 18, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 19, 14, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 20, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山红火焰'), 21, 15, 'P');
+
+-- 红彩之星
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='红彩之星'), 1, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 2, 7, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 3, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 4, 8, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 5, 9, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 6, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 8, 12, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 9, 14, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 10, 16, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 11, 16, 'P'),
+((SELECT id FROM product WHERE specs='红彩之星'), 12, 16.5, 'P');
+
+-- 茼蒿
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='茼蒿'), 1, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 2, 7, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 3, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 4, 8, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 5, 9, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 6, 9, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 7, 9, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 8, 7, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 9, 8, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 10, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 11, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 12, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='茼蒿'), 13, 13, 'P');
+
+-- 福山萵苣
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='福山萵苣'), 1, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 2, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 3, 8, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 4, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 5, 9, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 6, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 8, 11, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 9, 12, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 10, 13, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 11, 14, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 12, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 13, 15, 'P'),
+((SELECT id FROM product WHERE specs='福山萵苣'), 14, 15.5, 'P');
+
+-- 红皇冠波士顿
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 1, 5, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 2, 5.5, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 3, 6, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 4, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 5, 7, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 6, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 7, 8, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 8, 9, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 9, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 10, 10, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 11, 10.5, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 12, 11, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 13, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='红皇冠波士顿'), 14, 12, 'P');
+
+-- 塔菇菜
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='塔菇菜'), 1, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 2, 8, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 3, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 4, 9, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 5, 8, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 6, 8, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 8, 8, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 9, 8, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 10, 8, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 11, 8, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 12, 10, 'P'),
+((SELECT id FROM product WHERE specs='塔菇菜'), 13, 10.5, 'P');
+
+-- 红橡木
+INSERT INTO plant_growth (product_id ,day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='红橡木'), 1, 5, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 2, 5.5, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 3, 6, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 4, 7, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 5, 8, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 6, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 7, 9, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 8, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 9, 10, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 10, 10.5, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 11, 11, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 12, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 13, 12, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 14, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='红橡木'), 15, 13, 'P');
+-- 皇冠波士頓
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 1, 4, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 2, 4.5, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 3, 5, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 4, 6, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 5, 7, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 6, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 8, 11, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 9, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 10, 12, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 11, 13, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 12, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 13, 14, 'P'),
+((SELECT id FROM product WHERE specs='皇冠波士頓'), 14, 14.5, 'P');
+
+-- 綠蘿蔓
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 1, 9, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 2, 10, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 3, 11, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 4, 12, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 5, 13, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 6, 14, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 7, 15, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 8, 16, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 9, 17, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 10, 18, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 11, 19, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 12, 20, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 13, 21, 'P'),
+((SELECT id FROM product WHERE specs='綠蘿蔓'), 14, 22, 'P');
+
+-- 大將萵苣
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='大將萵苣'), 1, 5.5, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 2, 6, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 3, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 4, 7, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 5, 10, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 6, 10, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 7, 12, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 8, 10, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 9, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 10, 13, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 11, 16, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 12, 16, 'P'),
+((SELECT id FROM product WHERE specs='大將萵苣'), 13, 16, 'P');
+
+-- 綠橡木
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='綠橡木'), 1, 3.5, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 2, 4, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 3, 4.5, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 4, 5, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 5, 10, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 6, 6, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 7, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 8, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 9, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 10, 10, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 11, 16, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 12, 13, 'P'),
+((SELECT id FROM product WHERE specs='綠橡木'), 13, 13, 'P');
+
+-- 結球綠橡木
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='結球綠橡木'), 1, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 2, 8, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 3, 9, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 4, 10, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 5, 11, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 6, 12, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 7, 13, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 8, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 9, 14, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 10, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 11, 15, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 12, 15.5, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 13, 16, 'P'),
+((SELECT id FROM product WHERE specs='結球綠橡木'), 14, 16.5, 'P');
+
+-- 小白菜
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='小白菜'), 1, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 2, 8, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 3, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 4, 9, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 5, 8, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 6, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 8, 12, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 9, 12, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 10, 14, 'P'),
+((SELECT id FROM product WHERE specs='小白菜'), 11, 11, 'P');
+-- 小松菜
+INSERT INTO plant_growth (product_id ,day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='小松菜'), 1, 10, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 2, 11, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 3, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 4, 11, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 5, 12, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 6, 13, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 7, 14, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 8, 15, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 9, 16, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 10, 17, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 11, 18, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 12, 19, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 13, 20, 'P'),
+((SELECT id FROM product WHERE specs='小松菜'), 14, 20, 'P');
+
+-- A菜冬
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 1, 8, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 2, 9, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 3, 11, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 4, 12, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 5, 13, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 6, 14, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 7, 15, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 8, 16, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 9, 17, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 10, 17.5, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 11, 18, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 12, 19, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 13, 19.5, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='冬'), 14, 20, 'P');
+
+-- A菜夏
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 1, 8, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 2, 9, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 3, 11, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 4, 12, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 5, 13, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 6, 14, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 7, 15, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 8, 16, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 9, 17, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 10, 17.5, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 11, 18, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 12, 19, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 13, 19.5, 'P'),
+((SELECT id FROM product WHERE specs='A菜' and type='夏'), 14, 20, 'P');
+
+-- 冰山綠火焰冬
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 1, 6, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 2, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 3, 7, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 4, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 5, 8, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 6, 9, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 8, 10.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 9, 11, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 10, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 11, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 12, 12, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 13, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 14, 13, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 15, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 16, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 17, 14, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 18, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 19, 15, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 20, 15.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 21, 16, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='冬'), 22, 16, 'P');
+
+-- 冰山綠火焰夏
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 1, 6, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 2, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 3, 7, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 4, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 5, 8, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 6, 9, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 8, 10.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 9, 11, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 10, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 11, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 12, 12, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 13, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 14, 13, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 15, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 16, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 17, 14, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 18, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 19, 15, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 20, 15.5, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 21, 16, 'P'),
+((SELECT id FROM product WHERE specs='冰山綠火焰'  and type='夏'), 22, 16, 'P');
+
+-- 紅捲萵苣
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 1, 5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 2, 5.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 3, 6, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 4, 7, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 5, 8, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 6, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 7, 9, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 8, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 9, 10, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 10, 10.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 11, 11, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 12, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 13, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 14, 13, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 15, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 16, 14, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 17, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 18, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 19, 15, 'P'),
+((SELECT id FROM product WHERE specs='紅捲萵苣'), 20, 15, 'P');
+
+-- 山茼蒿
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='山茼蒿'), 1, 6, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 2, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 3, 7, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 4, 8, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 5, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 6, 9, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 8, 11, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 9, 12, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 10, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 11, 13, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 12, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 13, 14, 'P'),
+((SELECT id FROM product WHERE specs='山茼蒿'), 14, 15, 'P');
+-- 翠綠捲葉羽衣甘藍
+INSERT INTO plant_growth (product_id ,day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 1, 6, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 2, 7, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 3, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 4, 8, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 5, 9, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 6, 9.5, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 7, 10, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 8, 11, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 9, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 10, 12, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 11, 12.5, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 12, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 13, 14, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 14, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 15, 15, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 16, 15.5, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 17, 16.5, 'P'),
+((SELECT id FROM product WHERE specs='翠綠捲葉羽衣甘藍'), 18, 17, 'P');
+
+-- 黑葉芥藍
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 1, 10.5, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 2, 11, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 3, 12, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 4, 13, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 5, 13.5, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 6, 14, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 7, 15, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 8, 16, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 9, 17, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 10, 18, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 11, 19, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 12, 19.5, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 13, 20, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 14, 21, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 15, 21.5, 'P'),
+((SELECT id FROM product WHERE specs='黑葉芥藍'), 16, 22, 'P');
+
+-- 義大利綠精靈
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 1, 6.5, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 2, 7.5, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 3, 9, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 4, 10, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 5, 11, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 6, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 7, 12, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 8, 13, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 9, 14.5, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 10, 15.5, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 11, 17, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 12, 18, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 13, 19, 'P'),
+((SELECT id FROM product WHERE specs='義大利綠精靈'), 14, 20, 'P');
+
+-- 菊苣
+INSERT INTO plant_growth (product_id ,day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='菊苣'), 1, 7, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 2, 8, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 3, 8.5, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 4, 9, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 5, 10, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 6, 11, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 7, 11.5, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 8, 13, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 9, 14, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 10, 15, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 11, 15.5, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 12, 16.5, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 13, 17, 'P'),
+((SELECT id FROM product WHERE specs='菊苣'), 14, 18, 'P');
+
+-- 京都水菜
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='京都水菜'), 1, 12, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 2, 13, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 3, 14, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 4, 15, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 5, 15.5, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 6, 16, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 7, 17.5, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 8, 18, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 9, 19, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 10, 20, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 11, 21, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 12, 22, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 13, 22.5, 'P'),
+((SELECT id FROM product WHERE specs='京都水菜'), 14, 23, 'P');
+-- 紅酸模冬
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 1, 1.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 2, 2, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 3, 2, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 4, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 5, 3, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 6, 3, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 7, 3.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 8, 4, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 9, 4.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 10, 5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 11, 5.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 12, 6, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 13, 6.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='冬'), 14, 7, 'G');
+
+-- 紅酸模夏
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 1, 1.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 2, 2, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 3, 2, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 4, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 5, 3, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 6, 3, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 7, 3.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 8, 4, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 9, 4.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 10, 5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 11, 5.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 12, 6, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 13, 6.5, 'G'),
+((SELECT id FROM product WHERE specs='紅酸模' and type='夏'), 14, 7, 'G');
+
+-- 紅蕾絲香水
+INSERT INTO plant_growth (product_id ,day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 1, 4.5, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 2, 5, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 3, 5.5, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 4, 6, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 5, 7, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 6, 7.5, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 7, 8, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 8, 8.5, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 9, 9, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 10, 10, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 11, 11, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 12, 12, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 13, 12.5, 'G'),
+((SELECT id FROM product WHERE specs='紅蕾絲香水'), 14, 13, 'G');
+
+-- 芥末葉夏
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 1, 3.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 2, 4, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 3, 4, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 4, 5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 5, 6, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 6, 6.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 7, 7, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 8, 7.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 9, 8, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 10, 8.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 11, 9, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 12, 9.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 13, 10.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='夏'), 14, 11, 'G');
+
+-- 芥末葉冬
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 1, 3.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 2, 4, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 3, 4, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 4, 5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 5, 6, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 6, 6.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 7, 7, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 8, 7.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 9, 8, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 10, 8.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 11, 9, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 12, 9.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 13, 10.5, 'G'),
+((SELECT id FROM product WHERE specs='芥末葉' and type='冬'), 14, 11, 'G');
+
+-- 香荽
+INSERT INTO plant_growth (product_id ,day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='香荽'), 1, 7, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 2, 8, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 3, 9, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 4, 10, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 5, 11, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 6, 12, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 7, 13, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 8, 13.5, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 9, 14, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 10, 14.5, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 11, 15, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 12, 16, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 13, 17, 'G'),
+((SELECT id FROM product WHERE specs='香荽'), 14, 18, 'G');
+
+-- 幼嫩捲葉羽衣甘藍
+INSERT INTO plant_growth (product_id,day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 1, 2.0, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 2, 2.2, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 3, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 4, 2.7, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 5, 3.0, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 6, 3.2, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 7, 3.4, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 8, 3.7, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 9, 3.9, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 10, 4.1, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 11, 4.4, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 12, 4.6, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 13, 4.9, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 14, 5.1, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 15, 5.3, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 16, 5.6, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 17, 5.8, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 18, 6.0, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 19, 6.3, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 20, 6.5, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 21, 6.8, 'G'),
+((SELECT id FROM product WHERE specs='幼嫩捲葉羽衣甘藍'), 22, 7.0, 'G');
+
+-- 圓葉芝麻葉冬
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 1, 1.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉'  and type='冬'), 2, 1.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 3, 2, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 4, 2, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 5, 2, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 6, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 7, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 8, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 9, 3, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 10, 3, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 11, 3.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 12, 3.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 13, 4, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 14, 4.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 15, 4.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 16, 5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 17, 5.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 18, 6, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 19, 6.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 20, 7, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 21, 7, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 22, 7.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 23, 8, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 24, 8.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 25, 9, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='冬'), 26, 9, 'G');
+
+-- 圓葉芝麻葉夏
+INSERT INTO plant_growth (product_id, day_number, height, stage) VALUES
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 1, 1.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉'  and type='夏'), 2, 1.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 3, 2, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 4, 2, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 5, 2, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 6, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 7, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 8, 2.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 9, 3, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 10, 3, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 11, 3.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 12, 3.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 13, 4, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 14, 4.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 15, 4.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 16, 5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 17, 5.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 18, 6, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 19, 6.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 20, 7, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 21, 7, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 22, 7.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 23, 8, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 24, 8.5, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 25, 9, 'G'),
+((SELECT id FROM product WHERE specs='圓葉芝麻葉' and type='夏'), 26, 9, 'G');
+
+--巡檢報表用
+CREATE VIEW vw_transplant_summary AS
+SELECT 
+    ps.manu_no,
+    p.product_name,
+    tr.act_board_count,
+    ps.est_harvest_date,
+    s.position,
+    tr.stage,
+    tr.act_trans_date
+FROM 
+    transplant_record tr
+LEFT JOIN 
+    product_schedule ps ON tr.ps_id = ps.id
+LEFT JOIN 
+    product p ON p.id = ps.product_id
+LEFT JOIN 
+    stock s ON tr.stock_id = s.id
+LEFT JOIN 
+    plant_growth pg ON pg.product_id = ps.product_id 
+                     AND pg.day_number = DATEDIFF(DAY, tr.act_trans_date, GETDATE())
+WHERE 
+    ps.est_harvest_date BETWEEN '2019-09-01' AND '2019-09-30';
