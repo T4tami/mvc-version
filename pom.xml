@@ -80,6 +80,18 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>5.6.12.Final</version>
 		</dependency>
+		<!-- Apache POI dependencies for handling .xlsx files -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.2</version>
+		</dependency>
+		<!-- Optional: POI's core library (if you need it) -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.2.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

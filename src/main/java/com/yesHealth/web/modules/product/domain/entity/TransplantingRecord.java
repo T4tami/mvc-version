@@ -30,7 +30,7 @@ public class TransplantingRecord {
 	@JoinColumn(name = "stock_id")
 	private Stock stock;
 	@Column(name = "act_board_count")
-	private Integer actGBoardCount;
+	private Integer actBoardCount;
 	private String stage;
 	private String remark;
 }
