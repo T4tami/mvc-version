@@ -27,6 +27,7 @@ public class UserEntity {
 	private String name;
 	private String email;
 	private String password;
+	private String imgName;
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "auth_user_role", joinColumns = {
 			@JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = {

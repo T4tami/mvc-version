@@ -1,4 +1,8 @@
-body, h1, p, button, img {
+body,
+h1,
+p,
+button,
+img {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -12,6 +16,7 @@ body, h1, p, button, img {
 	padding: 10px 20px;
 	border-bottom: 1px solid #e0e0e0;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	background-color: #b9e5aead;
 }
 
 .menu-toggle {
@@ -36,7 +41,7 @@ body, h1, p, button, img {
 }
 
 .header-left img {
-	width: 32px;
+	width: 60px;
 	height: auto;
 	cursor: pointer;
 }
@@ -47,7 +52,7 @@ body, h1, p, button, img {
 }
 
 .header-right img {
-	width: 32px;
+	width: 60px;
 	height: auto;
 	margin-right: 15px;
 	cursor: pointer;
@@ -60,7 +65,7 @@ body, h1, p, button, img {
 }
 
 .header-right button {
-	background-color: #007bff;
+	background-color: #07790d63;
 	border: none;
 	color: white;
 	padding: 8px 16px;
@@ -70,16 +75,33 @@ body, h1, p, button, img {
 }
 
 .header-right button:hover {
-	background-color: #0056b3;
+	background-color: rgb(5, 84, 10);
 }
 
-@media ( max-width : 768px) {
-	.header-left, .header-right {
+.avatar {
+	width: 150px;
+	/* 圓形的直徑 */
+	height: 150px;
+	/* 圓形的直徑 */
+	border-radius: 50%;
+	/* 使其成為圓形 */
+	object-fit: cover;
+	/* 確保圖片保持圓形並填滿 */
+}
+
+.logo {
+	width: 50px;
+	height: 50px;
+}
+
+@media (max-width : 768px) {
+
+	.header-left,
+	.header-right {
 		flex: 1;
 		justify-content: center;
 		text-align: center;
 	}
-	.header-right {
-		display: none; /* Hide right section on small screens */
-	}
+
+
 }

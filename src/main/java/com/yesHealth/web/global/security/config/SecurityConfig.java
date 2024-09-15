@@ -28,9 +28,9 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(requests -> requests
-						.antMatchers("/login", "/register/**", "/css/**", "/js/**").permitAll().anyRequest().authenticated())
-				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/index").loginProcessingUrl("/login")
+				.authorizeHttpRequests(requests -> requests.antMatchers("/login", "/register/**", "/css/**", "/js/**")
+						.permitAll().anyRequest().authenticated())
+				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/dashboard").loginProcessingUrl("/login")
 						.failureUrl("/login?error=true").permitAll())
 				.logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll());
 		return http.build();

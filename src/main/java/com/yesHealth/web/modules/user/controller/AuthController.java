@@ -1,5 +1,8 @@
 package com.yesHealth.web.modules.user.controller;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -7,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.yesHealth.web.global.security.model.CustomUserDetails;
 import com.yesHealth.web.modules.user.dto.RegistrationDto;
 import com.yesHealth.web.modules.user.entity.Menu;
 import com.yesHealth.web.modules.user.entity.UserEntity;
@@ -33,10 +37,16 @@ public class AuthController {
 		return "login/login";
 	}
 
-	@GetMapping("/index")
+	@GetMapping("/dashboard")
 	public String index(HttpSession session) {
 		List<Menu> menus = userService.getUserMenus();
+		CustomUserDetails userDetails = null;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+			userDetails = (CustomUserDetails) auth.getPrincipal();
+		}
 		session.setAttribute("menus", menus);
+		session.setAttribute("userDetails", userDetails);
 		return "index/index";
 	}
 

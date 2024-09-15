@@ -1,6 +1,7 @@
 /* Sidebar Styles */
 .sidebar {
-	max-width: 250px; /* Ensure a maximum width */
+	max-width: 250px;
+	/* Ensure a maximum width */
 	color: #ffffff;
 	height: 100vh;
 	overflow-y: auto;
@@ -37,8 +38,8 @@
 .submenu {
 	display: none;
 	margin-left: 20px;
-	background-color: #495057;
 	border-radius: 4px;
+	text-align: right;
 }
 
 .submenu-item {
@@ -59,11 +60,12 @@
 }
 
 /* Responsive Design */
-@media ( max-width : 768px) {
+@media (max-width : 768px) {
 	.sidebar {
 		width: 100%;
 		transform: translateX(-100%);
 	}
+
 	.sidebar.visible {
 		transform: translateX(0);
 	}

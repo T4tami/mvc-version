@@ -20,6 +20,7 @@ public class QcReportView {
 	private String stage;
 	private Date actTransDate;
 	private Long idealHeight;
+	private Long dayNumber;
 	private String plantLux;
 	private String stockLux;
 }
