@@ -30,6 +30,9 @@ public class Product {
 	
 	private Integer status;
 	private String type;
+	private String sLux;
+	private String gLux;
+	private String pLux;
 	
 	
 }

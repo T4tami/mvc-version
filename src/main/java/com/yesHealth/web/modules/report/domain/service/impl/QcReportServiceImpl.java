@@ -90,15 +90,14 @@ public class QcReportServiceImpl implements QcReportService {
 						report.getEstHarvestDate() != null ? dateFormat.format(report.getEstHarvestDate()) : "");
 				harvestDateCell.setCellStyle(dateCellStyle);
 
-				row.createCell(4).setCellValue(report.getPosition());
-
 				// Determine cell style for 目前儲位
 				Cell positionCell = row.createCell(4);
+				positionCell.setCellValue(report.getPosition());
 				CellStyle positionStyle = workbook.createCellStyle();
 				if (report.getPlantLux() != null && report.getStockLux() != null) {
 					if (report.getPlantLux().equals(report.getStockLux())) {
 						positionStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-					} else if (report.getPlantLux() < report.getStockLux()) {
+					} else if (Long.valueOf(report.getPlantLux()) < Long.valueOf(report.getStockLux())) {
 						positionStyle.setFillForegroundColor(IndexedColors.ORANGE.getIndex());
 					} else {
 						positionStyle.setFillForegroundColor(IndexedColors.RED.getIndex());

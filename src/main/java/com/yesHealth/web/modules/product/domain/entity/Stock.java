@@ -20,5 +20,6 @@ public class Stock {
 	private String building;
 	private String floor;
 	private String position;
+	private String lux;
 
 }
