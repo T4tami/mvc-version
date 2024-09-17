@@ -1,4 +1,6 @@
-package com.yesHealth.web.global.security.service.impl;
+package com.yesHealth.web.modules.product.domain.service.impl;
+
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.yesHealth.web.modules.product.domain.entity.Product;
 import com.yesHealth.web.modules.product.domain.repository.ProductRepository;
 import com.yesHealth.web.modules.product.domain.service.ProductService;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 	private ProductRepository productRepository;
@@ -19,6 +22,11 @@ public class ProductServiceImpl implements ProductService {
 	public Page<Product> findAll(Pageable pageable) {
 		Page<Product> product = productRepository.findAll(pageable);
 		return product;
+	}
+
+	@Override
+	public List<Product> findAll() {
+		return productRepository.findAll();
 	}
 
 }
