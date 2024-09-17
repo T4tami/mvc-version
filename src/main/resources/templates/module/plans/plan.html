@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>產品計劃</title>
+	<title>計劃排程</title>
 	<link rel="stylesheet" href="/css/style.css">
 	<link rel="stylesheet" type="text/css" th:href="@{/static/css/index.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/static/css/header.css}">
@@ -20,7 +20,7 @@
 		<div class="main-content">
 			<!-- 這裡是主要內容區域 -->
 			<header>
-				<h1>計劃排程</h1>
+				<h1>計劃排程查看</h1>
 			</header>
 			<main class="container flex-column w-100">
 				<form method="get" action="/production/planing" class="container justify-content-end ">
@@ -39,8 +39,9 @@
 						</select>
 					</div>
 					<button type="submit">搜尋</button>
-					<button class="btn btn-primary" onclick="window.location.href='/production/create-form'">新增</button>
 				</form>
+				<button class="btn btn-primary"
+					onclick="window.location.href='/production/create-form'">新增</button>
 				<table>
 					<thead>
 						<tr>

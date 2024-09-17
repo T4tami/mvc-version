@@ -2,6 +2,8 @@ package com.yesHealth.web.modules.planning.web.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,11 +49,17 @@ public class PlanController {
 	}
 
 	@GetMapping("create-form")
-	public String createForm(Model model) {
+	public String createForm(HttpSession session) {
 		List<Stock> stockList = stockService.findAll();
 		List<Product> products = productService.findAll();
-		model.addAttribute("stockList", stockList);
-		model.addAttribute("products", products);
+		session.setAttribute("stockList", stockList);
+		session.setAttribute("products", products);
 		return "/module/plans/create-form";
+	}
+
+	@GetMapping("create-plan")
+	public String createPlan(Model model) {
+
+		return "/module/plans/result-form";
 	}
 }
