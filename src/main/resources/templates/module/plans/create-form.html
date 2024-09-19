@@ -11,7 +11,6 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script th:src="@{/static/js/sidebar.js}"></script>
 	<script>
-		let rowId = 0;
 		function addRow() {
 			// 獲取表單區域和模板行
 			const formRows = document.getElementById('form-rows');
@@ -32,7 +31,7 @@
 					element.id = element.id.replace('-0', `-${rowId}`);
 				}
 				if (element.name) {
-					element.name = element.name.replace('-0', `-${rowId}`);
+					element.name = element.name.replace('[0]', `[${rowId}]`);
 				}
 				if (element.htmlFor) {
 					element.htmlFor = element.htmlFor.replace('-0', `-${rowId}`);
@@ -57,7 +56,7 @@
 			// 重新對剩餘的行進行編號，跳過 template-row
 			const formRows = document.getElementById('form-rows');
 			const rows = formRows.querySelectorAll('.row'); // 選取所有行
-			let rowIndex = 0; // 用於追蹤行編號
+			let rowIndex = 1; // 用於追蹤行編號
 
 			rows.forEach(row => {
 				if (row.id !== 'template-row') {
@@ -65,12 +64,12 @@
 					row.id = `row-${rowIndex}`;
 
 					// 查找行內的所有元素，更新id、name、for屬性
-					row.querySelectorAll('[id], [name], [for]').forEach(element => {
+					row.querySelectorAll('[id],[name],[for]').forEach(element => {
 						if (element.id) {
 							element.id = element.id.replace(/-\d+$/, `-${rowIndex}`);
 						}
 						if (element.name) {
-							element.name = element.name.replace(/-\d+$/, `-${rowIndex}`);
+							element.name = element.name.replace(/\[\d+\]/, `[${rowIndex}]`);
 						}
 						if (element.htmlFor) {
 							element.htmlFor = element.htmlFor.replace(/-\d+$/, `-${rowIndex}`);
@@ -247,7 +246,8 @@
 								style="background-color: #d8d8d8; color: black;" onclick="addRow()">新增</button>
 						</div>
 					</div>
-					<form id="dynamic-form" class="container flex-column" action="/production/create-plan">
+					<form id="dynamic-form" class="container flex-column" action="/production/create-plan"
+						method="post">
 						<div>
 							<div id="form-rows" class="mb-6 mt-2">
 								<div class="row flex-column border-top border-bottom border-2 pt-2" id="template-row">
@@ -258,12 +258,14 @@
 									<div class="container ml-2 justify-content-end">
 										<div class="col-md-6 mb-2">
 											<label for="target-weight-0">業務需求重量</label> <input id="target-weight-0"
-												type="number" class="form-control text-end" name="target-weight-0"
-												min="1" step="1" placeholder="kg">
+												type="number" class="form-control text-end"
+												th:field="*{createPlansForm.createPlanFormList[0].targetWeight}" min="1"
+												step="1" placeholder="kg">
 										</div>
 										<div class="col-md-6 mb-2">
 											<label for="product-id-0">品項</label> <select th:id="product-id-0"
-												class="form-select" data-row-id="0" th:name="product-id-0"
+												class="form-select" data-row-id="0"
+												th:field="*{createPlansForm.createPlanFormList[0].productId}">
 												onchange="handleChange(event)">
 												<option th:each="option : ${session.products}" th:value="${option.id}"
 													th:text="${option.specs+'('+option.type+')'}"
@@ -281,7 +283,8 @@
 									<div class="container ml-2 ml-2 justify-content-end">
 										<div class="col-md-4 mb-2">
 											<label for="s-stock-id-0">見苗儲位</label> <select id="s-stock-id-0"
-												class="form-select" th:name="s-stock-id-0">
+												class="form-select"
+												th:field="*{createPlansForm.createPlanFormList[0].sStockId}">
 												<option th:each="option : ${session.stockList}"
 													th:if="${option.stage} == 'S'" th:value="${option.id}"
 													th:text="${option.position}" th:selected="${option == 0}"></option>
@@ -289,7 +292,8 @@
 										</div>
 										<div class="col-md-4 mb-2">
 											<label for="g-stock-id-0">育苗儲位</label> <select id="g-stock-id-0"
-												class="form-select" th:name="g-stock-id-0">
+												class="form-select"
+												th:field="*{createPlansForm.createPlanFormList[0].gStockId}">
 												<option th:each="option : ${session.stockList}"
 													th:if="${option.stage} == 'G'" th:value="${option.id}"
 													th:text="${option.position}" th:selected="${option == 0}"></option>
@@ -297,7 +301,8 @@
 										</div>
 										<div class="col-md-4 mb-2">
 											<label for="p-stock-id-0">栽培儲位</label> <select id="p-stock-id-0"
-												class="form-select" th:name="p-stock-id-0">
+												class="form-select"
+												th:field="*{createPlansForm.createPlanFormList[0].pStockId}">
 												<option th:each="option : ${session.stockList}"
 													th:if="${option.stage} == 'P'" th:value="${option.id}"
 													th:text="${option.position}" th:selected="${option == 0}"></option>
@@ -307,59 +312,71 @@
 									<div class="container">
 										<div class="col-md-2 mb-2 ">
 											<label for="seeding-date">定案播種日</label> <input type="date"
-												id="seeding-date-0" class="form-control" name="seeding-date-0">
+												id="seeding-date-0" class="form-control"
+												th:field="*{createPlansForm.createPlanFormList[0].seedingDate}">
 										</div>
 										<div class="col-md-2 mb-2 ">
 											<label for="watering-date">定案壓水日</label> <input type="date"
-												id="watering-date-0" class="form-control" name="watering-date-0">
+												id="watering-date-0" class="form-control"
+												th:field="*{createPlansForm.createPlanFormList[0].wateringDate}">
 										</div>
 										<div class="col-md-2 mb-2 ">
 											<label for="head-out-date">定案見苗日</label> <input type="date"
-												id="head-out-date-0" class="form-control" name="head-out-date-0">
+												id="head-out-date-0" class="form-control"
+												th:field="*{createPlansForm.createPlanFormList[0].headOutDate}">
 										</div>
 										<div class="col-md-2 mb-2 ">
 											<label for="growing-date-0">定案育苗日</label> <input type="date"
-												id="growing-date-0" class="form-control" name="growing-date-0">
+												id="growing-date-0" class="form-control"
+												th:field="*{createPlansForm.createPlanFormList[0].growingDate}">
 										</div>
 										<div class="col-md-2 mb-2 ">
-											<label for="mature-date-0">定案栽培日</label> <input type="date" id="mature-date"
-												class="form-control" name="mature-date-0">
+											<label for="mature-date-0">定案栽培日</label> <input type="date"
+												id="mature-date-0" class="form-control"
+												name="createPlansForm.createPlansForm.createPlanFormList[0].matureDate">
 										</div>
 										<div class="col-md-2 mb-2 ">
 											<label for="harvest-date-0">定案採收日</label> <input type="date"
-												id="harvest-date-0" class="form-control" name="harvest-date-0">
+												id="harvest-date-0" class="form-control"
+												th:field="*{createPlansForm.createPlanFormList[0].harvestDate}">
 										</div>
 									</div>
 									<div class="container">
 										<div id="" class="col-md-2 mb-2">
 											<label for="seeding-board-count-0">預計播種盤數</label> <input
 												id="seeding-board-count-0" type="number" class="form-control text-end"
-												name="seeding-board-count-0" min="1" step="1">
+												th:field="*{createPlansForm.createPlanFormList[0].seedingBoardCount}"
+												min="1" step="1" value="0">
 										</div>
 										<div class="col-md-2 mb-2">
 											<label for="watering-board-count-0">預計壓水盤數</label> <input
 												id="watering-board-count-0" type="number" class="form-control text-end"
-												name="watering-board-count-0" min="1" step="1">
+												th:field="*{createPlansForm.createPlanFormList[0].wateringBoardCount}"
+												min="1" step="1" value="0">
 										</div>
 										<div class="col-md-2 mb-2">
 											<label for="head-out-board-count-0">預計見苗盤數</label> <input
 												id="head-out-board-count-0" type="number" class="form-control text-end"
-												name="head-out-board-count-0" min="1" step="1">
+												th:field="*{createPlansForm.createPlanFormList[0].headOutBoardCount}"
+												min="1" step="1" value="0">
 										</div>
 										<div class="col-md-2 mb-2">
 											<label for="growing-board-count-0">預計育苗盤數</label> <input
 												id="growing-board-count-0" type="number" class="form-control text-end"
-												name="growing-board-count-0" min="1" step="1">
+												th:field="*{createPlansForm.createPlanFormList[0].growingBoardCount}"
+												min="1" step="1" value="0">
 										</div>
 										<div class="col-md-2 mb-2">
 											<label for="mature-board-count">預計栽培盤數</label> <input
 												id="mature-board-count-0" type="number" class="form-control"
-												name="mature-board-count-0" min="1" step="1">
+												th:field="*{createPlansForm.createPlanFormList[0].matureBoardCount}"
+												min="1" step="1" value="0">
 										</div>
 										<div class="col-md-2 mb-2">
 											<label for="harvest-board-count-0">預計採收盤數</label> <input
 												id="harvest-board-count-0" type="number" class="form-control"
-												name="harvest-board-count-0" min="1" step="1">
+												th:field="*{createPlansForm.createPlanFormList[0].harvestBoardCount}"
+												min="1" step="1" value="0">
 										</div>
 									</div>
 								</div>

@@ -1,5 +1,6 @@
 package com.yesHealth.web.modules.planning.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -10,18 +11,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.yesHealth.web.modules.planning.domain.service.PlanService;
 import com.yesHealth.web.modules.planning.domain.service.StockService;
+import com.yesHealth.web.modules.planning.web.views.CreatePlanForm;
+import com.yesHealth.web.modules.planning.web.views.CreatePlansForm;
 import com.yesHealth.web.modules.product.domain.entity.Product;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.product.domain.entity.Stock;
 import com.yesHealth.web.modules.product.domain.service.ProductService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/production")
+@Slf4j
 public class PlanController {
 
 	private PlanService planService;
@@ -49,17 +57,20 @@ public class PlanController {
 	}
 
 	@GetMapping("create-form")
-	public String createForm(HttpSession session) {
+	public String createForm(HttpSession session, Model model) {
 		List<Stock> stockList = stockService.findAll();
 		List<Product> products = productService.findAll();
 		session.setAttribute("stockList", stockList);
 		session.setAttribute("products", products);
+		CreatePlansForm createPlansForm = new CreatePlansForm();
+		model.addAttribute("createPlansForm", createPlansForm);
 		return "/module/plans/create-form";
 	}
 
-	@GetMapping("create-plan")
-	public String createPlan(Model model) {
-
-		return "/module/plans/result-form";
+	@PostMapping("create-plan")
+	public void createPlan(@ModelAttribute CreatePlansForm createPlansForm) {
+		//service
+//		return "/module/plans/plan?add=success";
 	}
+
 }
