@@ -95,8 +95,10 @@ body {
 	text-decoration: none;
 	/* Removes underline */
 }
+
 /* Reset some default browser styles */
-body, html {
+body,
+html {
 	margin: 0;
 	padding: 0;
 	height: 100%;
@@ -104,12 +106,14 @@ body, html {
 
 /* Container to hold sidebar and main content */
 .main-container {
-	display: flex; /* Use flexbox for layout */
+	display: flex;
+	/* Use flexbox for layout */
 }
 
 /* Sidebar styles */
 .sidebar {
-	width: 18vw; /* 18% of viewport width */
+	width: 18vw;
+	/* 18% of viewport width */
 	background-color: white;
 	color: #ffffff;
 	height: 100vh;
@@ -125,24 +129,30 @@ body, html {
 
 /* Main content styles */
 .main-content {
-	flex: 1; /* Take up the remaining space */
+	flex: 1;
+	/* Take up the remaining space */
 	padding: 20px;
 	background-color: #f8f9fa;
-	height: 100vh; /* Full height */
-	overflow-y: auto; /* Scroll if content overflows */
+	height: 100vh;
+	/* Full height */
 }
 
 /* Responsive Design */
-@media ( max-width : 768px) {
+@media (max-width : 768px) {
 	.sidebar {
-		width: 100%; /* Full width on small screens */
-		position: relative; /* Change positioning for smaller screens */
+		width: 100%;
+		/* Full width on small screens */
+		position: relative;
+		/* Change positioning for smaller screens */
 		transform: translateX(-100%);
 	}
+
 	.sidebar.visible {
 		transform: translateX(0);
 	}
+
 	.main-content {
-		margin-left: 0; /* No margin for small screens */
+		margin-left: 0;
+		/* No margin for small screens */
 	}
 }

@@ -2,75 +2,208 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>新增計劃排程</title>
-<link rel="stylesheet" type="text/css"
-	th:href="@{/static/css/index.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/static/css/header.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/static/css/sidebar.css}">
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<script th:src="@{/static/js/sidebar.js}"></script>
-<script>
-	let rowId = 0;
-	 function addRow() {
-         rowId++;
-         const template = document.getElementById('template-row');
-         const newRow = template.cloneNode(true);
-         newRow.id = 'add-row-'+rowId;
-         newRow.querySelectorAll('input, select').forEach(element => {
-             element.name = element.name.replace(/\$\{rowId\}/g, rowId);
-             element.id = element.id.replace(/\$\{rowId\}/g, rowId);
-         });
-         const deleteButton = newRow.querySelector('button');
-         deleteButton.setAttribute('data-row-id', rowId);
-         document.getElementById('form-rows').appendChild(newRow);
-     }
-	function removeRow(button) {
-		 const rowId = button.getAttribute('data-row-id');
-		    
-		    const row = document.getElementById('add-row-' + rowId);
-		    if (row) {
-		        row.remove();
-		    }
-	}
-	 function filterTable(e) {
-         const productId = document.getElementById('product-id');
-         const tableContainer= document.getElementById('table-container');
-         const productid = select.value;
-         const rows = document.querySelectorAll('#data-table-body tr');
-         
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>新增計劃排程</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/index.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/header.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/sidebar.css}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script th:src="@{/static/js/sidebar.js}"></script>
+	<script>
+		let rowId = 0;
+		function addRow() {
+			// 獲取表單區域和模板行
+			const formRows = document.getElementById('form-rows');
+			const templateRow = document.getElementById('template-row');
 
-         rows.forEach(row => {
-             const rowId = row.getAttribute('data-id');
-             if (productid === 'all' || rowId === productid) {
-                 row.classList.remove('d-none');
-                 tableContainer.classList.remove('d-none');
-             } else {
-                 row.classList.add('d-none');
-             }
-         });
-         const pStockId = document.getElementById('p-stock' + selectElement.getAttribute('data-row-id'));
-         if (pStockId) {
-             if (pStockId.classList.contains('d-none')) {
-                 pStockId.classList.remove('d-none');
-             } else {
-                 pStockId.classList.add('d-none');
-             }
-         }
-     }
-</script>
+			// 複製模板行
+			const newRow = templateRow.cloneNode(true);
+
+			// 取得新的rowId，根據現有的行數
+			const rowId = formRows.childElementCount;
+
+			// 更新newRow的ID
+			newRow.id = `row-${rowId}`;
+
+			// 查找newRow中的所有元素，更新id、name和for屬性
+			newRow.querySelectorAll('[id], [name], [for]').forEach(element => {
+				if (element.id) {
+					element.id = element.id.replace('-0', `-${rowId}`);
+				}
+				if (element.name) {
+					element.name = element.name.replace('-0', `-${rowId}`);
+				}
+				if (element.htmlFor) {
+					element.htmlFor = element.htmlFor.replace('-0', `-${rowId}`);
+				}
+			});
+
+			// 顯示刪除按鈕
+			const removeButton = newRow.querySelector('button');
+			removeButton.classList.remove('d-none');
+			removeButton.dataset.rowId = rowId;
+
+			// 將新的行插入表單中
+			formRows.appendChild(newRow);
+		}
+		function removeRow(button) {
+			const rowId = button.dataset.rowId;
+			const row = document.getElementById(`row-${rowId}`);
+			if (row && rowId !== 'template-row') {
+				row.remove(); // 刪除指定的行
+			}
+
+			// 重新對剩餘的行進行編號，跳過 template-row
+			const formRows = document.getElementById('form-rows');
+			const rows = formRows.querySelectorAll('.row'); // 選取所有行
+			let rowIndex = 0; // 用於追蹤行編號
+
+			rows.forEach(row => {
+				if (row.id !== 'template-row') {
+					// 重新設置行的ID
+					row.id = `row-${rowIndex}`;
+
+					// 查找行內的所有元素，更新id、name、for屬性
+					row.querySelectorAll('[id], [name], [for]').forEach(element => {
+						if (element.id) {
+							element.id = element.id.replace(/-\d+$/, `-${rowIndex}`);
+						}
+						if (element.name) {
+							element.name = element.name.replace(/-\d+$/, `-${rowIndex}`);
+						}
+						if (element.htmlFor) {
+							element.htmlFor = element.htmlFor.replace(/-\d+$/, `-${rowIndex}`);
+						}
+					});
+
+					// 更新刪除按鈕的數據
+					const removeButton = row.querySelector('button');
+					removeButton.dataset.rowId = rowIndex;
+
+					rowIndex++; // 更新下一行的索引
+				}
+			});
+		}
+
+		function handleChange(event) {
+			// 取得觸發事件的 select 元素
+			const selectElement = event.target;
+
+			// 取得 select 元素所在的行 (data-row-id 屬性對應行)
+			const rowId = selectElement.dataset.rowId;
+
+			// 取得當前選中的選項
+			const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+			// 取得各個 data-xx 屬性
+			const specs = selectedOption.getAttribute('data-specs');
+			const family = selectedOption.getAttribute('data-family');
+			const sDays = selectedOption.getAttribute('data-sDays');
+			const gDays = selectedOption.getAttribute('data-gDays');
+			const pDays = selectedOption.getAttribute('data-pDays');
+			const sHole = selectedOption.getAttribute('data-sHole');
+			const gHole = selectedOption.getAttribute('data-gHole');
+			const pHole = selectedOption.getAttribute('data-pHole');
+			const sLux = selectedOption.getAttribute('data-sLux');
+			const gLux = selectedOption.getAttribute('data-gLux');
+			const pLux = selectedOption.getAttribute('data-pLux');
+
+			// 找到對應的 p-stock-id-row 元素
+			const pStockSelect = document.getElementById(`p-stock-id-${rowId}`);
+
+			// 如果 pLux 為 null 或空值，則禁用 p-stock-id-row，否則啟用
+			if (pLux === null || pLux === "") {
+				pStockSelect.disabled = true;
+				var newOption = document.createElement("option");
+				newOption.value = 0;  // 设置 value
+				newOption.text = "";     // 设置 text
+				pStockSelect.add(newOption);  // 添加到下拉列表
+				pStockSelect.value = 0;
+			} else {
+				pStockSelect.disabled = false;
+				for (var i = 0; i < pStockSelect.options.length; i++) {
+					if (pStockSelect.options[i].value === "0") {
+						pStockSelect.remove(i);
+						break;
+					}
+				}
+
+				var selectedIndex = pStockSelect.selectedIndex;
+			}
+
+			const tableContainer = document.getElementById("table-container");
+			const mainTitle = document.getElementById("main-title");
+			if (tableContainer.style.display === "none" || !tableContainer.style.display) {
+				tableContainer.style.display = "block";
+				//mainTitle
+				mainTitle.style.top = "213px";
+				mainTitle.style.position = "sticky";
+				mainTitle.style.zIndex = 998;
+				mainTitle.style.backgroundColor = "white";
+				mainTitle.style.width = "100%";
+				mainTitle.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+			}
+
+			// 更新對應的 <tbody> 行
+			let tbodyRow = document.querySelector(`#data-table-body tr[data-id="${rowId}"]`);
+
+			// 如果找到對應的行，則更新該行的各個 <td> 值，否則創建一個新行
+			if (!tbodyRow) {
+				// 創建新行
+				tbodyRow = document.createElement('tr');
+				tbodyRow.setAttribute('data-id', rowId);
+
+				// 依次添加每一個單元格
+				tbodyRow.innerHTML = `
+		            <td>${specs || ''}</td>
+		            <td>${family || ''}</td>
+		            <td>${sDays || ''}</td>
+		            <td>${gDays || ''}</td>
+		            <td>${pDays || ''}</td>
+		            <td>${sHole || ''}</td>
+		            <td>${gHole || ''}</td>
+		            <td>${pHole || ''}</td>
+		            <td>${sLux || ''}</td>
+		            <td>${gLux || ''}</td>
+		            <td>${pLux || ''}</td>
+		        `;
+
+				// 將新行插入表格
+				document.getElementById("data-table-body").appendChild(tbodyRow);
+			} else {
+				// 更新現有的行
+				tbodyRow.cells[0].textContent = specs || '';
+				tbodyRow.cells[1].textContent = family || '';
+				tbodyRow.cells[2].textContent = sDays || '';
+				tbodyRow.cells[3].textContent = gDays || '';
+				tbodyRow.cells[4].textContent = pDays || '';
+				tbodyRow.cells[5].textContent = sHole || '';
+				tbodyRow.cells[6].textContent = gHole || '';
+				tbodyRow.cells[7].textContent = pHole || '';
+				tbodyRow.cells[8].textContent = sLux || '';
+				tbodyRow.cells[9].textContent = gLux || '';
+				tbodyRow.cells[10].textContent = pLux || '';
+			}
+		}
+	</script>
+	<style>
+		#table-container {
+			position: sticky;
+			top: 60px;
+			/* 確保表格區塊在header下方顯示 */
+			z-index: 998;
+			background-color: white;
+			width: 100%;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+	</style>
 </head>
 
 <body>
 	<div th:include="layout/header::header(${session.userDetails})"></div>
 	<div class="main-container">
-		<div th:replace="layout/sidebar::sidebar(${session.menus})"
-			class="sidebar"></div>
+		<div th:replace="layout/sidebar::sidebar(${session.menus})" class="sidebar"></div>
 		<div class="main-content">
 			<!-- 這裡是主要內容區域 -->
 			<header>
@@ -78,7 +211,7 @@
 			</header>
 			<main class="container w-100">
 				<div class="container my-4 flex-column">
-					<div id="table-container" class="d-none">
+					<div id="table-container" class="" style="display: none;">
 						<div class="container">
 							<div class="container">
 								<h2 class="col-md-6 mb-3">基本資料</h2>
@@ -102,82 +235,69 @@
 									</tr>
 								</thead>
 								<tbody id="data-table-body">
-									<tr th:each="product : ${session.products}"
-										th:data-id="${product.id}">
-										<td th:text="${product.specs}"></td>
-										<td th:text="${product.family}"></td>
-										<td th:text="${product.sDays}"></td>
-										<td th:text="${product.gDays}"></td>
-										<td th:text="${product.pDays}"></td>
-										<td th:text="${product.sHole}"></td>
-										<td th:text="${product.gHole}"></td>
-										<td th:text="${product.pHole}"></td>
-										<td th:text="${product.sLux}"></td>
-										<td th:text="${product.gLux}"></td>
-										<td th:text="${product.pLux}"></td>
-									</tr>
+
 								</tbody>
 							</table>
 						</div>
 					</div>
-					<div>
+					<div id="main-title">
 						<div class="container justify-content-between">
 							<h2 class="pl-0">生管預排</h2>
 							<button type="button" class="btn mt-2 col-md-2"
-								style="background-color: #d8d8d8; color: black;"
-								onclick="addRow()">新增</button>
+								style="background-color: #d8d8d8; color: black;" onclick="addRow()">新增</button>
 						</div>
 					</div>
-					<form id="dynamic-form" class="container flex-column"
-						action="/production/create-plan">
+					<form id="dynamic-form" class="container flex-column" action="/production/create-plan">
 						<div>
 							<div id="form-rows" class="mb-6 mt-2">
-								<div
-									class="row flex-column border-top border-bottom border-2 pt-2"
-									id="template-row">
-									<div>
-										<button type="button" data-row-id="0"
+								<div class="row flex-column border-top border-bottom border-2 pt-2" id="template-row">
+									<div class="d-flex justify-content-end">
+										<button class="d-none" type="button" data-row-id="0"
 											onclick="removeRow(this)">x</button>
 									</div>
 									<div class="container ml-2 justify-content-end">
 										<div class="col-md-6 mb-2">
-											<label for="product-id">業務需求重量</label> <input
-												id="harvest-board-count" type="number"
-												class="form-control text-end" name="input7-${rowId}" min="1"
-												step="1" placeholder="kg">
+											<label for="target-weight-0">業務需求重量</label> <input id="target-weight-0"
+												type="number" class="form-control text-end" name="target-weight-0"
+												min="1" step="1" placeholder="kg">
 										</div>
 										<div class="col-md-6 mb-2">
-											<label for="product-id">品項</label> <select
-												id="product-id-${rowId}" class="form-select"
-												data-row-id="${rowId}" name="product-${rowId}"
-												onchange="filterTable(e)">
-												<option th:each="option : ${session.products}"
-													th:value="${option.id}"
+											<label for="product-id-0">品項</label> <select th:id="product-id-0"
+												class="form-select" data-row-id="0" th:name="product-id-0"
+												onchange="handleChange(event)">
+												<option th:each="option : ${session.products}" th:value="${option.id}"
 													th:text="${option.specs+'('+option.type+')'}"
-													th:selected="${option == 0}"></option>
+													th:if="${option.status==1}" th:data-specs="${option.specs}"
+													th:data-family="${option.family}" th:data-sDays="${option.sDays}"
+													th:data-gDays="${option.gDays}" th:data-pDays="${option.pDays}"
+													th:data-sHole="${option.sHole}" th:data-gHole="${option.gHole}"
+													th:data-pHole="${option.pHole}" th:data-sLux="${option.sLux}"
+													th:data-gLux="${option.gLux}" th:data-pLux="${option.pLux}"
+													th:selected="${option == 0}">
+												</option>
 											</select>
 										</div>
 									</div>
 									<div class="container ml-2 ml-2 justify-content-end">
 										<div class="col-md-4 mb-2">
-											<label for="s-stock-id">見苗儲位</label> <select id="s-stock-id"
-												class="form-select" name="s-stock-${rowId}">
+											<label for="s-stock-id-0">見苗儲位</label> <select id="s-stock-id-0"
+												class="form-select" th:name="s-stock-id-0">
 												<option th:each="option : ${session.stockList}"
 													th:if="${option.stage} == 'S'" th:value="${option.id}"
 													th:text="${option.position}" th:selected="${option == 0}"></option>
 											</select>
 										</div>
 										<div class="col-md-4 mb-2">
-											<label for="g-stock-id">育苗儲位</label> <select id="g-stock-id"
-												class="form-select" name="g-stock-${rowId}">
+											<label for="g-stock-id-0">育苗儲位</label> <select id="g-stock-id-0"
+												class="form-select" th:name="g-stock-id-0">
 												<option th:each="option : ${session.stockList}"
 													th:if="${option.stage} == 'G'" th:value="${option.id}"
 													th:text="${option.position}" th:selected="${option == 0}"></option>
 											</select>
 										</div>
 										<div class="col-md-4 mb-2">
-											<label for="p-stock-id">栽培儲位</label> <select id="p-stock-id"
-												class="form-select" name="p-stock-${rowId}">
+											<label for="p-stock-id-0">栽培儲位</label> <select id="p-stock-id-0"
+												class="form-select" th:name="p-stock-id-0">
 												<option th:each="option : ${session.stockList}"
 													th:if="${option.stage} == 'P'" th:value="${option.id}"
 													th:text="${option.position}" th:selected="${option == 0}"></option>
@@ -187,68 +307,59 @@
 									<div class="container">
 										<div class="col-md-2 mb-2 ">
 											<label for="seeding-date">定案播種日</label> <input type="date"
-												id="seeding-date" class="form-control"
-												name="input1-${rowId}">
+												id="seeding-date-0" class="form-control" name="seeding-date-0">
 										</div>
 										<div class="col-md-2 mb-2 ">
 											<label for="watering-date">定案壓水日</label> <input type="date"
-												id="watering-date" class="form-control"
-												name="input2-${rowId}">
+												id="watering-date-0" class="form-control" name="watering-date-0">
 										</div>
 										<div class="col-md-2 mb-2 ">
 											<label for="head-out-date">定案見苗日</label> <input type="date"
-												id="head-out-date" class="form-control"
-												name="input3-${rowId}">
+												id="head-out-date-0" class="form-control" name="head-out-date-0">
 										</div>
 										<div class="col-md-2 mb-2 ">
-											<label for="growing-date">定案育苗日</label> <input type="date"
-												id="growing-date" class="form-control"
-												name="input4-${rowId}">
+											<label for="growing-date-0">定案育苗日</label> <input type="date"
+												id="growing-date-0" class="form-control" name="growing-date-0">
 										</div>
 										<div class="col-md-2 mb-2 ">
-											<label for="mature-date">定案栽培日</label> <input type="date"
-												id="mature-date" class="form-control" name="input5-${rowId}">
+											<label for="mature-date-0">定案栽培日</label> <input type="date" id="mature-date"
+												class="form-control" name="mature-date-0">
 										</div>
 										<div class="col-md-2 mb-2 ">
-											<label for="harvest-date">定案採收日</label> <input type="date"
-												id="harvest-date" class="form-control"
-												name="input6-${rowId}">
+											<label for="harvest-date-0">定案採收日</label> <input type="date"
+												id="harvest-date-0" class="form-control" name="harvest-date-0">
 										</div>
 									</div>
 									<div class="container">
 										<div id="" class="col-md-2 mb-2">
-											<label for="seeding-board-count">預計播種盤數</label> <input
-												id="seeding-board-count" type="number"
-												class="form-control text-end" name="input7-${rowId}" min="1"
-												step="1">
+											<label for="seeding-board-count-0">預計播種盤數</label> <input
+												id="seeding-board-count-0" type="number" class="form-control text-end"
+												name="seeding-board-count-0" min="1" step="1">
 										</div>
 										<div class="col-md-2 mb-2">
-											<label for="watering-board-count">預計壓水盤數</label> <input
-												id="watering-board-count" type="number"
-												class="form-control text-end" name="input7-${rowId}" min="1"
-												step="1">
+											<label for="watering-board-count-0">預計壓水盤數</label> <input
+												id="watering-board-count-0" type="number" class="form-control text-end"
+												name="watering-board-count-0" min="1" step="1">
 										</div>
 										<div class="col-md-2 mb-2">
-											<label for="head-out-board-count">預計見苗盤數</label> <input
-												id="head-out-board-count" type="number"
-												class="form-control text-end" name="input7-${rowId}" min="1"
-												step="1">
+											<label for="head-out-board-count-0">預計見苗盤數</label> <input
+												id="head-out-board-count-0" type="number" class="form-control text-end"
+												name="head-out-board-count-0" min="1" step="1">
 										</div>
 										<div class="col-md-2 mb-2">
-											<label for="growing-board-count">預計育苗盤數</label> <input
-												id="growing-board-count text-end" type="number"
-												class="form-control text-end" name="input7-${rowId}" min="1"
-												step="1">
+											<label for="growing-board-count-0">預計育苗盤數</label> <input
+												id="growing-board-count-0" type="number" class="form-control text-end"
+												name="growing-board-count-0" min="1" step="1">
 										</div>
 										<div class="col-md-2 mb-2">
 											<label for="mature-board-count">預計栽培盤數</label> <input
-												id="mature-board-count text-end" type="number"
-												class="form-control" name="input7-${rowId}" min="1" step="1">
+												id="mature-board-count-0" type="number" class="form-control"
+												name="mature-board-count-0" min="1" step="1">
 										</div>
 										<div class="col-md-2 mb-2">
-											<label for="harvest-board-count">預計採收盤數</label> <input
-												id="harvest-board-count text-end" type="number"
-												class="form-control" name="input7-${rowId}" min="1" step="1">
+											<label for="harvest-board-count-0">預計採收盤數</label> <input
+												id="harvest-board-count-0" type="number" class="form-control"
+												name="harvest-board-count-0" min="1" step="1">
 										</div>
 									</div>
 								</div>
