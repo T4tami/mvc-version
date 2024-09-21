@@ -2,32 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>新增計劃排程</title>
-	<link rel="stylesheet" type="text/css" th:href="@{/static/css/index.css}">
-	<link rel="stylesheet" type="text/css" th:href="@{/static/css/header.css}">
-	<link rel="stylesheet" type="text/css" th:href="@{/static/css/sidebar.css}">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-	<script th:src="@{/static/js/sidebar.js}"></script>
-	<script th:src="@{/static/js/create-form.js}"></script>
-	<style>
-		#table-container {
-			position: sticky;
-			top: 60px;
-			/* 確保表格區塊在header下方顯示 */
-			z-index: 998;
-			background-color: white;
-			width: 100%;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		}
-	</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新增計劃排程</title>
+<link rel="stylesheet" type="text/css"
+	th:href="@{/static/css/index.css}">
+<link rel="stylesheet" type="text/css"
+	th:href="@{/static/css/header.css}">
+<link rel="stylesheet" type="text/css"
+	th:href="@{/static/css/sidebar.css}">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script th:src="@{/static/js/sidebar.js}"></script>
+<script th:src="@{/static/js/create-form.js}"></script>
+<style>
+#table-container {
+	position: sticky;
+	top: 60px;
+	/* 確保表格區塊在header下方顯示 */
+	z-index: 998;
+	background-color: white;
+	width: 100%;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+</style>
 </head>
 
 <body>
 	<div th:include="layout/header::header(${session.userDetails})"></div>
 	<div class="main-container">
-		<div th:replace="layout/sidebar::sidebar(${session.menus})" class="sidebar"></div>
+		<div th:replace="layout/sidebar::sidebar(${session.menus})"
+			class="sidebar"></div>
 		<div class="main-content">
 			<!-- 這裡是主要內容區域 -->
 			<header>
@@ -38,7 +44,8 @@
 					<div id="table-container" class="" style="display: none;">
 						<div class="container">
 							<div class="container">
-								<h2 class="col-md-6 mb-3" th:text="#{plan.createForm.section.basic.title}"></h2>
+								<h2 class="col-md-6 mb-3"
+									th:text="#{plan.createForm.section.basic.title}"></h2>
 							</div>
 						</div>
 						<div class="container">
@@ -69,240 +76,292 @@
 						<div class="container justify-content-between">
 							<h2 class="pl-0">生管預排</h2>
 							<button type="button" class="btn mt-2 col-md-2"
-								style="background-color: #d8d8d8; color: black;" onclick="addRow()"
-								th:text="#{plan.createForm.button.add}"></button>
+								style="background-color: #d8d8d8; color: black;"
+								onclick="addRow()" th:text="#{plan.createForm.button.add}"></button>
 						</div>
 					</div>
-					<form id="dynamic-form" action="/production/create-plan" class="container flex-column"
-						th:each="createPlanForm : ${createPlansForm.createPlanList}" method="post">
-						<div>
-							<div id="form-rows" class="mb-6 mt-2">
-								<div class="row flex-column border-top border-bottom border-2 pt-2" id="template-row">
-									<div class="d-flex justify-content-end">
-										<button class="d-none" type="button" data-row-id="0"
-											onclick="removeRow(this)">x</button>
-									</div>
-
-									<div class="container ml-2 justify-content-end">
-										<div class="col-md-6 mb-2">
-											<label for="product-id-0">品項</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].productId')}">
-												<span th:errors="*{createPlanFormList[0].productId}"
-													style="color: red;"></span>
-											</div><select th:id="product-id-0" class="form-select" data-row-id="0"
-												th:field="*{createPlanForm.productId}"
-												onchange="handleChange(event)" required>
-												<option value="" selected>請選擇</option>
-												<option th:each="option : ${session.products}" th:value="${option.id}"
-													th:text="${option.specs+'('+option.type+')'}"
-													th:if="${option.status==1}" th:data-specs="${option.specs}"
-													th:data-family="${option.family}" th:data-sDays="${option.sDays}"
-													th:data-gDays="${option.gDays}" th:data-pDays="${option.pDays}"
-													th:data-sHole="${option.sHole}" th:data-gHole="${option.gHole}"
-													th:data-pHole="${option.pHole}" th:data-sLux="${option.sLux}"
-													th:data-gLux="${option.gLux}" th:data-pLux="${option.pLux}"
-													th:data-dDays="${option.dDays}" th:data-rDays="${option.rDays}"
-													th:data-dRate="${option.dRate}" th:data-rRate="${option.rRate}"
-													th:data-sRate="${option.sRate}" th:data-gRate="${option.gRate}"
-													th:data-pRate="${option.pRate}"
-													th:data-estWeight="${option.estWeight}"
-													th:data-harvestStage="${option.harvestStage}">
-												</option>
-											</select>
-										</div>
-										<div class=" col-md-6 mb-2">
-											<label for="target-weight-0">業務需求重量</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].targetWeight')}">
-												<span th:errors="*{createPlanFormList[0].targetWeight}"
-													style="color: red;"></span>
-											</div><input id="target-weight-0" data-row-id="0" type="number"
-												class="form-control text-end"
-												th:field="*{createPlanForm.targetWeight}" min="1"
-												onblur="fillBoardCount(event)" step="1" placeholder="kg" required>
+					<form id="dynamic-form" th:action="@{/production/create-plans}"
+						class="container flex-column" th:object="${createPlansForm}"
+						method="post">
+						<div
+							th:each="createPlanForm ,iterStat: ${createPlansForm.createPlanFormList}">
+							<div>
+								<div id="form-rows" class="mb-6 mt-2">
+									<div
+										class="row flex-column border-top border-bottom border-2 pt-2"
+										id="template-row">
+										<div class="d-flex justify-content-end">
+											<button class="d-none" type="button" data-row-id="0"
+												onclick="removeRow(this)">x</button>
 										</div>
 
-									</div>
-									<div class="container ml-2 ml-2 justify-content-end">
-										<div class="col-md-4 mb-2">
-											<label for="s-stock-id-0">見苗儲位</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].sStockId')}">
-												<span th:errors="*{createPlanFormList[0].sStockId}"
-													style="color: red;"></span>
-											</div><select id="s-stock-id-0" class="form-select"
-												th:field="*{createPlanForm.sStockId}">
-												<option th:each="option : ${session.stockList}"
-													th:if="${option.stage} == 'S'" th:value="${option.id}"
-													th:text="${option.position+'('+option.lux+')'}"
-													th:selected="${option == 0}" required></option>
-											</select>
+										<div class="container ml-2 justify-content-end">
+											<div class="col-md-6 mb-2">
+												<label for="product-id-0">品項</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].productId')}">
+													<span
+														th:errors="*{createPlanFormList__${iterStat.index}__.productId}"
+														style="color: red;"></span>
+												</div>
+												<select th:id="product-id-0" class="form-select"
+													data-row-id="0"
+													th:field="*{createPlanFormList[__${iterStat.index}__].productId}"
+													onchange="handleChange(event)" required>
+													<option value="" selected>請選擇</option>
+													<option th:each="option : ${session.products}"
+														th:value="${option.id}"
+														th:text="${option.specs+'('+option.type+')'}"
+														th:if="${option.status==1}"
+														th:data-specs="${option.specs}"
+														th:data-family="${option.family}"
+														th:data-sDays="${option.sDays}"
+														th:data-gDays="${option.gDays}"
+														th:data-pDays="${option.pDays}"
+														th:data-sHole="${option.sHole}"
+														th:data-gHole="${option.gHole}"
+														th:data-pHole="${option.pHole}"
+														th:data-sLux="${option.sLux}"
+														th:data-gLux="${option.gLux}"
+														th:data-pLux="${option.pLux}"
+														th:data-dDays="${option.dDays}"
+														th:data-rDays="${option.rDays}"
+														th:data-dRate="${option.dRate}"
+														th:data-rRate="${option.rRate}"
+														th:data-sRate="${option.sRate}"
+														th:data-gRate="${option.gRate}"
+														th:data-pRate="${option.pRate}"
+														th:data-estWeight="${option.estWeight}"
+														th:data-harvestStage="${option.harvestStage}"></option>
+												</select>
+											</div>
+											<div class=" col-md-6 mb-2">
+												<label for="target-weight-0">業務需求重量</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].targetWeight')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].targetWeight}"
+														style="color: red;"></span>
+												</div>
+												<input id="target-weight-0" data-row-id="0" type="number"
+													class="form-control text-end"
+													th:field="*{createPlanFormList[__${iterStat.index}__].targetWeight}"
+													min="1" onblur="fillBoardCount(event)" step="1"
+													placeholder="kg" required>
+											</div>
+
 										</div>
-										<div class="col-md-4 mb-2">
-											<label for="g-stock-id-0">育苗儲位</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].gStockId')}">
-												<span th:errors="*{createPlanFormList[0].gStockId}"
-													style="color: red;"></span>
-											</div> <select id="g-stock-id-0" class="form-select"
-												th:field="*{createPlanForm.gStockId}" required>
-												<option th:each="option : ${session.stockList}"
-													th:if="${option.stage} == 'G'" th:value="${option.id}"
-													th:text="${option.position+'('+option.lux+')'}"
-													th:selected="${option == 0}"></option>
-											</select>
+										<div class="container ml-2 ml-2 justify-content-end">
+											<div class="col-md-4 mb-2">
+												<label for="s-stock-id-0">見苗儲位</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].sStockId')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].sStockId}"
+														style="color: red;"></span>
+												</div>
+												<select id="s-stock-id-0" class="form-select"
+													th:field="*{createPlanFormList[__${iterStat.index}__].sStockId}"
+													required>
+													<option th:each="option : ${session.stockList}"
+														th:if="${option.stage} == 'S'" th:value="${option.id}"
+														th:text="${option.position+'('+option.lux+')'}"
+														th:selected="${option == 0}"></option>
+												</select>
+											</div>
+											<div class="col-md-4 mb-2">
+												<label for="g-stock-id-0">育苗儲位</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].gStockId')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].gStockId}"
+														style="color: red;"></span>
+												</div>
+												<select id="g-stock-id-0" class="form-select"
+													th:field="*{createPlanFormList[__${iterStat.index}__].gStockId}"
+													required>
+													<option th:each="option : ${session.stockList}"
+														th:if="${option.stage} == 'G'" th:value="${option.id}"
+														th:text="${option.position+'('+option.lux+')'}"
+														th:selected="${option == 0}"></option>
+												</select>
+											</div>
+											<div class="col-md-4 mb-2">
+												<label for="p-stock-id-0">栽培儲位</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].pStockId')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].pStockId}"
+														style="color: red;"></span>
+												</div>
+												<select id="p-stock-id-0" class="form-select"
+													th:field="*{createPlanFormList[__${iterStat.index}__].pStockId}">
+													<option th:each="option : ${session.stockList}"
+														th:if="${option.stage} == 'P'" th:value="${option.id}"
+														th:text="${option.position+'('+option.lux+')'}"
+														th:selected="${option == 0}"></option>
+												</select>
+											</div>
 										</div>
-										<div class="col-md-4 mb-2">
-											<label for="p-stock-id-0">栽培儲位</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].pStockId')}">
-												<span th:errors="*{createPlanFormList[0].pStockId}"
-													style="color: red;"></span>
-											</div><select id="p-stock-id-0" class="form-select"
-												th:field="*{createPlanForm.pStockId}">
-												<option th:each="option : ${session.stockList}"
-													th:if="${option.stage} == 'P'" th:value="${option.id}"
-													th:text="${option.position+'('+option.lux+')'}"
-													th:selected="${option == 0}"></option>
-											</select>
+										<div class="container">
+											<div class="col-md-2 mb-2 ">
+												<label for="seeding-date">定案播種日</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].seedingDate')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].seedingDate}"
+														style="color: red;"> </span>
+												</div>
+												<input type="date" data-row-id="0" id="seeding-date-0"
+													class="form-control" onchange="updateMinDate(event)"
+													th:field="*{createPlanFormList[__${iterStat.index}__].seedingDate}"
+													required>
+											</div>
+											<div class="col-md-2 mb-2 ">
+												<label for="watering-date">定案壓水日</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].wateringDate')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].wateringDate}"
+														style="color: red;"> </span>
+												</div>
+												<input type="date" data-row-id="0" id="watering-date-0"
+													class="form-control"
+													th:field="*{createPlanFormList[__${iterStat.index}__].wateringDate}"
+													required>
+											</div>
+											<div class="col-md-2 mb-2 ">
+												<label for="head-out-date">定案見苗日</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].headOutDate')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].headOutDate}"
+														style="color: red;"> </span>
+												</div>
+												<input type="date" id="head-out-date-0" class="form-control"
+													th:field="*{createPlanFormList[__${iterStat.index}__].headOutDate}"
+													required>
+											</div>
+											<div class="col-md-2 mb-2 ">
+												<label for="growing-date-0">定案育苗日</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].growingDate')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].growingDate}"
+														style="color: red;"> </span>
+												</div>
+												<input type="date" id="growing-date-0" class="form-control"
+													th:field="*{createPlanFormList[__${iterStat.index}__].growingDate}"
+													required>
+											</div>
+											<div class="col-md-2 mb-2 ">
+												<label for="mature-date-0">定案栽培日</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].matureDate')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].matureDate}"
+														style="color: red;"> </span>
+												</div>
+												<input type="date" id="mature-date-0" class="form-control"
+													th:field="*{createPlanFormList[__${iterStat.index}__].matureDate}">
+											</div>
+											<div class="col-md-2 mb-2 ">
+												<label for="harvest-date-0">定案採收日</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].harvestDate')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].harvestDate}"
+														style="color: red;"></span>
+												</div>
+												<input type="date" id="harvest-date-0" class="form-control"
+													th:field="*{createPlanFormList[__${iterStat.index}__].harvestDate}"
+													required>
+											</div>
 										</div>
-									</div>
-									<div class="container">
-										<div class="col-md-2 mb-2 ">
-											<label for="seeding-date">定案播種日</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].seedingDate')}">
-												<span th:errors="*{createPlanFormList[0].seedingDate}"
-													style="color: red;"> </span>
-											</div><input type="date" data-row-id="0" id="seeding-date-0"
-												class="form-control" onchange="updateMinDate(event)"
-												th:field="*{createPlanForm.seedingDate}"
-												required>
-										</div>
-										<div class="col-md-2 mb-2 ">
-											<label for="watering-date">定案壓水日</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].wateringDate')}">
-												<span th:errors="*{createPlanFormList[0].wateringDate}"
-													style="color: red;"> </span>
-											</div><input type="date" data-row-id="0" id="watering-date-0"
-												class="form-control"
-												th:field="*{createPlanForm.wateringDate}"
-												required>
-										</div>
-										<div class="col-md-2 mb-2 ">
-											<label for="head-out-date">定案見苗日</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].headOutDate')}">
-												<span th:errors="*{createPlanFormList[0].headOutDate}"
-													style="color: red;"> </span>
-											</div><input type="date" id="head-out-date-0" class="form-control"
-												th:field="*{createPlanForm.headOutDate}"
-												required>
-										</div>
-										<div class="col-md-2 mb-2 ">
-											<label for="growing-date-0">定案育苗日</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].growingDate')}">
-												<span th:errors="*{createPlanFormList[0].growingDate}"
-													style="color: red;"> </span>
-											</div><input type="date" id="growing-date-0" class="form-control"
-												th:field="*{createPlanForm.growingDate}"
-												required>
-										</div>
-										<div class="col-md-2 mb-2 ">
-											<label for="mature-date-0">定案栽培日</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].matureDate')}">
-												<span th:errors="*{createPlanFormList[0].matureDate}"
-													style="color: red;"> </span>
-											</div><input type="date" id="mature-date-0" class="form-control"
-												th:field="*{createPlanForm.matureDate}">
-										</div>
-										<div class="col-md-2 mb-2 ">
-											<label for="harvest-date-0">定案採收日</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].harvestDate')}">
-												<span th:errors="*{createPlanFormList[0].harvestDate}"
-													style="color: red;"></span>
-											</div><input type="date" id="harvest-date-0" class="form-control"
-												th:field="*{createPlanForm.harvestDate}"
-												required>
-										</div>
-									</div>
-									<div class="container">
-										<div id="" class="col-md-2 mb-2">
-											<label for="seeding-board-count-0">預計播種盤數</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].seedingBoardCount')}">
-												<span th:errors="*{createPlanFormList[0].seedingBoardCount}"
-													style="color: red;"> </span>
-											</div><input id="seeding-board-count-0" type="number"
-												class="form-control text-end"
-												th:field="*{createPlanForm.seedingBoardCount}"
-												min="1" step="1" value="0" required>
-										</div>
-										<div class="col-md-2 mb-2">
-											<label for="watering-board-count-0">預計壓水盤數</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].wateringBoardCount')}">
-												<span th:errors="*{createPlanFormList[0].wateringBoardCount}"
-													style="color: red;"> </span>
-											</div><input id="watering-board-count-0" type="number"
-												class="form-control text-end"
-												th:field="*{createPlanForm.wateringBoardCount}"
-												min="1" step="1" value="0" required>
-										</div>
-										<div class="col-md-2 mb-2">
-											<label for="head-out-board-count-0">預計見苗盤數</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].headOutBoardCount')}">
-												<span th:errors="*{createPlanFormList[0].headOutBoardCount}"
-													style="color: red;"> </span>
-											</div><input id="head-out-board-count-0" type="number"
-												class="form-control text-end"
-												th:field="*{createPlanForm.headOutBoardCount}"
-												min="1" step="1" value="0" required>
-										</div>
-										<div class="col-md-2 mb-2">
-											<label for="growing-board-count-0">預計育苗盤數</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].growingBoardCount')}">
-												<span th:errors="*{createPlanFormList[0].growingBoardCount}"
-													style="color: red;"> </span>
-											</div><input id="growing-board-count-0" type="number"
-												class="form-control text-end"
-												th:field="*{createPlanForm.growingBoardCount}"
-												min="1" step="1" value="0" required>
-										</div>
-										<div class="col-md-2 mb-2">
-											<label for="mature-board-count">預計栽培盤數</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].matureBoardCount')}">
-												<span th:errors="*{createPlanFormList[0].matureBoardCount}"
-													style="color: red;"> </span>
-											</div><input id="mature-board-count-0" type="number"
-												class="form-control text-end"
-												th:field="*{createPlanForm.matureBoardCount}"
-												min="1" step="1" value="0">
-										</div>
-										<div class="col-md-2 mb-2">
-											<label for="harvest-board-count-0">預計採收盤數</label>
-											<div
-												th:if="${#fields.hasErrors('createPlansForm.createPlanFormList[0].harvestBoardCount')}">
-												<span th:errors="*{createPlanFormList[0].harvestBoardCount}"
-													style="color: red;"> </span>
-											</div><input id="harvest-board-count-0" type="number"
-												class="form-control text-end"
-												th:field="*{createPlanForm.harvestBoardCount}"
-												min="1" step="1" value="0" required>
+										<div class="container">
+											<div id="" class="col-md-2 mb-2">
+												<label for="seeding-board-count-0">預計播種盤數</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].seedingBoardCount')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].seedingBoardCount}"
+														style="color: red;"> </span>
+												</div>
+												<input id="seeding-board-count-0" type="number"
+													class="form-control text-end"
+													th:field="*{createPlanFormList[__${iterStat.index}__].seedingBoardCount}"
+													min="1" step="1" value="0" required>
+											</div>
+											<div class="col-md-2 mb-2">
+												<label for="watering-board-count-0">預計壓水盤數</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].wateringBoardCount')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].wateringBoardCount}"
+														style="color: red;"> </span>
+												</div>
+												<input id="watering-board-count-0" type="number"
+													class="form-control text-end"
+													th:field="*{createPlanFormList[__${iterStat.index}__].wateringBoardCount}"
+													min="1" step="1" value="0" required>
+											</div>
+											<div class="col-md-2 mb-2">
+												<label for="head-out-board-count-0">預計見苗盤數</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].headOutBoardCount')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].headOutBoardCount}"
+														style="color: red;"> </span>
+												</div>
+												<input id="head-out-board-count-0" type="number"
+													class="form-control text-end"
+													th:field="*{createPlanFormList[__${iterStat.index}__].headOutBoardCount}"
+													min="1" step="1" value="0" required>
+											</div>
+											<div class="col-md-2 mb-2">
+												<label for="growing-board-count-0">預計育苗盤數</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].growingBoardCount')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].growingBoardCount}"
+														style="color: red;"> </span>
+												</div>
+												<input id="growing-board-count-0" type="number"
+													class="form-control text-end"
+													th:field="*{createPlanFormList[__${iterStat.index}__].growingBoardCount}"
+													min="1" step="1" value="0" required>
+											</div>
+											<div class="col-md-2 mb-2">
+												<label for="mature-board-count">預計栽培盤數</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].matureBoardCount')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].matureBoardCount}"
+														style="color: red;"> </span>
+												</div>
+												<input id="mature-board-count-0" type="number"
+													class="form-control text-end"
+													th:field="*{createPlanFormList[__${iterStat.index}__].matureBoardCount}"
+													min="1" step="1" value="0">
+											</div>
+											<div class="col-md-2 mb-2">
+												<label for="harvest-board-count-0">預計採收盤數</label>
+												<div
+													th:if="${#fields.hasErrors('createPlanFormList[__${iterStat.index}__].harvestBoardCount')}">
+													<span
+														th:errors="*{createPlanFormList[__${iterStat.index}__].harvestBoardCount}"
+														style="color: red;"> </span>
+												</div>
+												<input id="harvest-board-count-0" type="number"
+													class="form-control text-end"
+													th:field="*{createPlanFormList[__${iterStat.index}__].harvestBoardCount}"
+													min="1" step="1" value="0" required>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-
 						<div class="container justify-content-end mt-2">
 							<input type="submit" value="送出" />
 						</div>

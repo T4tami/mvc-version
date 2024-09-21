@@ -65,7 +65,7 @@ public class PlanController {
 		return "/module/plans/create-form";
 	}
 
-	@PostMapping("create-plan")
+	@PostMapping("create-plans")
 	public String createPlan(@ModelAttribute @Valid CreatePlansForm createPlansForm, Model model,
 			BindingResult result) {
 
