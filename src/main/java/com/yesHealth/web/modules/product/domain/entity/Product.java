@@ -20,6 +20,8 @@ public class Product {
 	private String specs;
 	private String unit;
 	private String family;
+	private Integer dDays;
+	private Integer rDays;
 	private Integer sDays;
 	private Integer gDays;
 	private Integer pDays;
@@ -27,12 +29,19 @@ public class Product {
 	private Integer sHole;
 	private Integer gHole;
 	private Integer pHole;
+
+	private Double dRate;
+	private Double rRate;
+	private Double sRate;
+	private Double gRate;
+	private Double pRate;
 	
-	private Integer status;
-	private String type;
 	private String sLux;
 	private String gLux;
 	private String pLux;
-	
-	
+	private Integer estWeight;
+	private String type;
+	private Integer status;
+	private String harvestStage;
+
 }
