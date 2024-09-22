@@ -3,6 +3,7 @@ package com.yesHealth.web.modules.planning.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -78,9 +79,18 @@ public class PlanController {
 		ArrayList<?> list = null;
 		if (businessErrors.containsKey("globalError")) {
 			list = (ArrayList<?>) businessErrors.get("globalError");
+			businessErrors.remove("globalError");
 		}
-		if (!businessErrors.isEmpty() && !list.isEmpty()) {
-			model.addAttribute("businessErrors", businessErrors);
+		if (!list.isEmpty()) {
+			model.addAttribute("globalError", list);
+			model.addAttribute("createPlansForm", createPlansForm);
+			return "module/plans/create-form"; // 返回失敗的創建表單
+		}
+
+		if (!businessErrors.isEmpty()) {
+			for (Entry<String, Object> entry : businessErrors.entrySet()) {
+				result.rejectValue(entry.getKey(), "business.error", (String) entry.getValue());
+			}
 			model.addAttribute("createPlansForm", createPlansForm);
 			return "module/plans/create-form"; // 返回失敗的創建表單
 		}
