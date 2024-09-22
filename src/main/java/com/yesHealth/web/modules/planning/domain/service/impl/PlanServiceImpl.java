@@ -27,6 +27,7 @@ import com.yesHealth.web.modules.planning.domain.service.OrderService;
 import com.yesHealth.web.modules.planning.domain.service.PlanService;
 import com.yesHealth.web.modules.planning.web.views.CreatePlanForm;
 import com.yesHealth.web.modules.planning.web.views.CreatePlansForm;
+import com.yesHealth.web.modules.planning.web.views.EditPlanForm;
 import com.yesHealth.web.modules.product.domain.entity.Product;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.product.domain.entity.Stock;
@@ -332,6 +333,11 @@ public class PlanServiceImpl implements PlanService {
 		}
 	}
 
+	private String convertDateToString(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+		return formatter.format(date);
+	}
+
 	@Override
 	public void saveProductSchedule(CreatePlansForm createPlansForm) {
 		List<Stock> stocks = stockRepository.findAll();
@@ -389,4 +395,23 @@ public class PlanServiceImpl implements PlanService {
 		return calendar.getTime();
 	}
 
+	@Override
+	public EditPlanForm findbyId(Long planId) {
+		return mapToEditForm(planRepository.findById(planId).get());
+	}
+
+	private EditPlanForm mapToEditForm(ProductSchedule ps) {
+		return EditPlanForm.builder().id(ps.getId()).harvestStage(ps.getProduct().getHarvestStage())
+				.manuNo(ps.getManuNo()).targetWeight(ps.getTargetWeight()).productId(ps.getProduct().getId())
+				.sStockId(ps.getSStockId().getId()).gStockId(ps.getGStockId().getId())
+				.pStockId(ps.getPStockId().getId()).seedingDate(convertDateToString(ps.getSeedingDate()))
+				.wateringDate(convertDateToString(ps.getWateringDate()))
+				.headOutDate(convertDateToString(ps.getHeadOutDate()))
+				.growingDate(convertDateToString(ps.getGrowingDate()))
+				.matureDate(convertDateToString(ps.getMatureDate()))
+				.harvestDate(convertDateToString(ps.getHarvestDate())).seedingBoardCount(ps.getSeedingBoardCount())
+				.wateringBoardCount(ps.getWateringBoardCount()).headOutBoardCount(ps.getHeadOutBoardCount())
+				.growingBoardCount(ps.getGrowingBoardCount()).matureBoardCount(ps.getMatureBoardCount())
+				.harvestBoardCount(ps.getHarvestBoardCount()).build();
+	}
 }

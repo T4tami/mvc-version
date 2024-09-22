@@ -94,6 +94,7 @@ tbody tr:nth-child(even) {
 					<table>
 						<thead>
 							<tr>
+								<th>編輯</th>
 								<th>工單號</th>
 								<th>品項</th>
 								<th>播種盤數</th>
@@ -115,6 +116,14 @@ tbody tr:nth-child(even) {
 						</thead>
 						<tbody>
 							<tr th:each="plan : ${plans.content}">
+								<td>
+									<form th:action="@{/production/edit-form(planId=${plan.id})}"
+										method="get">
+										<input type="number" class="d-none" name="planId"
+											th:value="${plan.id}">
+										<button type="submit" class="btn btn-link">編輯</button>
+									</form>
+								</td>
 								<td th:text="${plan.manuNo}"></td>
 								<td th:text="${plan.product.specs}"></td>
 								<td th:text="${plan.seedingBoardCount}"></td>

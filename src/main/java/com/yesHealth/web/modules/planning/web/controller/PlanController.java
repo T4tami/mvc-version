@@ -98,4 +98,21 @@ public class PlanController {
 		return "redirect:/production/planing";
 	}
 
+	@GetMapping("/edit-form")
+	@SuppressWarnings("unchecked")
+	public String editPlan(@RequestParam(required = false) Long planId, HttpSession session, Model model) {
+		List<Product> products = (List<Product>) session.getAttribute("products");
+		if (products == null) {
+			products = productService.findAll();
+			session.setAttribute("products", products);
+		}
+		List<Stock> stockList = (List<Stock>) session.getAttribute("stockList");
+		if (stockList == null) {
+			stockList = stockService.findAll();
+			session.setAttribute("stockList", stockList);
+		}
+		model.addAttribute("plan", planService.findbyId(planId));
+		return "module/plans/edit-form";
+	}
+
 }
