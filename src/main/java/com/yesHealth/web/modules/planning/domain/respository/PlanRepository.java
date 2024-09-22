@@ -16,6 +16,8 @@ public interface PlanRepository extends JpaRepository<ProductSchedule, Long> {
 
 	Page<ProductSchedule> findByHarvestDateBetween(Date startDate, Date endDate, Pageable pageable);
 
+	long countByCreateDate(Date createDate);
+
 	@Query("SELECT COALESCE(SUM(ps.growingBoardCount),0) FROM ProductSchedule ps WHERE ps.gStockId = :G_STOCK_ID AND ps.growingDate > :GROWING_DATE AND ps.matureDate < :MATURE_DATE")
 	Long sumGBoardCount(@Param("G_STOCK_ID") Stock gStockId, @Param("GROWING_DATE") Date growingDate,
 			@Param("MATURE_DATE") Date matureDate);

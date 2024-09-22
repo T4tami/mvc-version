@@ -14,4 +14,6 @@ public interface PlanService {
 	public Page<ProductSchedule> findByestHarvestDateBetween(String hStartDate, String hEndDate, Pageable pageable);
 
 	public Map<String, Object> validateCreatePlan(CreatePlansForm createPlansForm);
+
+	public void saveProductSchedule(CreatePlansForm createPlansForm);
 }

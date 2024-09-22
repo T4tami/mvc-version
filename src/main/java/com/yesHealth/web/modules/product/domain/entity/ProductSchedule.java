@@ -2,7 +2,6 @@ package com.yesHealth.web.modules.product.domain.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,11 +11,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "ProductSchedule")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class ProductSchedule {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,5 +55,6 @@ public class ProductSchedule {
 	private Date growingDate;
 	private Date matureDate;
 	private Date harvestDate;
+	private Date createDate;
 
 }

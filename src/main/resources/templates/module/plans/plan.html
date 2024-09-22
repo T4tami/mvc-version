@@ -40,35 +40,48 @@
 					</div>
 					<button type="submit">搜尋</button>
 				</form>
-				<button class="btn btn-primary"
-					onclick="window.location.href='/production/create-form'">新增</button>
+				<button class="btn btn-primary" onclick="window.location.href='/production/create-form'">新增</button>
 				<table>
 					<thead>
 						<tr>
-							<th>製造商編號</th>
-							<th>產品</th>
-							<th>預估 S 板數量</th>
-							<th>預估 G 板數量</th>
-							<th>預估 P 板數量</th>
-							<th>預估播種日期</th>
-							<th>預估灌溉日期</th>
-							<th>預估轉移 G 日期</th>
-							<th>預估轉移 P 日期</th>
-							<th>預估收穫日期</th>
+							<th>工單號</th>
+							<th>品項</th>
+							<th>播種盤數</th>
+							<th>壓水盤數</th>
+							<th>見苗盤數</th>
+							<th>育苗盤數</th>
+							<th>栽培盤數</th>
+							<th>採收盤數</th>
+							<th>見苗儲位</th>
+							<th>育苗儲位</th>
+							<th>栽培儲位</th>
+							<th>播種日</th>
+							<th>壓水日</th>
+							<th>見苗日</th>
+							<th>育苗日</th>
+							<th>栽培日</th>
+							<th>採收日</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="plan : ${plans.content}">
 							<td th:text="${plan.manuNo}"></td>
 							<td th:text="${plan.product.productName}"></td>
-							<td th:text="${plan.estSBoardCount}"></td>
-							<td th:text="${plan.estGBoardCount}"></td>
-							<td th:text="${plan.estPBoardCount}"></td>
-							<td th:text="${#dates.format(plan.estSeedingDate, 'yyyy-MM-dd')}"></td>
-							<td th:text="${#dates.format(plan.estWateringDate, 'yyyy-MM-dd')}"></td>
-							<td th:text="${#dates.format(plan.estTransGDate, 'yyyy-MM-dd')}"></td>
-							<td th:text="${#dates.format(plan.estTransPDate, 'yyyy-MM-dd')}"></td>
-							<td th:text="${#dates.format(plan.estHarvestDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${plan.seedingBoardCount}"></td>
+							<td th:text="${plan.wateringBoardCount}"></td>
+							<td th:text="${plan.headOutBoardCount}"></td>
+							<td th:text="${plan.growingBoardCount}"></td>
+							<td th:text="${plan.matureBoardCount}"></td>
+							<td th:text="${plan.harvestBoardCount}"></td>
+							<td th:text="${plan.sStockId.position}"></td>
+							<td th:text="${plan.gStockId.position}"></td>
+							<td th:text="${plan.pStockId.position}"></td>
+							<td th:text="${#dates.format(plan.seedingDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${#dates.format(plan.wateringDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${#dates.format(plan.headOutDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${#dates.format(plan.growingDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${#dates.format(plan.matureDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${#dates.format(plan.harvestDate, 'yyyy-MM-dd')}"></td>
 						</tr>
 					</tbody>
 				</table>
