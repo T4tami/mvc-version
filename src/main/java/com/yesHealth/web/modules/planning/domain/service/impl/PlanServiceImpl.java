@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -162,7 +163,7 @@ public class PlanServiceImpl implements PlanService {
 			}
 			// 水道盤數驗證
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date growingDate = null, matureDate = null, harvestDate = null;
+			Date growingDate = null, matureDate = null;
 			try {
 
 				if (!"G".equals(harvestStage)) {
@@ -171,27 +172,31 @@ public class PlanServiceImpl implements PlanService {
 
 					growingDate = format.parse(createPlanForm.getGrowingDate());
 					matureDate = format.parse(createPlanForm.getMatureDate());
-					harvestDate = format.parse(createPlanForm.getHarvestDate());
 					for (CreatePlanForm form : createPlanList) {
+						Long formProductId = form.getProductId();
+						Product formProduct = findProductById(products, formProductId);
+						String formHarvestStage = formProduct.getHarvestStage();
 						if (form.getGStockId().equals(gStockId)) {
 							formTotalGBoardCount = Long.sum(form.getGrowingBoardCount(), formTotalGBoardCount);
 
 						}
-						if (form.getPStockId().equals(pStockId)) {
-							formTotalPBoardCount = Long.sum(form.getMatureBoardCount(), formTotalPBoardCount);
+						if (!"G".equals(formHarvestStage)) {
+							if (form.getPStockId().equals(pStockId)) {
+								formTotalPBoardCount = Long.sum(form.getMatureBoardCount(), formTotalPBoardCount);
+							}
 						}
 					}
-					Stock gStock = findStockById(stocks, gStockId);
 					// G水道
-					Long planTotalGBoardCount = planRepository.sumGBoardCount(gStock, growingDate, matureDate);
+					Long planTotalGBoardCount = planRepository.sumGBoardCount(gStockId,
+							getDateWithoutTime(growingDate));
 					if (Long.sum(formTotalGBoardCount, planTotalGBoardCount) > Long.valueOf(MAX_BOARD_COUNT)) {
-						String gPosition = gStock.getPosition();
+						String gPosition = findStockById(stocks, gStockId).getPosition();
 						String err = messageService.getMessage("plan.createForm.gPosition.limit1",
 								new Object[] { specs, gPosition, MAX_BOARD_COUNT });
 						globalErrorList.add(err);
 					}
-					Long actTotalGBoardCount = transplantRecordRepository.sumActGBoardCountByStage(gStock, growingDate,
-							matureDate, "G");
+					Long actTotalGBoardCount = transplantRecordRepository.sumActGBoardCountByStage(gStockId,
+							getDateWithoutTime(growingDate), "G");
 					if (Long.sum(formTotalGBoardCount, actTotalGBoardCount) > Long.valueOf(MAX_BOARD_COUNT)) {
 						String gPosition = findStockById(stocks, gStockId).getPosition();
 						String err = messageService.getMessage("plan.createForm.gPosition.limit2",
@@ -199,16 +204,15 @@ public class PlanServiceImpl implements PlanService {
 						globalErrorList.add(err);
 					}
 					// P水道
-					Stock pStock = findStockById(stocks, pStockId);
-					Long planTotalPBoardCount = planRepository.sumPBoardCount(gStock, matureDate, harvestDate);
+					Long planTotalPBoardCount = planRepository.sumPBoardCount(pStockId, getDateWithoutTime(matureDate));
 					if (Long.sum(formTotalPBoardCount, planTotalPBoardCount) > Long.valueOf(MAX_BOARD_COUNT)) {
-						String pPosition = pStock.getPosition();
+						String pPosition = findStockById(stocks, pStockId).getPosition();
 						String err = messageService.getMessage("plan.createForm.pPosition.limit1",
 								new Object[] { specs, pPosition, MAX_BOARD_COUNT });
 						globalErrorList.add(err);
 					}
-					Long actTotalPBoardCount = transplantRecordRepository.sumActPBoardCountByStage(pStock, matureDate,
-							harvestDate, "G");
+					Long actTotalPBoardCount = transplantRecordRepository.sumActPBoardCountByStage(pStockId,
+							getDateWithoutTime(matureDate), "G");
 					if (Long.sum(formTotalPBoardCount, actTotalPBoardCount) > Long.valueOf(MAX_BOARD_COUNT)) {
 						String pPosition = findStockById(stocks, pStockId).getPosition();
 						String err = messageService.getMessage("plan.createForm.pPosition.limit2",
@@ -217,23 +221,22 @@ public class PlanServiceImpl implements PlanService {
 					}
 				} else if ("G".equals(harvestStage)) {
 					growingDate = format.parse(createPlanForm.getGrowingDate());
-					harvestDate = format.parse(createPlanForm.getHarvestDate());
 					Long formTotalGBoardCount = Long.valueOf("0");
 					for (CreatePlanForm form : createPlanList) {
 						if (form.getGStockId().equals(gStockId)) {
 							formTotalGBoardCount = Long.sum(form.getGrowingBoardCount(), formTotalGBoardCount);
 						}
 					}
-					Stock gStock = findStockById(stocks, gStockId);
-					Long planTotalGBoardCount = planRepository.sumGBoardCountByG(gStock, growingDate, harvestDate);
+					Long planTotalGBoardCount = planRepository.sumGBoardCountByG(gStockId,
+							getDateWithoutTime(growingDate));
 					if (Long.sum(formTotalGBoardCount, planTotalGBoardCount) > Long.valueOf(MAX_BOARD_COUNT)) {
 						String gPosition = findStockById(stocks, gStockId).getPosition();
 						String err = messageService.getMessage("plan.createForm.gPosition.limit1",
 								new Object[] { specs, gPosition, MAX_BOARD_COUNT });
 						globalErrorList.add(err);
 					}
-					Long actTotalGBoardCount = transplantRecordRepository.sumActGBoardCountByStage(gStock, growingDate,
-							matureDate, "G");
+					Long actTotalGBoardCount = transplantRecordRepository.sumActGBoardCountByStage(gStockId,
+							getDateWithoutTime(growingDate), "G");
 					if (Long.sum(formTotalGBoardCount, actTotalGBoardCount) > Long.valueOf(MAX_BOARD_COUNT)) {
 						String gPosition = findStockById(stocks, gStockId).getPosition();
 						String err = messageService.getMessage("plan.createForm.gPosition.limit2",
@@ -333,7 +336,7 @@ public class PlanServiceImpl implements PlanService {
 	public void saveProductSchedule(CreatePlansForm createPlansForm) {
 		List<Stock> stocks = stockRepository.findAll();
 		List<Product> products = productRepository.findAll();
-		int index=0;
+		int index = 0;
 		for (CreatePlanForm createPlanForm : createPlansForm.getCreatePlanFormList()) {
 			Long productId = createPlanForm.getProductId();
 			Long sStockId = createPlanForm.getSStockId();
@@ -352,7 +355,7 @@ public class PlanServiceImpl implements PlanService {
 					pStock = findStockById(stocks, createPlanForm.getPStockId());
 					matureDate = format.parse(createPlanForm.getMatureDate());
 				}
-				
+
 				String manuNo = OrderService.generateOrderNo(++index);
 				ProductSchedule productSchedule = ProductSchedule.builder().manuNo(manuNo)
 						.product(findProductById(products, productId)).targetWeight(createPlanForm.getTargetWeight())
@@ -366,7 +369,7 @@ public class PlanServiceImpl implements PlanService {
 						.wateringDate(format.parse(createPlanForm.getWateringDate()))
 						.headOutDate(format.parse(createPlanForm.getHeadOutDate()))
 						.growingDate(format.parse(createPlanForm.getGrowingDate())).matureDate(matureDate)
-						.harvestDate(format.parse(createPlanForm.getHarvestDate())).build();
+						.harvestDate(format.parse(createPlanForm.getHarvestDate())).createDate(new Date()).build();
 				ProductSchedule savePlan = planRepository.save(productSchedule);
 				log.info(savePlan.toString());
 			} catch (ParseException e) {
@@ -374,6 +377,16 @@ public class PlanServiceImpl implements PlanService {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private Date getDateWithoutTime(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
 	}
 
 }

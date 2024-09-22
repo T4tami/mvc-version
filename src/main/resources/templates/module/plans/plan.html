@@ -66,7 +66,7 @@
 					<tbody>
 						<tr th:each="plan : ${plans.content}">
 							<td th:text="${plan.manuNo}"></td>
-							<td th:text="${plan.product.productName}"></td>
+							<td th:text="${plan.product.specs}"></td>
 							<td th:text="${plan.seedingBoardCount}"></td>
 							<td th:text="${plan.wateringBoardCount}"></td>
 							<td th:text="${plan.headOutBoardCount}"></td>
@@ -75,7 +75,7 @@
 							<td th:text="${plan.harvestBoardCount}"></td>
 							<td th:text="${plan.sStockId.position}"></td>
 							<td th:text="${plan.gStockId.position}"></td>
-							<td th:text="${plan.pStockId.position}"></td>
+							<td th:text="${plan.pStockId!=null?plan.pStockId.position:''}"></td>
 							<td th:text="${#dates.format(plan.seedingDate, 'yyyy-MM-dd')}"></td>
 							<td th:text="${#dates.format(plan.wateringDate, 'yyyy-MM-dd')}"></td>
 							<td th:text="${#dates.format(plan.headOutDate, 'yyyy-MM-dd')}"></td>

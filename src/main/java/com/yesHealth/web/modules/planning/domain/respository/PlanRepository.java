@@ -16,18 +16,16 @@ public interface PlanRepository extends JpaRepository<ProductSchedule, Long> {
 
 	Page<ProductSchedule> findByHarvestDateBetween(Date startDate, Date endDate, Pageable pageable);
 
-	long countByCreateDate(Date createDate);
+	@Query(value = "SELECT COUNT(*) FROM PRODUCT_SCHEDULE WHERE CONVERT(DATE, CREATE_DATE) = CONVERT(DATE, :CREATE_DATE)", nativeQuery = true)
+	long countByCreateDate(@Param("CREATE_DATE") Date createDate);
 
-	@Query("SELECT COALESCE(SUM(ps.growingBoardCount),0) FROM ProductSchedule ps WHERE ps.gStockId = :G_STOCK_ID AND ps.growingDate > :GROWING_DATE AND ps.matureDate < :MATURE_DATE")
-	Long sumGBoardCount(@Param("G_STOCK_ID") Stock gStockId, @Param("GROWING_DATE") Date growingDate,
-			@Param("MATURE_DATE") Date matureDate);
+	@Query(value = "SELECT COALESCE(SUM(ps.GROWING_BOARD_COUNT),0) FROM PRODUCT_SCHEDULE ps WHERE ps.G_STOCK_ID = :G_STOCK_ID AND CONVERT(DATE,ps.GROWING_DATE) >= CONVERT(DATE,:GROWING_DATE) AND CONVERT(DATE,ps.MATURE_DATE) >= CONVERT(DATE,GETDATE())", nativeQuery = true)
+	Long sumGBoardCount(@Param("G_STOCK_ID") Long gStockId, @Param("GROWING_DATE") Date growingDate);
 
-	@Query("SELECT COALESCE(SUM(ps.matureBoardCount),0) FROM ProductSchedule ps WHERE ps.pStockId = :P_STOCK_ID AND ps.matureDate > :MATURE_DATE AND ps.harvestDate < :HARVEST_DATE")
-	Long sumPBoardCount(@Param("P_STOCK_ID") Stock gStockId, @Param("MATURE_DATE") Date matureDate,
-			@Param("HARVEST_DATE") Date harvestDate);
+	@Query(value = "SELECT COALESCE(SUM(ps.MATURE_BOARD_COUNT),0) FROM PRODUCT_SCHEDULE ps WHERE ps.P_STOCK_ID = :P_STOCK_ID AND CONVERT(DATE,ps.MATURE_DATE) >= CONVERT(DATE,:MATURE_DATE) AND CONVERT(DATE,ps.HARVEST_DATE) >= CONVERT(DATE,GETDATE())", nativeQuery = true)
+	Long sumPBoardCount(@Param("P_STOCK_ID") Long gStockId, @Param("MATURE_DATE") Date matureDate);
 
-	@Query("SELECT COALESCE(SUM(ps.growingBoardCount),0) FROM ProductSchedule ps WHERE ps.gStockId = :G_STOCK_ID AND ps.growingDate > :GROWING_DATE AND ps.harvestDate < :HARVEST_DATE")
-	Long sumGBoardCountByG(@Param("G_STOCK_ID") Stock gStockId, @Param("GROWING_DATE") Date growingDate,
-			@Param("HARVEST_DATE") Date harvestDate);
+	@Query(value = "SELECT COALESCE(SUM(ps.GROWING_BOARD_COUNT),0) FROM PRODUCT_SCHEDULE ps WHERE ps.G_STOCK_ID = :G_STOCK_ID AND CONVERT(DATE,ps.GROWING_DATE) >= CONVERT(DATE,:GROWING_DATE) AND CONVERT(DATE,ps.HARVEST_DATE) >= CONVERT(DATE,GETDATE())", nativeQuery = true)
+	Long sumGBoardCountByG(@Param("G_STOCK_ID") Long gStockId, @Param("GROWING_DATE") Date growingDate);
 
 }

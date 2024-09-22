@@ -10,15 +10,17 @@ import com.yesHealth.web.modules.product.domain.entity.Stock;
 import com.yesHealth.web.modules.product.domain.entity.TransplantRecord;
 
 public interface TransplantRecordRepository extends JpaRepository<TransplantRecord, Long> {
-	@Query("SELECT COALESCE(SUM(tr.actBoardCount),0) FROM TransplantRecord tr " + "LEFT JOIN tr.productSchedule ps "
-			+ "WHERE tr.stock = :stock_id AND tr.actTransDate > :act_Trans_Date "
-			+ "AND ps.matureDate < :mature_Date AND tr.stage = :stage")
-	Long sumActGBoardCountByStage(@Param("stock_id") Stock stockId, @Param("act_Trans_Date") Date actTransDate,
-			@Param("mature_Date") Date matureDate, @Param("stage") String stage);
+	@Query(nativeQuery = true, value = "SELECT COALESCE(SUM(tr.ACT_BOARD_COUNT),0) FROM TRANSPLANT_RECORD tr "
+			+ "LEFT JOIN PRODUCT_SCHEDULE ps ON tr.PS_ID=ps.ID "
+			+ "WHERE tr.STOCK_ID = :STOCK_ID AND CONVERT(DATE,tr.ACT_TRANS_DATE) >= CONVERT(DATE,:ACT_TRANS_DATE) "
+			+ "AND CONVERT(DATE,ps.MATURE_DATE) <= CONVERT(DATE,GETDATE()) AND tr.STAGE = :STAGE")
+	Long sumActGBoardCountByStage(@Param("STOCK_ID") Long stockId, @Param("ACT_TRANS_DATE") Date actTransDate,
+			@Param("STAGE") String stage);
 
-	@Query("SELECT COALESCE(SUM(tr.actBoardCount),0) FROM TransplantRecord tr " + "LEFT JOIN tr.productSchedule ps "
-			+ "WHERE tr.stock = :stock_id AND tr.actTransDate > :act_Trans_Date "
-			+ "AND ps.harvestDate < :harvest_Date AND tr.stage = :stage")
-	Long sumActPBoardCountByStage(@Param("stock_id") Stock stockId, @Param("act_Trans_Date") Date actTransDate,
-			@Param("harvest_Date") Date harvestDate, @Param("stage") String stage);
+	@Query(nativeQuery = true, value = "SELECT COALESCE(SUM(tr.ACT_BOARD_COUNT),0) FROM TRANSPLANT_RECORD tr "
+			+ "LEFT JOIN PRODUCT_SCHEDULE ps ON tr.PS_ID=ps.ID "
+			+ "WHERE tr.STOCK_ID = :STOCK_ID AND CONVERT(DATE,tr.ACT_TRANS_DATE) >= CONVERT(DATE,:ACT_TRANS_DATE) "
+			+ "AND CONVERT(DATE,ps.HARVEST_DATE) <= CONVERT(DATE,GETDATE()) AND tr.STAGE = :STAGE")
+	Long sumActPBoardCountByStage(@Param("STOCK_ID") Long stockId, @Param("ACT_TRANS_DATE") Date actTransDate,
+			@Param("STAGE") String stage);
 }
