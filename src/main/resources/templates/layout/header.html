@@ -1,4 +1,4 @@
-<div th:fragment="header(userDetails)">
+<div th:fragment="header">
 	<header class="navbar">
 		<div class="header-left g-col-6 text-left container justify-content-start">
 			<div class="menu-toggle" onclick="toggleSidebar()">
@@ -10,8 +10,8 @@
 				onclick="window.location.href='/dashboard'" />
 		</div>
 		<div class="header-right g-col-6 text-right">
-			<img class="avatar" th:src="@{/avatar/{imgName}(imgName=${userDetails.imgName})}" alt="頭貼" />
-			<span th:text="${userDetails.name}"></span>
+			<img class="avatar" th:src="${#authentication.principal.imgName}" alt="頭貼" />
+			<span sec:authentication="name"></span>
 			<button onclick="window.location.href='/logout'">登出</button>
 		</div>
 	</header>

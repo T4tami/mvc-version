@@ -30,7 +30,7 @@
 </head>
 
 <body>
-	<div th:include="layout/header::header(${session.userDetails})"></div>
+	<div th:include="layout/header::header"></div>
 	<div class="main-container">
 		<div th:replace="layout/sidebar::sidebar(${session.menus})"
 			class="sidebar"></div>
@@ -89,7 +89,7 @@
 								onclick="addRow()" th:text="#{plan.createForm.button.add}"></button>
 						</div>
 					</div>
-					<form id="dynamic-form" th:action="@{/production/create-plans}"
+					<form id="dynamic-form" th:action="@{/production/plans/not-implemented}"
 						class="container flex-column" th:object="${createPlansForm}"
 						method="post">
 						<div

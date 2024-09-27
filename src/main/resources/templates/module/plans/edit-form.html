@@ -75,8 +75,8 @@ tbody tr:nth-child(even) {
 				<h1>編輯</h1>
 			</header>
 			<main class="container flex-column w-100">
-				<form th:action="@{/production/{id}/edit(id=${plan.id})}"
-					th:object="${plan}" method="post">
+				<form th:action="@{/production/not-implemented/{id}(id=${plan.id})}"
+					th:object="${plan}" method="patch">
 					<input class="d-none" th:field="*{id}" type="number" />
 					<div th:if="${plan.harvestStage!='G'}"></div>
 					<div class="card">

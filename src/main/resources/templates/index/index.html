@@ -13,7 +13,7 @@
 </head>
 
 <body>
-	<div th:include="layout/header::header(${session.userDetails})"></div>
+	<div th:include="layout/header::header"></div>
 	<div class="main-container">
 		<div th:replace="layout/sidebar::sidebar(${session.menus})" class="sidebar"></div>
 		<div class="main-content">
