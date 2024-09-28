@@ -9,10 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
-import com.yesHealth.web.modules.product.domain.entity.Stock;
 
 public interface PlanRepository extends JpaRepository<ProductSchedule, Long> {
 	Page<ProductSchedule> findAll(Pageable pageable);
+
+	Page<ProductSchedule> findAllByStatus(String status, Pageable pageable);
 
 	Page<ProductSchedule> findByHarvestDateBetween(Date startDate, Date endDate, Pageable pageable);
 

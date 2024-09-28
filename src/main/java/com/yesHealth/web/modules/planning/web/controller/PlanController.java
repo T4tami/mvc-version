@@ -3,7 +3,6 @@ package com.yesHealth.web.modules.planning.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -16,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.yesHealth.web.modules.planning.domain.service.PlanService;
 import com.yesHealth.web.modules.planning.domain.service.StockService;
 import com.yesHealth.web.modules.planning.web.views.CreatePlansForm;
+import com.yesHealth.web.modules.planning.web.views.EditPlanForm;
 import com.yesHealth.web.modules.product.domain.entity.Product;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.product.domain.entity.Stock;
@@ -35,6 +37,8 @@ public class PlanController {
 	private PlanService planService;
 	private StockService stockService;
 	private ProductService productService;
+	private static final String BASE_FILEPATH = "/module/plans/";
+	private static final String REDIRECT_PREFIX = "redirect:/production/plans/";
 
 	public PlanController(PlanService planService, StockService stockService, ProductService productService) {
 		this.planService = planService;
@@ -42,7 +46,7 @@ public class PlanController {
 		this.productService = productService;
 	}
 
-	@GetMapping("planing")
+	@GetMapping("plans/not-implemented")
 	public String findAll(Model model, @RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String hStartDate,
 			@RequestParam(required = false) String hEndDate) {
@@ -53,10 +57,10 @@ public class PlanController {
 		model.addAttribute("hStartDate", hStartDate != null ? hStartDate : "");
 		model.addAttribute("hEndDate", hEndDate != null ? hEndDate : "");
 		model.addAttribute("size", size != null ? size : "");
-		return "/module/plans/plan";
+		return BASE_FILEPATH + "plan";
 	}
 
-	@GetMapping("create-form")
+	@GetMapping("plans/not-implemented/create-form")
 	public String createForm(HttpSession session, Model model) {
 		List<Stock> stockList = stockService.findAll();
 		List<Product> products = productService.findAll();
@@ -64,10 +68,10 @@ public class PlanController {
 		session.setAttribute("products", products);
 		CreatePlansForm createPlansForm = new CreatePlansForm();
 		model.addAttribute("createPlansForm", createPlansForm);
-		return "/module/plans/create-form";
+		return BASE_FILEPATH + "create-form";
 	}
 
-	@PostMapping("create-plans")
+	@PostMapping("plans/not-implemented")
 	public String createPlan(@ModelAttribute @Valid CreatePlansForm createPlansForm, Model model,
 			BindingResult result) {
 
@@ -79,26 +83,27 @@ public class PlanController {
 		ArrayList<?> list = null;
 		if (businessErrors.containsKey("globalError")) {
 			list = (ArrayList<?>) businessErrors.get("globalError");
-			businessErrors.remove("globalError");
-		}
-		if (!list.isEmpty()) {
-			model.addAttribute("globalError", list);
-			model.addAttribute("createPlansForm", createPlansForm);
-			return "module/plans/create-form"; // 返回失敗的創建表單
+			if (!list.isEmpty()) {
+				model.addAttribute("globalError", list);
+				model.addAttribute("createPlansForm", createPlansForm);
+				return BASE_FILEPATH + "create-form"; // 返回失敗的創建表單
+			}
 		}
 
-		if (!businessErrors.isEmpty()) {
-			for (Entry<String, Object> entry : businessErrors.entrySet()) {
-				result.rejectValue(entry.getKey(), "business.error", (String) entry.getValue());
-			}
-			model.addAttribute("createPlansForm", createPlansForm);
-			return "module/plans/create-form"; // 返回失敗的創建表單
-		}
+//		if (!businessErrors.isEmpty()) {
+//			for (Entry<String, Object> entry : businessErrors.entrySet()) {
+//				String key = entry.getKey();
+//				String message = (entry.getValue() != null) ? entry.getValue().toString() : "未知錯誤"; // 預設錯誤信息
+//				result.rejectValue(key, "business.error", message);
+//			}
+//			model.addAttribute("createPlansForm", createPlansForm);
+//			return BASE_FILEPATH + "create-form"; // 返回失敗的創建表單
+//		}
 		planService.saveProductSchedule(createPlansForm);
-		return "redirect:/production/planing";
+		return REDIRECT_PREFIX + "not-implemented";
 	}
 
-	@GetMapping("/edit-form")
+	@GetMapping("plans/not-implemented/edit-form")
 	@SuppressWarnings("unchecked")
 	public String editPlan(@RequestParam(required = false) Long planId, HttpSession session, Model model) {
 		List<Product> products = (List<Product>) session.getAttribute("products");
@@ -112,7 +117,22 @@ public class PlanController {
 			session.setAttribute("stockList", stockList);
 		}
 		model.addAttribute("plan", planService.findbyId(planId));
-		return "module/plans/edit-form";
+		return BASE_FILEPATH + "edit-form";
 	}
 
+	@PostMapping("plans/not-implemented/{id}")
+	public String updateProduction(@PathVariable Long id, @ModelAttribute EditPlanForm editPlanForm,
+			BindingResult result) {
+//		productionPlanService.update(id, plan);
+		return REDIRECT_PREFIX + "not-implemented"; // 更新後重定向到列表頁面
+	}
+
+	@GetMapping("plans/implemented")
+	public String getManuInfo(Model model, @RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<ProductSchedule> ps = planService.findAll(pageable);
+		model.addAttribute("productSchedule", ps);
+		return BASE_FILEPATH + "/manufacture-info"; // 更新後重定向到列表頁面
+	}
 }

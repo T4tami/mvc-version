@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.yesHealth.web.modules.product.domain.entity.Stock;
 import com.yesHealth.web.modules.product.domain.entity.TransplantRecord;
 
 public interface TransplantRecordRepository extends JpaRepository<TransplantRecord, Long> {

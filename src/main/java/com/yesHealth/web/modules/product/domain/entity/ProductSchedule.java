@@ -48,6 +48,7 @@ public class ProductSchedule {
 	@ManyToOne
 	@JoinColumn(name = "p_stock_id")
 	private Stock pStockId;
+	private String status;
 
 	private Date seedingDate;
 	private Date wateringDate;

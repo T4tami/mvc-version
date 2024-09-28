@@ -45,7 +45,7 @@ public class PlanServiceImpl implements PlanService {
 	private TransplantRecordRepository transplantRecordRepository;
 	private MessageService messageService;
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
-	private static final String ERR_KEY_PREFIX = "createPlansForm.createPlanFormList";
+	private static final String NOT_IMPLEMENTEDSTATUS = "0";
 
 	private static final int MAX_BOARD_COUNT = 52;
 
@@ -61,7 +61,7 @@ public class PlanServiceImpl implements PlanService {
 
 	@Override
 	public Page<ProductSchedule> findAll(Pageable pageable) {
-		Page<ProductSchedule> plans = planRepository.findAll(pageable);
+		Page<ProductSchedule> plans = planRepository.findAllByStatus(NOT_IMPLEMENTEDSTATUS, pageable);
 		return plans;
 	}
 
@@ -78,10 +78,11 @@ public class PlanServiceImpl implements PlanService {
 		List<CreatePlanForm> createPlanList = createPlansForm.getCreatePlanFormList();
 		List<Stock> stocks = stockRepository.findAll();
 		List<Product> products = productRepository.findAll();
-		Map<String, Object> businessErrors = new HashMap<>();
 		List<String> globalErrorList = new ArrayList<>();
-		int index = 0;
+		Map<String, Object> businessErrors = new HashMap<>();
 		for (CreatePlanForm createPlanForm : createPlanList) {
+			int index = 0;
+			index++;
 			Long productId = createPlanForm.getProductId();
 			Long sStockId = createPlanForm.getSStockId();
 			Long gStockId = createPlanForm.getGStockId();
@@ -101,28 +102,28 @@ public class PlanServiceImpl implements PlanService {
 
 			if (!validateLux(productSLux, stockSLux)) {
 				String err = messageService.getMessage("plan.createForm.stockSLux.error",
-						new Object[] { specs, productSLux });
-				businessErrors.put(ERR_KEY_PREFIX + "[" + index + "]." + "sStockId", err);
+						new Object[] { index, specs, productSLux });
+				globalErrorList.add(err);
 			}
 
 			if (!validateLux(productGLux, stockGLux)) {
 				String err = messageService.getMessage("plan.createForm.stockGLux.error",
-						new Object[] { specs, productGLux });
-				businessErrors.put(ERR_KEY_PREFIX + "[" + index + "]." + "gStockId", err);
+						new Object[] { index, specs, productGLux });
+				globalErrorList.add(err);
 			}
 
 			if (!"G".equals(harvestStage)) {
 				if (productPLux == 340) {
 					if (!validateLux(productPLux, stockPLux)) {
 						String err = messageService.getMessage("plan.createForm.stockPLux.error",
-								new Object[] { specs, productPLux });
-						businessErrors.put(ERR_KEY_PREFIX + "[" + index + "]." + "pStockId", err);
+								new Object[] { index, specs, productPLux });
+						globalErrorList.add(err);
 					}
 				} else if (productPLux == 440) {
 					if (stockPLux < productPLux) {
 						String err = messageService.getMessage("plan.createForm.stockPLux.range.error",
-								new Object[] { specs, productPLux });
-						businessErrors.put(ERR_KEY_PREFIX + "[" + index + "]." + "pStockId", err);
+								new Object[] { index, specs, productPLux });
+						globalErrorList.add(err);
 					}
 				}
 			}
@@ -365,7 +366,7 @@ public class PlanServiceImpl implements PlanService {
 				String manuNo = OrderService.generateOrderNo(++index);
 				ProductSchedule productSchedule = ProductSchedule.builder().manuNo(manuNo)
 						.product(findProductById(products, productId)).targetWeight(createPlanForm.getTargetWeight())
-						.seedingBoardCount(createPlanForm.getSeedingBoardCount())
+						.status(NOT_IMPLEMENTEDSTATUS).seedingBoardCount(createPlanForm.getSeedingBoardCount())
 						.wateringBoardCount(createPlanForm.getWateringBoardCount())
 						.headOutBoardCount(createPlanForm.getHeadOutBoardCount())
 						.growingBoardCount(createPlanForm.getGrowingBoardCount()).matureBoardCount(matureBoardCount)

@@ -67,24 +67,37 @@
 			</header>
 			<main class="container flex-column w-100">
 				<form method="get" action="/production/plans/not-implemented" class="container justify-content-end ">
-					<div class="date-filter">
-						<label for="hStartDate">採收開始日期:</label> <input type="date" id="hStartDate" name="hStartDate"
-							th:value="${hStartDate}">
-
-						<label for="hEndDate">採收結束日期:</label> <input type="date" id="hEndDate" name="hEndDate"
-							th:value="${hEndDate}">
+					<div class="date-filter d-flex">
+						<div class="date-filter d-flex flex-column">
+							<label for="hStartDate">採收開始日期:</label> <input type="date" id="hStartDate" name="hStartDate"
+								th:value="${hStartDate}">
+						</div>
+						<div class="date-filter d-flex flex-column">
+							<label for="hEndDate">採收結束日期:</label> <input type="date" id="hEndDate" name="hEndDate"
+								th:value="${hEndDate}">
+						</div>
 					</div>
 
-					<div class="item-count-filter">
-						<label for="size">顯示筆數:</label> <select id="size" name="size">
-							<option th:each="option : ${session.options}" th:value="${option}" th:text="${option}"
-								th:selected="${option == size}"></option>
-						</select>
+					<div class="item-count-filter ml-2">
+						<div class="date-filter d-flex flex-column">
+							<label for="size">顯示筆數:</label> <select id="size" name="size">
+								<option th:each="option : ${session.options}" th:value="${option}" th:text="${option}"
+									th:selected="${option == size}"></option>
+							</select>
+						</div>
 					</div>
-					<button type="submit">搜尋</button>
+					<div class=" d-flex">
+						<div>
+						</div>
+						<div class=" d-flex align-item-end">
+							<label for="search"></label>
+							<button id="search" class="btn btn-outline-secondary  btn-sm" type="submit">搜尋</button>
+						</div>
+					</div>
 				</form>
-				<div class="container justify-content-end">
-					<button class="btn btn-primary" onclick="window.location.href='/production/plans/not-implemented/create-form'">新增計畫排程</button>
+				<div class="container justify-content-end mt-2">
+					<button class="btn btn-outline-secondary"
+						onclick="window.location.href='/production/plans/not-implemented/create-form'">新增計畫排程</button>
 				</div>
 				<div class="table-container">
 					<table>
@@ -113,19 +126,20 @@
 						<tbody>
 							<tr th:each="plan : ${plans.content}" th:if="${plans.size != 0}">
 								<td>
-									<form th:action="@{/production/edit-form(planId=${plan.id})}" method="get">
+									<form th:action="@{/production/plans/not-implemented/edit-form(planId=${plan.id})}"
+										method="get">
 										<input type="number" class="d-none" name="planId" th:value="${plan.id}">
 										<button type="submit" class="btn btn-link">編輯</button>
 									</form>
 								</td>
 								<td th:text="${plan.manuNo}"></td>
 								<td th:text="${plan.product.specs}"></td>
-								<td th:text="${plan.seedingBoardCount}"></td>
-								<td th:text="${plan.wateringBoardCount}"></td>
-								<td th:text="${plan.headOutBoardCount}"></td>
-								<td th:text="${plan.growingBoardCount}"></td>
-								<td th:text="${plan.matureBoardCount}"></td>
-								<td th:text="${plan.harvestBoardCount}"></td>
+								<td class="text-end" th:text="${plan.seedingBoardCount}"></td>
+								<td class="text-end" th:text="${plan.wateringBoardCount}"></td>
+								<td class="text-end" th:text="${plan.headOutBoardCount}"></td>
+								<td class="text-end" th:text="${plan.growingBoardCount}"></td>
+								<td class="text-end" th:text="${plan.matureBoardCount}"></td>
+								<td class="text-end" th:text="${plan.harvestBoardCount}"></td>
 								<td th:text="${plan.sStockId.position}"></td>
 								<td th:text="${plan.gStockId.position}"></td>
 								<td th:text="${plan.pStockId!=null?plan.pStockId.position:''}"></td>
@@ -144,9 +158,9 @@
 				</div>
 				<div class="pagination">
 					<span th:if="${plans.hasPrevious()}"> <a
-							th:href="@{/production/planing(page=${plans.number - 1}, size=${size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">上一頁</a>
+							th:href="@{/production/plans/not-implemented(page=${plans.number - 1}, size=${size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">上一頁</a>
 					</span> <span th:if="${plans.hasNext()}"> <a
-							th:href="@{/production/planing(page=${plans.number + 1}, size=${size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">下一頁</a>
+							th:href="@{/production/plans/not-implemented(page=${plans.number + 1}, size=${size}, hStartDate=${hStartDate}, hEndDate=${hEndDate})}">下一頁</a>
 					</span>
 				</div>
 			</main>
