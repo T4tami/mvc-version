@@ -19,4 +19,6 @@ public interface PlanService {
 	public EditPlanForm findbyId(Long planId);
 
 	public void saveProductSchedule(CreatePlansForm createPlansForm);
+
+	public void updateProductSchedule(Long id, EditPlanForm editPlanForm);
 }

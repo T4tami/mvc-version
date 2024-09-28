@@ -15,6 +15,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.validation.ValidationException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +49,7 @@ public class PlanServiceImpl implements PlanService {
 	private MessageService messageService;
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final String NOT_IMPLEMENTEDSTATUS = "0";
+	private static final String IMPLEMENTEDSTATUS = "1";
 
 	private static final int MAX_BOARD_COUNT = 52;
 
@@ -264,9 +268,9 @@ public class PlanServiceImpl implements PlanService {
 		return totalPBoardCount;
 	}
 
-	private Stock findStockById(List<Stock> stocks, Long gStockId) {
+	private Stock findStockById(List<Stock> stocks, Long stockId) {
 		try {
-			return stocks.stream().filter(stock -> stock.getId().equals(gStockId)).findFirst()
+			return stocks.stream().filter(stock -> stock.getId().equals(stockId)).findFirst()
 					.orElseThrow(() -> new Exception("Product not found"));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -405,5 +409,43 @@ public class PlanServiceImpl implements PlanService {
 				.wateringBoardCount(ps.getWateringBoardCount()).headOutBoardCount(ps.getHeadOutBoardCount())
 				.growingBoardCount(ps.getGrowingBoardCount()).matureBoardCount(ps.getMatureBoardCount())
 				.harvestBoardCount(ps.getHarvestBoardCount()).build();
+	}
+
+	@Override
+	public void updateProductSchedule(Long id, EditPlanForm editPlanForm) {
+
+		ProductSchedule ps = mapToProductSchedule(id, editPlanForm);
+		planRepository.save(ps);
+	}
+
+	private ProductSchedule mapToProductSchedule(Long id, EditPlanForm editPlanForm) {
+		Optional<ProductSchedule> ps = planRepository.findById(id);
+		if (!ps.isPresent()) {
+			throw new ValidationException("no data");
+		}
+		if (IMPLEMENTEDSTATUS.equals(ps.get().getStatus())) {
+			throw new ValidationException("the plan has already implemented!!");
+		}
+
+		List<Stock> stocks = stockRepository.findAll();
+		Stock sStock = findStockById(stocks, ps.get().getSStockId().getId());
+		Stock gStock = findStockById(stocks, ps.get().getGStockId().getId());
+		Stock pStock = findStockById(stocks, ps.get().getPStockId().getId());
+
+		return ProductSchedule.builder().id(ps.get().getId()).manuNo(ps.get().getManuNo())
+				.product(ps.get().getProduct()).targetWeight(editPlanForm.getTargetWeight())
+				.seedingBoardCount(editPlanForm.getSeedingBoardCount())
+				.wateringBoardCount(editPlanForm.getWateringBoardCount())
+				.headOutBoardCount(editPlanForm.getHeadOutBoardCount())
+				.growingBoardCount(editPlanForm.getGrowingBoardCount())
+				.matureBoardCount(editPlanForm.getMatureBoardCount())
+				.harvestBoardCount(editPlanForm.getHarvestBoardCount()).sStockId(sStock).gStockId(gStock)
+				.pStockId(pStock).status(ps.get().getStatus())
+				.seedingDate(convertStringToDate(editPlanForm.getSeedingDate()))
+				.wateringDate(convertStringToDate(editPlanForm.getWateringDate()))
+				.headOutDate(convertStringToDate(editPlanForm.getHeadOutDate()))
+				.growingDate(convertStringToDate(editPlanForm.getGrowingDate()))
+				.matureDate(convertStringToDate(editPlanForm.getMatureDate()))
+				.harvestDate(convertStringToDate(editPlanForm.getHarvestDate())).build();
 	}
 }

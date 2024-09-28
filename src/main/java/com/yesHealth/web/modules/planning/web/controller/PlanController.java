@@ -89,15 +89,6 @@ public class PlanController {
 			}
 		}
 
-//		if (!businessErrors.isEmpty()) {
-//			for (Entry<String, Object> entry : businessErrors.entrySet()) {
-//				String key = entry.getKey();
-//				String message = (entry.getValue() != null) ? entry.getValue().toString() : "未知錯誤"; // 預設錯誤信息
-//				result.rejectValue(key, "business.error", message);
-//			}
-//			model.addAttribute("createPlansForm", createPlansForm);
-//			return BASE_FILEPATH + "create-form"; // 返回失敗的創建表單
-//		}
 		planService.saveProductSchedule(createPlansForm);
 		return REDIRECT_PREFIX + "not-implemented";
 	}
@@ -122,7 +113,7 @@ public class PlanController {
 	@PostMapping("plans/not-implemented/{id}")
 	public String updateProduction(@PathVariable Long id, @ModelAttribute EditPlanForm editPlanForm,
 			BindingResult result) {
-//		productionPlanService.update(id, plan);
+		planService.updateProductSchedule(id, editPlanForm);
 		return REDIRECT_PREFIX + "not-implemented"; // 更新後重定向到列表頁面
 	}
 
