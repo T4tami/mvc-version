@@ -2,17 +2,15 @@ package com.yesHealth.web.modules.planning.web.views;
 
 import javax.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @SuperBuilder
+@NoArgsConstructor
 public class PlanForm {
 	@NotNull(message = "業務重量不可為空")
 	private Integer targetWeight;

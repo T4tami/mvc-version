@@ -17,6 +17,6 @@ import lombok.ToString;
 @ToString
 public class CreatePlansForm {
 	@Valid
-	private List<CreatePlanForm> createPlanFormList = new ArrayList<>(Collections.singletonList(new CreatePlanForm()));
+	private List<PlanForm> createPlanFormList = new ArrayList<>(Collections.singletonList(new PlanForm()));
 
 }
