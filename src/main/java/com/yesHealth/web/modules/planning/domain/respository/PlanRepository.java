@@ -15,7 +15,8 @@ public interface PlanRepository extends JpaRepository<ProductSchedule, Long> {
 
 	Page<ProductSchedule> findAllByStatus(String status, Pageable pageable);
 
-	Page<ProductSchedule> findByHarvestDateBetween(Date startDate, Date endDate, Pageable pageable);
+	Page<ProductSchedule> findByHarvestDateBetweenAndStatus(Date startDate, Date endDate, String Status,
+			Pageable pageable);
 
 	@Query(value = "SELECT COUNT(*) FROM PRODUCT_SCHEDULE WHERE CONVERT(DATE, CREATE_DATE) = CONVERT(DATE, :CREATE_DATE)", nativeQuery = true)
 	long countByCreateDate(@Param("CREATE_DATE") Date createDate);

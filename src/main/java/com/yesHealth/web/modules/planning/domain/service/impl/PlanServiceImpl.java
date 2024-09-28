@@ -74,7 +74,8 @@ public class PlanServiceImpl implements PlanService {
 			Pageable pageable) {
 		Date formateStartDate = startDateStr == null ? getStartOfNextWeek() : convertStringToDate(startDateStr);
 		Date formateEndDate = endDateStr == null ? getEndOfNextWeek() : convertStringToDate(endDateStr);
-		return planRepository.findByHarvestDateBetween(formateStartDate, formateEndDate, pageable);
+		return planRepository.findByHarvestDateBetweenAndStatus(formateStartDate, formateEndDate, NOT_IMPLEMENTEDSTATUS,
+				pageable);
 	}
 
 	@Override
