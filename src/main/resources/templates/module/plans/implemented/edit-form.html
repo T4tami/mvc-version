@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>計劃排程</title>
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/index.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/header.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/sidebar.css}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script th:src="@{/static/js/sidebar.js}"></script>
+</head>
+<style>
+	/* Table Styles */
+	table {
+		width: 100%;
+		margin-top: 20px;
+		table-layout: auto;
+		/* This allows for automatic column width adjustment */
+	}
+
+	th,
+	td {
+		border-bottom: 1px solid #dee2e6;
+		padding: 10px;
+		text-align: left;
+		white-space: nowrap;
+		/* Prevents text from wrapping */
+	}
+
+	th {
+		background-color: limegreen;
+		color: white;
+	}
+
+	/* Row Hover Effect */
+	tbody tr {
+		transition: background-color 0.3s;
+	}
+
+	tbody tr:hover {
+		background-color: #e9ecef;
+		/* Light gray color on hover */
+	}
+
+	tbody tr:nth-child(even) {
+		background-color: #f2f2f2;
+	}
+
+	/* Container for the table to enable scrolling */
+	.table-container {
+		overflow-x: auto;
+		/* Adds horizontal scrollbar */
+	}
+
+	.card {
+		background-color: white;
+		/* 背景顏色 */
+		border-radius: 8px;
+		/* 邊角圓滑 */
+		padding: 20px;
+		/* 內邊距 */
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		/* 陰影效果 */
+		margin: 20px;
+		/* 外邊距 */
+	}
+</style>
+
+<body>
+	<div th:include="layout/header::header"></div>
+	<div class="main-container">
+		<div th:replace="layout/sidebar::sidebar(${session.menus})" class="sidebar"></div>
+		<div class="main-content">
+			<!-- 這裡是主要內容區域 -->
+			<header>
+				<h1>編輯</h1>
+			</header>
+			<main class="container flex-column w-100">
+				<form th:action="@{/production/plans/implemented/{id}(id=${plan.id})}" th:object="${plan}"
+					method="post">
+					<input class="d-none" th:field="*{id}" type="number" />
+					<div th:if="${plan.harvestStage!='G'}"></div>
+					<div class="card">
+						<label for="manu_no">工單號</label>
+						<h3 id="manu_no" class=" bolder" th:text="*{manuNo}"></h3>
+						<div class="field-group d-flex">
+							<div class="d-flex flex-column col-md-6">
+								<label for="target_weight">業務重量</label><input id="target_weight"
+									th:field="*{targetWeight}" type="number" readonly/>
+							</div>
+							<div class="d-flex flex-column col-md-6">
+								<label for="product-id">品項</label><select id="product_id" th:field="*{productId}" disabled >
+									<option th:if="${option.status==1}" th:each="option:${session.products}"
+										th:text="${option.specs+'('+option.type+')'}" th:value="${option.id}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="field-group d-flex">
+							<div class="d-flex flex-column col-md-4">
+								<label for="s_stock_id">見苗儲位</label><select id="s_stock_id" th:field="*{sStockId}">
+									<option th:each="option:${session.stockList}" th:if="${option.stage} == 'S'"
+										th:value="${option.id}" th:text="${option.position+'('+option.lux+')'}">
+									</option>
+								</select>
+							</div>
+							<div class="d-flex flex-column col-md-4">
+								<label for="g_stock_id">育苗儲位</label><select id="g_stock_id" th:field="*{gStockId}">
+									<option th:each="option:${session.stockList}" th:if="${option.stage} == 'G'"
+										th:value="${option.id}" th:text="${option.position+'('+option.lux+')'}">
+									</option>
+								</select>
+							</div>
+							<div class="d-flex flex-column col-md-4">
+								<label for="p_stock_id">栽培儲位</label><select id="p_stock_id" th:field="*{pStockId}">
+									<option th:each="option:${session.stockList}" th:if="${option.stage} == 'P'"
+										th:value="${option.id}" th:text="${option.position+'('+option.lux+')'}">
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="field-group d-flex">
+							<div class="d-flex flex-column col-md-2">
+								<label for="seeding_date">播種日</label><input id="seeding_date" th:field="*{seedingDate}"
+									type="date" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="watering_date">壓水日</label><input id="watering_date"
+									th:field="*{wateringDate}" type="date" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="head_out_date">見苗日</label><input id="head_out_date"
+									th:field="*{headOutDate}" type="date" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="growing_date">育苗日</label><input id="growing_date" th:field="*{growingDate}"
+									type="date" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="mature_date">栽培日</label> <input id="mature_date" th:field="*{matureDate}"
+									type="date" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="harvest_date">栽培日</label><input id="harvest_date" th:field="*{harvestDate}"
+									type="date" />
+							</div>
+						</div>
+						<div class="field-group d-flex">
+							<div class="d-flex flex-column col-md-2">
+								<label for="seeding_board_count">播種盤數</label> <input id="seeding_board_count"
+									class="board-count" th:field="*{seedingBoardCount}" type="number" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="watering_board_count">壓水盤數</label><input id="watering_board_count"
+									class="board-count" th:field="*{wateringBoardCount}" type="number" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="head_out_board_count">見苗盤數</label> <input id="head_out_board_count"
+									class="board-count" th:field="*{headOutBoardCount}" type="number" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="growing_board_count">育苗盤數</label><input id="growing_board_count"
+									class="board-count" th:field="*{growingBoardCount}" type="number" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="mature_board_count">栽培盤數</label> <input id="mature_board_count"
+									class="board-count" th:field="*{matureBoardCount}" type="number" />
+							</div>
+							<div class="d-flex flex-column col-md-2">
+								<label for="harvest_board_count">栽培盤數</label><input id="harvest_board_count"
+									class="board-count" th:field="*{harvestBoardCount}" type="number" />
+							</div>
+						</div>
+						<div class="field-group d-flex mt-2 justify-content-end">
+							<input class="btn btn-outline-secondary" type="submit" value="更新" />
+						</div>
+					</div>
+				</form>
+			</main>
+		</div>
+	</div>
+</body>
+
+</html>

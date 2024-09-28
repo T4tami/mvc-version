@@ -38,6 +38,8 @@ public class PlanController {
 	private ProductService productService;
 	private static final String BASE_FILEPATH = "/module/plans/";
 	private static final String REDIRECT_PREFIX = "redirect:/production/plans/";
+	private static final String NOT_IMPLEMENTEDSTATUS = "0";
+	private static final String IMPLEMENTEDSTATUS = "1";
 
 	public PlanController(PlanService planService, StockService stockService, ProductService productService) {
 		this.planService = planService;
@@ -46,12 +48,13 @@ public class PlanController {
 	}
 
 	@GetMapping("plans/not-implemented")
-	public String findAll(Model model, @RequestParam(defaultValue = "0") Integer page,
+	public String findNotImplementedPlan(Model model, @RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String hStartDate,
 			@RequestParam(required = false) String hEndDate) {
 		Pageable pageable = PageRequest.of(page, size);
 
-		Page<ProductSchedule> plans = planService.findByestHarvestDateBetween(hStartDate, hEndDate, pageable);
+		Page<ProductSchedule> plans = planService.findByHarvestDateBetweenAndStatus(hStartDate, hEndDate,
+				NOT_IMPLEMENTEDSTATUS, pageable);
 		model.addAttribute("plans", plans);
 		model.addAttribute("hStartDate", hStartDate != null ? hStartDate : "");
 		model.addAttribute("hEndDate", hEndDate != null ? hEndDate : "");
@@ -117,12 +120,43 @@ public class PlanController {
 		return REDIRECT_PREFIX + "not-implemented"; // 更新後重定向到列表頁面
 	}
 
+	// ===============================製程管理===========================================
 	@GetMapping("plans/implemented")
-	public String getManuInfo(Model model, @RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "10") Integer size) {
+	public String findImplementedPlan(Model model, @RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String hStartDate,
+			@RequestParam(required = false) String hEndDate) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<ProductSchedule> ps = planService.findAll(pageable);
-		model.addAttribute("productSchedule", ps);
-		return BASE_FILEPATH + "/manufacture-info"; // 更新後重定向到列表頁面
+
+		Page<ProductSchedule> plans = planService.findByHarvestDateBetweenAndStatus(hStartDate, hEndDate,
+				IMPLEMENTEDSTATUS, pageable);
+		model.addAttribute("plans", plans);
+		model.addAttribute("hStartDate", hStartDate != null ? hStartDate : "");
+		model.addAttribute("hEndDate", hEndDate != null ? hEndDate : "");
+		model.addAttribute("size", size != null ? size : "");
+		return BASE_FILEPATH + "plan-implemented";
+	}
+
+	@GetMapping("plans/implemented/edit-form")
+	@SuppressWarnings("unchecked")
+	public String editImplementedPlan(@RequestParam(required = false) Long planId, HttpSession session, Model model) {
+		List<Product> products = (List<Product>) session.getAttribute("products");
+		if (products == null) {
+			products = productService.findAll();
+			session.setAttribute("products", products);
+		}
+		List<Stock> stockList = (List<Stock>) session.getAttribute("stockList");
+		if (stockList == null) {
+			stockList = stockService.findAll();
+			session.setAttribute("stockList", stockList);
+		}
+		model.addAttribute("plan", planService.findbyId(planId));
+		return BASE_FILEPATH + "implemented/edit-form";
+	}
+
+	@PostMapping("plans/implemented/{id}")
+	public String updateImplementedPlan(@PathVariable Long id, @ModelAttribute EditPlanForm editPlanForm,
+			BindingResult result) {
+		planService.updateProductSchedule(id, editPlanForm);
+		return REDIRECT_PREFIX + "not-implemented"; // 更新後重定向到列表頁面
 	}
 }

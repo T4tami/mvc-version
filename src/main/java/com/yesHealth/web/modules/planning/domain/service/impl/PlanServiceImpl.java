@@ -70,12 +70,11 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public Page<ProductSchedule> findByestHarvestDateBetween(String startDateStr, String endDateStr,
-			Pageable pageable) {
+	public Page<ProductSchedule> findByHarvestDateBetweenAndStatus(String startDateStr, String endDateStr,
+			String Status, Pageable pageable) {
 		Date formateStartDate = startDateStr == null ? getStartOfNextWeek() : convertStringToDate(startDateStr);
 		Date formateEndDate = endDateStr == null ? getEndOfNextWeek() : convertStringToDate(endDateStr);
-		return planRepository.findByHarvestDateBetweenAndStatus(formateStartDate, formateEndDate, NOT_IMPLEMENTEDSTATUS,
-				pageable);
+		return planRepository.findByHarvestDateBetweenAndStatus(formateStartDate, formateEndDate, Status, pageable);
 	}
 
 	@Override
