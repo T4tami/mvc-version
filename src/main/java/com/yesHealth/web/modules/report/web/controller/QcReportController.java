@@ -3,8 +3,6 @@ package com.yesHealth.web.modules.report.web.controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.report.domain.service.QcReportService;
 import com.yesHealth.web.modules.report.domain.view.QcReportView;
 

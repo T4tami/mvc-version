@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +28,6 @@ public class UserServiceImpl implements UserService {
 	private RoleRepository roleRepository;
 	private PasswordEncoder passwordEncoder;
 
-	@Autowired
 	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
 			PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
