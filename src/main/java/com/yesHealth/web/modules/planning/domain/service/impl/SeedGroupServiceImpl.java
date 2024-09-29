@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,7 @@ import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.util.GenerateExcelUtil;
 import com.yesHealth.web.modules.util.MergeCell;
 import com.yesHealth.web.modules.util.CellInfoStyle;
+import com.yesHealth.web.modules.util.ExcelCell;
 import com.yesHealth.web.modules.util.ReportInfo;
 
 @Service
@@ -248,7 +250,10 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 		ReportInfo reportInfo = new ReportInfo();
 		reportInfo.setSheetName("壓水日報表");
-		List<Object> dataList = new ArrayList<>();
+		reportInfo.setMinRowCount(22);
+		reportInfo.setDataRowCount(psList.size());
+		reportInfo.setColCount(10);
+		List<RowInfo> dataList = new ArrayList<>();
 
 		// =========================標題style==================
 		CellInfoStyle headerStyle = new CellInfoStyle();
@@ -258,6 +263,8 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
 		// =======================公司標題====================
+		RowInfo companyHeaderRow = new RowInfo();
+		companyHeaderRow.setRowIndex(0);
 		MergeCell companyHeader = new MergeCell();
 		companyHeader.setStartRowIndex(0);
 		companyHeader.setEndRowIndex(0);
@@ -265,9 +272,11 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		companyHeader.setEndColIndex(10);
 		companyHeader.setValue("菜好吃股份有限公司");
 		companyHeader.setCellInfoStyle(headerStyle);
-
-		dataList.add(companyHeader);
+		companyHeaderRow.setRowData(new ArrayList<ExcelCell>(Arrays.asList(companyHeader)));
+		dataList.add(companyHeaderRow);
 		// =======================報表標題=====================
+		RowInfo reportHeaderRow = new RowInfo();
+		reportHeaderRow.setRowIndex(1);
 		MergeCell reportHeader = new MergeCell();
 		reportHeader.setStartRowIndex(1);
 		reportHeader.setEndRowIndex(1);
@@ -275,10 +284,11 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		reportHeader.setEndColIndex(10);
 		reportHeader.setValue("壓水日報表");
 		reportHeader.setCellInfoStyle(headerStyle);
-		dataList.add(reportHeader);
+		reportHeaderRow.setRowData(new ArrayList<ExcelCell>(Arrays.asList(reportHeader)));
+		dataList.add(reportHeaderRow);
 		// ========================一般欄位====================
 		RowInfo rowInfo = new RowInfo();
-		rowInfo.setRowIndex(4);
+		rowInfo.setRowIndex(2);
 		List<CellInfo> tableRowData = new ArrayList<>();
 		// =========================一般欄位Style===============
 		// 置中
@@ -315,20 +325,19 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 		// j3
 		CellInfo j3 = new CellInfo();
-		j3.setColIndex(2);
+		j3.setColIndex(9);
 		j3.setValue(getWeekDayString());
 		j3.setCellInfoStyle(center);
 		tableRowData.add(j3);
 
 		// k3
 		CellInfo k3 = new CellInfo();
-		k3.setColIndex(2);
-		k3.setValue("總盤數:" + calculateTotalBoardCount(psList) + "盤");
+		k3.setColIndex(10);
+		k3.setValue("總盤數：" + calculateTotalBoardCount(psList) + "盤");
 		k3.setCellInfoStyle(right);
 		tableRowData.add(k3);
-		dataList.add(tableRowData);
-
-		List<CellInfo> thList = new ArrayList<>();
+		rowInfo.setRowData(tableRowData);
+		dataList.add(rowInfo);
 
 		CellInfoStyle thCenterStyle = new CellInfoStyle();
 		thCenterStyle.setFontName("標楷體");
@@ -340,6 +349,10 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		thCenterStyle.setBorderLeft(BorderStyle.THIN);
 		thCenterStyle.setBorderRight(BorderStyle.THIN);
 		thCenterStyle.setWrapText(Boolean.TRUE);
+
+		RowInfo thRowInfo = new RowInfo();
+		thRowInfo.setRowIndex(3);
+		List<CellInfo> thList = new ArrayList<>();
 		String[] tableHeader = { "序", "工單號碼", "品名", "壓水盤數", "壓水人數", "壓水時間起", "壓水時間止", "暗房儲位", "暗移見日期", "備註" };
 		for (int i = 0; i < tableHeader.length; i++) {
 			CellInfo thCell = new CellInfo();
@@ -350,7 +363,8 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 			thList.add(thCell);
 		}
-		dataList.add(thList);
+		thRowInfo.setRowData(thList);
+		dataList.add(thRowInfo);
 
 		// table_detail
 		CellInfoStyle tdCenterStyle = new CellInfoStyle();
@@ -373,11 +387,11 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		tdLeftStyle.setBorderLeft(BorderStyle.THIN);
 		tdLeftStyle.setBorderRight(BorderStyle.THIN);
 
+		RowInfo tdRowInfo = new RowInfo();
+		List<CellInfo> tdList = new ArrayList<>();
 		for (int i = 0; i < psList.size(); i++) {
-			RowInfo tdRowInfo = new RowInfo();
-			tdRowInfo.setRowIndex(4 + i + 1);
+			tdRowInfo.setRowIndex(4 + i);
 
-			List<CellInfo> tdList = new ArrayList<>();
 			CellInfo bCol = new CellInfo();
 			bCol.setColIndex(i + 1);
 			String formatIndex = String.format("%03d", i + 1);
@@ -404,19 +418,49 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			eCol.setCellInfoStyle(tdCenterStyle);
 			tdList.add(eCol);
 
+			CellInfo fCol = new CellInfo();
+			fCol.setColIndex(i + 5);
+			fCol.setValue("");
+			fCol.setCellInfoStyle(tdCenterStyle);
+			tdList.add(fCol);
+
+			CellInfo gCol = new CellInfo();
+			gCol.setColIndex(i + 6);
+			gCol.setValue("");
+			gCol.setCellInfoStyle(tdCenterStyle);
+			tdList.add(gCol);
+
+			CellInfo hCol = new CellInfo();
+			hCol.setColIndex(i + 7);
+			hCol.setValue("");
+			hCol.setCellInfoStyle(tdCenterStyle);
+			tdList.add(hCol);
+
+			CellInfo iCol = new CellInfo();
+			iCol.setColIndex(i + 8);
+			iCol.setValue("");
+			iCol.setCellInfoStyle(tdCenterStyle);
+			tdList.add(iCol);
+
 			CellInfo jCol = new CellInfo();
 			jCol.setColIndex(i + 9);
 			jCol.setValue(convertHeadOutDate(ps.getHeadOutDate()));
 			jCol.setCellInfoStyle(tdCenterStyle);
 			tdList.add(jCol);
 
-			tdRowInfo.setRowData(tdList);
+			CellInfo kCol = new CellInfo();
+			kCol.setColIndex(i + 10);
+			kCol.setValue("");
+			kCol.setCellInfoStyle(tdCenterStyle);
+			tdList.add(kCol);
+
 			dataList.add(tdRowInfo);
 		}
+		tdRowInfo.setRowData(tdList);
+		dataList.add(tdRowInfo);
+		reportInfo.setRowList(dataList);
 
-		reportInfo.setDataList(dataList);
-
-		return GenerateExcelUtil.genDailyWateringReport(reportInfo);
+		return GenerateExcelUtil.genDailyReport(reportInfo);
 	}
 
 	private Integer calculateTotalBoardCount(List<ProductSchedule> psList) {
@@ -498,7 +542,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		style.setFont(font);
 		return style;
 	}
-
 
 	private String getTodayString() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
