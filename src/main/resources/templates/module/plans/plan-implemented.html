@@ -127,6 +127,9 @@ tbody tr:nth-child(even) {
 							</tr>
 						</thead>
 						<tbody>
+							<tr th:if="${#lists.isEmpty(plans.content)}">
+								<td colspan="18" style="text-align: center;">沒有資料</td>
+							</tr>
 							<tr th:each="plan : ${plans.content}" th:if="${plans.size != 0}">
 								<td>
 									<form
@@ -154,8 +157,6 @@ tbody tr:nth-child(even) {
 								<td th:text="${#dates.format(plan.growingDate, 'yyyy-MM-dd')}"></td>
 								<td th:text="${#dates.format(plan.matureDate, 'yyyy-MM-dd')}"></td>
 								<td th:text="${#dates.format(plan.harvestDate, 'yyyy-MM-dd')}"></td>
-							</tr>
-							<tr th:if="${plans.content.size == 0}">沒有資料!!
 							</tr>
 						</tbody>
 					</table>
