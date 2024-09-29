@@ -10,4 +10,6 @@ public interface SeedGroupService {
 	public Page<ProductSchedule> findBySeedingGroupForm(String startDate, String endDate, Pageable pageable);
 
 	public byte[] downloadSeedExcel() throws YhNoDataException;
+
+	public byte[] downloadWateringExcel() throws YhNoDataException;
 }

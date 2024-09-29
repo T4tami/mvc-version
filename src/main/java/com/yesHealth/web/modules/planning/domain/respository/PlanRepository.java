@@ -24,6 +24,8 @@ public interface PlanRepository extends JpaRepository<ProductSchedule, Long> {
 
 	List<ProductSchedule> findBySeedingDateBetweenAndStatus(Date startOfDay, Date endOfDay, String status);
 
+	List<ProductSchedule> findByWateringDateBetweenAndStatus(Date startOfDay, Date endOfDay, String status);
+
 	@Query(value = "SELECT COUNT(*) FROM PRODUCT_SCHEDULE WHERE CONVERT(DATE, CREATE_DATE) = CONVERT(DATE, :CREATE_DATE)", nativeQuery = true)
 	long countByCreateDate(@Param("CREATE_DATE") Date createDate);
 
