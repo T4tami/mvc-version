@@ -1,13 +1,16 @@
 package com.yesHealth.web.modules.util;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
-public class MergeCell {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class MergeCell extends ExcelCell {
 	private int startRowIndex;
 	private int endRowIndex;
 	private int startColIndex;
 	private int endColIndex;
-	private Object value;
-	private CellInfoStyle cellInfoStyle;
+
 }
