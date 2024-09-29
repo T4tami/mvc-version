@@ -50,6 +50,22 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 				pageable);
 	}
 
+	@Override
+	public Page<ProductSchedule> getWateringForm(String startDateStr, String endDateStr, Pageable pageable) {
+		Date formateStartDate = startDateStr == null ? getStartOfNextWeek() : convertStringToDate(startDateStr);
+		Date formateEndDate = endDateStr == null ? getEndOfNextWeek() : convertStringToDate(endDateStr);
+		return planRepository.findByWateringDateBetweenAndStatus(formateStartDate, formateEndDate,
+				NOT_IMPLEMENTEDSTATUS, pageable);
+	}
+
+	@Override
+	public Page<ProductSchedule> getHeadOutForm(String startDateStr, String endDateStr, Pageable pageable) {
+		Date formateStartDate = startDateStr == null ? getStartOfNextWeek() : convertStringToDate(startDateStr);
+		Date formateEndDate = endDateStr == null ? getEndOfNextWeek() : convertStringToDate(endDateStr);
+		return planRepository.findByHeadOutDateBetweenAndStatus(formateStartDate, formateEndDate, NOT_IMPLEMENTEDSTATUS,
+				pageable);
+	}
+
 	private Date getStartOfNextWeek() {
 		LocalDate today = LocalDate.now();
 		LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
@@ -482,6 +498,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		style.setFont(font);
 		return style;
 	}
+
 
 	private String getTodayString() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");

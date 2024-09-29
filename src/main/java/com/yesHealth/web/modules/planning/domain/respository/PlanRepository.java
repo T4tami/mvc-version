@@ -22,6 +22,12 @@ public interface PlanRepository extends JpaRepository<ProductSchedule, Long> {
 	Page<ProductSchedule> findBySeedingDateBetweenAndStatus(Date startDate, Date endDate, String Status,
 			Pageable pageable);
 
+	Page<ProductSchedule> findByWateringDateBetweenAndStatus(Date startDate, Date endDate, String Status,
+			Pageable pageable);
+
+	Page<ProductSchedule> findByHeadOutDateBetweenAndStatus(Date startDate, Date endDate, String Status,
+			Pageable pageable);
+
 	List<ProductSchedule> findBySeedingDateBetweenAndStatus(Date startOfDay, Date endOfDay, String status);
 
 	List<ProductSchedule> findByWateringDateBetweenAndStatus(Date startOfDay, Date endOfDay, String status);
