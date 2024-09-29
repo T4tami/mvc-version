@@ -1,6 +1,7 @@
 package com.yesHealth.web.modules.planning.domain.respository;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,11 @@ public interface PlanRepository extends JpaRepository<ProductSchedule, Long> {
 
 	Page<ProductSchedule> findByHarvestDateBetweenAndStatus(Date startDate, Date endDate, String Status,
 			Pageable pageable);
+
+	Page<ProductSchedule> findBySeedingDateBetweenAndStatus(Date startDate, Date endDate, String Status,
+			Pageable pageable);
+
+	List<ProductSchedule> findBySeedingDateBetweenAndStatus(Date startOfDay, Date endOfDay, String status);
 
 	@Query(value = "SELECT COUNT(*) FROM PRODUCT_SCHEDULE WHERE CONVERT(DATE, CREATE_DATE) = CONVERT(DATE, :CREATE_DATE)", nativeQuery = true)
 	long countByCreateDate(@Param("CREATE_DATE") Date createDate);
