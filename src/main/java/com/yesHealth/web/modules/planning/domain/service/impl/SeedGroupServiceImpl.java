@@ -1,11 +1,5 @@
 package com.yesHealth.web.modules.planning.domain.service.impl;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -29,7 +23,8 @@ import com.yesHealth.web.modules.planning.domain.service.SeedGroupService;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.util.GenerateExcelUtil;
 import com.yesHealth.web.modules.util.MergeCell;
-import com.yesHealth.web.modules.util.CellInfoStyle;
+import com.yesHealth.web.modules.util.CellInfo;
+import com.yesHealth.web.modules.util.CellStyleInfo;
 import com.yesHealth.web.modules.util.ExcelCell;
 import com.yesHealth.web.modules.util.ReportInfo;
 
@@ -98,144 +93,194 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 	@Override
 	public byte[] downloadSeedExcel() throws YhNoDataException {
-		Workbook workbook = new XSSFWorkbook();
-		Sheet sheet = workbook.createSheet("播種報表");
-
-		createMergedCell(sheet, 0, 1, 14, "菜好吃生物科技股份有限公司", 18, (XSSFWorkbook) workbook);
-		createMergedCell(sheet, 1, 1, 14, "播種日報表", 18, (XSSFWorkbook) workbook);
-
-		Row row3 = sheet.createRow(2);
-		createCell(row3, 1, "日期:", HorizontalAlignment.LEFT, (XSSFWorkbook) workbook);
-		createDateCell(row3, 2, new Date(), (XSSFWorkbook) workbook);
-
-		Cell cellL3 = row3.createCell(11);
-		setWeekday(cellL3, (XSSFWorkbook) workbook);
-
-		createCell(row3, 14, "總盤數:盤", HorizontalAlignment.CENTER, (XSSFWorkbook) workbook);
-
-		Row row4 = sheet.createRow(3);
-		String[] headers = { "序", "工單號碼", "品名", "盤數", "片數", "播種日期", "人數", "時間起", "時間止", "使用前克數", "使用後克數", "播數", "工時預估",
-				"備註" };
-		for (int i = 0; i < headers.length; i++) {
-			createCell(row4, i + 1, headers[i], HorizontalAlignment.CENTER, (XSSFWorkbook) workbook);
-		}
 
 		List<ProductSchedule> psList = planRepository.findBySeedingDateBetweenAndStatus(getStartOfDay(), getEndOfDay(),
-				NOT_IMPLEMENTEDSTATUS);
+				IMPLEMENTEDSTATUS);
 
 		if (psList == null || psList.isEmpty()) {
 			throw new YhNoDataException("無當日播種計畫");
 		}
+		ReportInfo reportInfo = new ReportInfo();
+		reportInfo.setSheetName("播種日報表");
+		reportInfo.setMinRowCount(22);
+		reportInfo.setDataRowCount(psList.size());
+		reportInfo.setColCount(14);
+		List<RowInfo> dataList = new ArrayList<>();
+
+		// =======================公司標題====================
+		RowInfo companyHeaderRow = new RowInfo();
+		companyHeaderRow.setRowIndex(0);
+		MergeCell companyHeader = new MergeCell();
+		companyHeader.setStartRowIndex(0);
+		companyHeader.setEndRowIndex(0);
+		companyHeader.setStartColIndex(1);
+		companyHeader.setEndColIndex(14);
+		companyHeader.setValue("菜好吃股份有限公司");
+		companyHeader.setCellStyleInfo(CellStyleInfo.HEADER);
+		companyHeaderRow.setRowData(new ArrayList<ExcelCell>(Arrays.asList(companyHeader)));
+		dataList.add(companyHeaderRow);
+		// =======================報表標題=====================
+		RowInfo reportHeaderRow = new RowInfo();
+		reportHeaderRow.setRowIndex(1);
+		MergeCell reportHeader = new MergeCell();
+		reportHeader.setStartRowIndex(1);
+		reportHeader.setEndRowIndex(1);
+		reportHeader.setStartColIndex(1);
+		reportHeader.setEndColIndex(14);
+		reportHeader.setValue("播種日報表");
+		reportHeader.setCellStyleInfo(CellStyleInfo.HEADER);
+		reportHeaderRow.setRowData(new ArrayList<ExcelCell>(Arrays.asList(reportHeader)));
+		dataList.add(reportHeaderRow);
+		// ========================一般欄位====================
+		RowInfo rowInfo = new RowInfo();
+		rowInfo.setRowIndex(2);
+		List<CellInfo> tableRowData = new ArrayList<>();
+
+		// b3
+		CellInfo b3 = new CellInfo();
+		b3.setColIndex(1);
+		b3.setValue("日期:");
+		b3.setCellStyleInfo(CellStyleInfo.CENTER);
+		tableRowData.add(b3);
+
+		// c3
+		CellInfo c3 = new CellInfo();
+		c3.setColIndex(2);
+		c3.setValue(getTodayString());
+		c3.setCellStyleInfo(CellStyleInfo.LEFT);
+		tableRowData.add(c3);
+
+		// L3
+		CellInfo l3 = new CellInfo();
+		l3.setColIndex(11);
+		l3.setValue(getWeekDayString());
+		l3.setCellStyleInfo(CellStyleInfo.CENTER);
+		tableRowData.add(l3);
+
+		// k3
+		CellInfo o3 = new CellInfo();
+		o3.setColIndex(14);
+		o3.setValue("總盤數：" + calculateTotalBoardCount(psList) + "盤");
+		o3.setCellStyleInfo(CellStyleInfo.RIGHT);
+		tableRowData.add(o3);
+		rowInfo.setRowData(tableRowData);
+		dataList.add(rowInfo);
+
+		RowInfo thRowInfo = new RowInfo();
+		thRowInfo.setRowIndex(3);
+		List<CellInfo> thList = new ArrayList<>();
+		String[] tableHeader = { "序", "工單號碼", "品名", "播種盤數", "播種片數", "播種日期", "播種人數", "播種時間起", "壓水時間止", "使用前克數", "使用後克數",
+				"播數", "工時預估", "備註" };
+		for (int i = 0; i < tableHeader.length; i++) {
+			CellInfo thCell = new CellInfo();
+			thCell.setColIndex(i + 1);
+			thCell.setValue(tableHeader[i]);
+
+			thCell.setCellStyleInfo(CellStyleInfo.TH_CENTER);
+
+			thList.add(thCell);
+		}
+		thRowInfo.setRowData(thList);
+		dataList.add(thRowInfo);
+
+		RowInfo tdRowInfo = new RowInfo();
+		List<CellInfo> tdList = new ArrayList<>();
 		for (int i = 0; i < psList.size(); i++) {
-			Row dataRow = sheet.createRow(4 + i);
+			tdRowInfo.setRowIndex(4 + i);
+
+			CellInfo bCol = new CellInfo();
+			bCol.setColIndex(i + 1);
+			String formatIndex = String.format("%03d", i + 1);
+			bCol.setValue(formatIndex);
+			bCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(bCol);
+
 			ProductSchedule ps = psList.get(i);
+			CellInfo cCol = new CellInfo();
+			cCol.setColIndex(i + 2);
+			cCol.setValue(ps.getManuNo());
+			cCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(cCol);
 
-			Cell cellB = dataRow.createCell(1);
-			String cellBStr = String.format("%03d", i + 1); // 格式化为三位数
-			cellB.setCellValue(cellBStr);
-			CellStyle cellBStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellBStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellBStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellB.setCellStyle(cellBStyle);
+			CellInfo dCol = new CellInfo();
+			dCol.setColIndex(i + 3);
+			dCol.setValue(ps.getProduct().getSpecs());
+			dCol.setCellStyleInfo(CellStyleInfo.TD_LEFT);
+			tdList.add(dCol);
 
-			Cell cellC = dataRow.createCell(2);
-			cellC.setCellValue(ps.getManuNo());
-			CellStyle cellCStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellCStyle.setAlignment(HorizontalAlignment.LEFT);
-			cellCStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellC.setCellStyle(cellCStyle);
+			CellInfo eCol = new CellInfo();
+			eCol.setColIndex(i + 4);
+			eCol.setValue(ps.getSeedingBoardCount().toString());
+			eCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(eCol);
 
-			Cell cellD = dataRow.createCell(3);
-			cellD.setCellValue(ps.getProduct().getSpecs());
-			CellStyle cellDStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellDStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellDStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellD.setCellStyle(cellDStyle);
+			CellInfo fCol = new CellInfo();
+			fCol.setColIndex(i + 5);
+			fCol.setValue(Integer.toString(ps.getSeedingBoardCount() * 3));
+			fCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(fCol);
 
-			Cell cellE = dataRow.createCell(4);
-			cellE.setCellValue(ps.getSeedingBoardCount());
-			CellStyle cellEStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellEStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellEStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellE.setCellStyle(cellEStyle);
+			CellInfo gCol = new CellInfo();
+			gCol.setColIndex(i + 6);
+			gCol.setValue("");
+			gCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(gCol);
 
-			Cell cellF = dataRow.createCell(5);
-			cellF.setCellValue(ps.getSeedingBoardCount() * 3);
-			CellStyle cellFStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellFStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellFStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellF.setCellStyle(cellFStyle);
+			CellInfo hCol = new CellInfo();
+			hCol.setColIndex(i + 7);
+			hCol.setValue("");
+			hCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(hCol);
 
-			Cell cellG = dataRow.createCell(6);
-			CellStyle cellGStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellGStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellGStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellG.setCellStyle(cellGStyle);
+			CellInfo iCol = new CellInfo();
+			iCol.setColIndex(i + 8);
+			iCol.setValue("");
+			iCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(iCol);
 
-			Cell cellH = dataRow.createCell(7);
-			CellStyle cellHStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellHStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellHStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellH.setCellStyle(cellHStyle);
+			CellInfo jCol = new CellInfo();
+			jCol.setColIndex(i + 9);
+			jCol.setValue("");
+			jCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(jCol);
 
-			Cell cellI = dataRow.createCell(8);
-			CellStyle cellIStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellIStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellIStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellI.setCellStyle(cellIStyle);
+			CellInfo kCol = new CellInfo();
+			kCol.setColIndex(i + 10);
+			kCol.setValue("");
+			kCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(kCol);
 
-			Cell cellJ = dataRow.createCell(9);
-			CellStyle cellJStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellJStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellJStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellJ.setCellStyle(cellJStyle);
+			CellInfo lCol = new CellInfo();
+			lCol.setColIndex(i + 11);
+			lCol.setValue("");
+			lCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(lCol);
 
-			Cell cellK = dataRow.createCell(10);
-			CellStyle cellKStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellKStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellKStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellK.setCellStyle(cellKStyle);
+			CellInfo mCol = new CellInfo();
+			mCol.setColIndex(i + 12);
+			mCol.setValue("");
+			mCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(mCol);
 
-			Cell cellL = dataRow.createCell(11);
-			CellStyle cellLStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellLStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellLStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellL.setCellStyle(cellLStyle);
+			CellInfo nCol = new CellInfo();
+			nCol.setColIndex(i + 13);
+			nCol.setValue("");
+			nCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(nCol);
 
-			Cell cellM = dataRow.createCell(12);
-			CellStyle cellMStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellMStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellMStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellM.setCellStyle(cellMStyle);
+			CellInfo oCol = new CellInfo();
+			oCol.setColIndex(i + 14);
+			oCol.setValue("");
+			oCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(oCol);
 
-			Cell cellN = dataRow.createCell(13);
-			CellStyle cellNStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellNStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellNStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellN.setCellStyle(cellNStyle);
-
-			Cell cellO = dataRow.createCell(14);
-			CellStyle cellOStyle = createTableStyle((XSSFWorkbook) workbook);
-			cellOStyle.setAlignment(HorizontalAlignment.CENTER);
-			cellOStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-			cellO.setCellStyle(cellOStyle);
-
+			dataList.add(tdRowInfo);
 		}
+		tdRowInfo.setRowData(tdList);
+		dataList.add(tdRowInfo);
+		reportInfo.setRowList(dataList);
 
-		// 寫入 ByteArrayOutputStream
-		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-			workbook.write(outputStream);
-			return outputStream.toByteArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			try {
-				workbook.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		return GenerateExcelUtil.genDailyReport(reportInfo);
 	}
 
 	@Override
@@ -255,13 +300,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		reportInfo.setColCount(10);
 		List<RowInfo> dataList = new ArrayList<>();
 
-		// =========================標題style==================
-		CellInfoStyle headerStyle = new CellInfoStyle();
-		headerStyle.setFontName("標楷體");
-		headerStyle.setFontSize((short) 18);
-		headerStyle.setHorizontalAlignment(HorizontalAlignment.CENTER);
-		headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
 		// =======================公司標題====================
 		RowInfo companyHeaderRow = new RowInfo();
 		companyHeaderRow.setRowIndex(0);
@@ -271,7 +309,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		companyHeader.setStartColIndex(1);
 		companyHeader.setEndColIndex(10);
 		companyHeader.setValue("菜好吃股份有限公司");
-		companyHeader.setCellInfoStyle(headerStyle);
+		companyHeader.setCellStyleInfo(CellStyleInfo.HEADER);
 		companyHeaderRow.setRowData(new ArrayList<ExcelCell>(Arrays.asList(companyHeader)));
 		dataList.add(companyHeaderRow);
 		// =======================報表標題=====================
@@ -283,72 +321,43 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		reportHeader.setStartColIndex(1);
 		reportHeader.setEndColIndex(10);
 		reportHeader.setValue("壓水日報表");
-		reportHeader.setCellInfoStyle(headerStyle);
+		reportHeader.setCellStyleInfo(CellStyleInfo.HEADER);
 		reportHeaderRow.setRowData(new ArrayList<ExcelCell>(Arrays.asList(reportHeader)));
 		dataList.add(reportHeaderRow);
 		// ========================一般欄位====================
 		RowInfo rowInfo = new RowInfo();
 		rowInfo.setRowIndex(2);
 		List<CellInfo> tableRowData = new ArrayList<>();
-		// =========================一般欄位Style===============
-		// 置中
-		CellInfoStyle center = new CellInfoStyle();
-		center.setFontName("標楷體");
-		center.setFontSize((short) 11);
-		center.setHorizontalAlignment(HorizontalAlignment.CENTER);
-		center.setVerticalAlignment(VerticalAlignment.CENTER);
-		// 靠左
-		CellInfoStyle left = new CellInfoStyle();
-		left.setFontName("標楷體");
-		left.setFontSize((short) 11);
-		left.setHorizontalAlignment(HorizontalAlignment.LEFT);
-		left.setVerticalAlignment(VerticalAlignment.CENTER);
-		// 靠左
-		CellInfoStyle right = new CellInfoStyle();
-		right.setFontName("標楷體");
-		right.setFontSize((short) 11);
-		right.setHorizontalAlignment(HorizontalAlignment.RIGHT);
-		right.setVerticalAlignment(VerticalAlignment.CENTER);
+
 		// b3
 		CellInfo b3 = new CellInfo();
 		b3.setColIndex(1);
 		b3.setValue("日期:");
-		b3.setCellInfoStyle(center);
+		b3.setCellStyleInfo(CellStyleInfo.CENTER);
 		tableRowData.add(b3);
 
 		// c3
 		CellInfo c3 = new CellInfo();
 		c3.setColIndex(2);
 		c3.setValue(getTodayString());
-		c3.setCellInfoStyle(left);
+		c3.setCellStyleInfo(CellStyleInfo.LEFT);
 		tableRowData.add(c3);
 
 		// j3
 		CellInfo j3 = new CellInfo();
 		j3.setColIndex(9);
 		j3.setValue(getWeekDayString());
-		j3.setCellInfoStyle(center);
+		j3.setCellStyleInfo(CellStyleInfo.CENTER);
 		tableRowData.add(j3);
 
 		// k3
 		CellInfo k3 = new CellInfo();
 		k3.setColIndex(10);
 		k3.setValue("總盤數：" + calculateTotalBoardCount(psList) + "盤");
-		k3.setCellInfoStyle(right);
+		k3.setCellStyleInfo(CellStyleInfo.RIGHT);
 		tableRowData.add(k3);
 		rowInfo.setRowData(tableRowData);
 		dataList.add(rowInfo);
-
-		CellInfoStyle thCenterStyle = new CellInfoStyle();
-		thCenterStyle.setFontName("標楷體");
-		thCenterStyle.setFontSize((short) 11);
-		thCenterStyle.setHorizontalAlignment(HorizontalAlignment.CENTER);
-		thCenterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-		thCenterStyle.setBorderTop(BorderStyle.THIN);
-		thCenterStyle.setBorderBottom(BorderStyle.THIN);
-		thCenterStyle.setBorderLeft(BorderStyle.THIN);
-		thCenterStyle.setBorderRight(BorderStyle.THIN);
-		thCenterStyle.setWrapText(Boolean.TRUE);
 
 		RowInfo thRowInfo = new RowInfo();
 		thRowInfo.setRowIndex(3);
@@ -359,33 +368,12 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			thCell.setColIndex(i + 1);
 			thCell.setValue(tableHeader[i]);
 
-			thCell.setCellInfoStyle(thCenterStyle);
+			thCell.setCellStyleInfo(CellStyleInfo.TH_CENTER);
 
 			thList.add(thCell);
 		}
 		thRowInfo.setRowData(thList);
 		dataList.add(thRowInfo);
-
-		// table_detail
-		CellInfoStyle tdCenterStyle = new CellInfoStyle();
-		tdCenterStyle.setFontName("標楷體");
-		tdCenterStyle.setFontSize((short) 11);
-		tdCenterStyle.setHorizontalAlignment(HorizontalAlignment.CENTER);
-		tdCenterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-		tdCenterStyle.setBorderTop(BorderStyle.THIN);
-		tdCenterStyle.setBorderBottom(BorderStyle.THIN);
-		tdCenterStyle.setBorderLeft(BorderStyle.THIN);
-		tdCenterStyle.setBorderRight(BorderStyle.THIN);
-
-		CellInfoStyle tdLeftStyle = new CellInfoStyle();
-		tdLeftStyle.setFontName("標楷體");
-		tdLeftStyle.setFontSize((short) 11);
-		tdLeftStyle.setHorizontalAlignment(HorizontalAlignment.LEFT);
-		tdLeftStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-		tdLeftStyle.setBorderTop(BorderStyle.THIN);
-		tdLeftStyle.setBorderBottom(BorderStyle.THIN);
-		tdLeftStyle.setBorderLeft(BorderStyle.THIN);
-		tdLeftStyle.setBorderRight(BorderStyle.THIN);
 
 		RowInfo tdRowInfo = new RowInfo();
 		List<CellInfo> tdList = new ArrayList<>();
@@ -396,62 +384,62 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			bCol.setColIndex(i + 1);
 			String formatIndex = String.format("%03d", i + 1);
 			bCol.setValue(formatIndex);
-			bCol.setCellInfoStyle(tdCenterStyle);
+			bCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(bCol);
 
 			ProductSchedule ps = psList.get(i);
 			CellInfo cCol = new CellInfo();
 			cCol.setColIndex(i + 2);
 			cCol.setValue(ps.getManuNo());
-			cCol.setCellInfoStyle(tdCenterStyle);
+			cCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(cCol);
 
 			CellInfo dCol = new CellInfo();
 			dCol.setColIndex(i + 3);
 			dCol.setValue(ps.getProduct().getSpecs());
-			dCol.setCellInfoStyle(tdLeftStyle);
+			dCol.setCellStyleInfo(CellStyleInfo.TD_LEFT);
 			tdList.add(dCol);
 
 			CellInfo eCol = new CellInfo();
 			eCol.setColIndex(i + 4);
 			eCol.setValue(ps.getWateringBoardCount().toString());
-			eCol.setCellInfoStyle(tdCenterStyle);
+			eCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(eCol);
 
 			CellInfo fCol = new CellInfo();
 			fCol.setColIndex(i + 5);
 			fCol.setValue("");
-			fCol.setCellInfoStyle(tdCenterStyle);
+			fCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(fCol);
 
 			CellInfo gCol = new CellInfo();
 			gCol.setColIndex(i + 6);
 			gCol.setValue("");
-			gCol.setCellInfoStyle(tdCenterStyle);
+			gCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(gCol);
 
 			CellInfo hCol = new CellInfo();
 			hCol.setColIndex(i + 7);
 			hCol.setValue("");
-			hCol.setCellInfoStyle(tdCenterStyle);
+			hCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(hCol);
 
 			CellInfo iCol = new CellInfo();
 			iCol.setColIndex(i + 8);
 			iCol.setValue("");
-			iCol.setCellInfoStyle(tdCenterStyle);
+			iCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(iCol);
 
 			CellInfo jCol = new CellInfo();
 			jCol.setColIndex(i + 9);
 			jCol.setValue(convertHeadOutDate(ps.getHeadOutDate()));
-			jCol.setCellInfoStyle(tdCenterStyle);
+			jCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(jCol);
 
 			CellInfo kCol = new CellInfo();
 			kCol.setColIndex(i + 10);
 			kCol.setValue("");
-			kCol.setCellInfoStyle(tdCenterStyle);
+			kCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(kCol);
 
 			dataList.add(tdRowInfo);
@@ -472,75 +460,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			}
 		}
 		return sum;
-	}
-
-	private void createMergedCell(Sheet sheet, int rowIndex, int startCol, int endCol, String value, int fontSize,
-			XSSFWorkbook workbook) {
-		CellRangeAddress range = new CellRangeAddress(rowIndex, rowIndex, startCol, endCol);
-		sheet.addMergedRegion(range);
-		Cell cell = sheet.createRow(rowIndex).createCell(startCol);
-		cell.setCellValue(value);
-		CellStyle style = createCellStyle(fontSize, workbook);
-		cell.setCellStyle(style);
-	}
-
-	private void createCell(Row row, int colIndex, String value, HorizontalAlignment alignment, XSSFWorkbook workbook) {
-		Cell cell = row.createCell(colIndex);
-		cell.setCellValue(value);
-		CellStyle style = createTableStyle(workbook);
-		style.setAlignment(alignment);
-		cell.setCellStyle(style);
-	}
-
-	private void createDateCell(Row row, int colIndex, Date date, XSSFWorkbook workbook) {
-		Cell cell = row.createCell(colIndex);
-		cell.setCellValue(date);
-		CellStyle dateStyle = createCellStyle(11, workbook);
-		CreationHelper creationHelper = cell.getSheet().getWorkbook().getCreationHelper();
-		dateStyle.setDataFormat(creationHelper.createDataFormat().getFormat("yyyy年MM月dd日"));
-		cell.setCellStyle(dateStyle);
-	}
-
-	private void setWeekday(Cell cell, XSSFWorkbook workbook) {
-		String[] weekDays = { "一", "二", "三", "四", "五", "六", "日" };
-		int dayOfWeek = Integer.parseInt(new SimpleDateFormat("u").format(new Date()));
-		cell.setCellValue("星期" + weekDays[dayOfWeek - 1]);
-		CellStyle style = createBoldStyle(workbook);
-		cell.setCellStyle(style);
-	}
-
-	private CellStyle createCellStyle(int fontSize, XSSFWorkbook workbook) {
-		CellStyle style = workbook.createCellStyle();
-		Font font = workbook.createFont();
-		font.setFontHeightInPoints((short) fontSize);
-		font.setFontName("標楷體");
-		style.setFont(font);
-		style.setAlignment(HorizontalAlignment.CENTER);
-		style.setVerticalAlignment(VerticalAlignment.CENTER);
-		return style;
-	}
-
-	private CellStyle createBoldStyle(XSSFWorkbook workbook) {
-		CellStyle style = workbook.createCellStyle();
-		Font font = workbook.createFont();
-		font.setBold(true);
-		style.setFont(font);
-		return style;
-	}
-
-	private CellStyle createTableStyle(XSSFWorkbook workbook) {
-		CellStyle style = workbook.createCellStyle();
-		style.setAlignment(HorizontalAlignment.CENTER);
-		style.setVerticalAlignment(VerticalAlignment.CENTER);
-		style.setBorderTop(BorderStyle.THIN);
-		style.setBorderBottom(BorderStyle.THIN);
-		style.setBorderLeft(BorderStyle.THIN);
-		style.setBorderRight(BorderStyle.THIN);
-		Font font = workbook.createFont();
-		font.setFontName("標楷體");
-		font.setFontHeightInPoints((short) 11);
-		style.setFont(font);
-		return style;
 	}
 
 	private String getTodayString() {

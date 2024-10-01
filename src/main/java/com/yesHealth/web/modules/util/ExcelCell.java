@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class ExcelCell {
 	private String value;
-	private CellInfoStyle cellInfoStyle;
+	private CellStyleInfo cellStyleInfo;
 }

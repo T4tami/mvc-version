@@ -16,7 +16,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.yesHealth.web.modules.planning.domain.service.impl.CellInfo;
 import com.yesHealth.web.modules.planning.domain.service.impl.RowInfo;
 
 public class GenerateExcelUtil {
@@ -43,11 +42,11 @@ public class GenerateExcelUtil {
 
 					CellStyle style = workbook.createCellStyle();
 					Font font = workbook.createFont();
-					font.setFontHeightInPoints(mergeCell.getCellInfoStyle().getFontSize());
-					font.setFontName(mergeCell.getCellInfoStyle().getFontName());
+					font.setFontHeightInPoints(mergeCell.getCellStyleInfo().getFontSize());
+					font.setFontName(mergeCell.getCellStyleInfo().getFontName());
 					style.setFont(font);
-					style.setAlignment(mergeCell.getCellInfoStyle().getHorizontalAlignment());
-					style.setVerticalAlignment(mergeCell.getCellInfoStyle().getVerticalAlignment());
+					style.setAlignment(mergeCell.getCellStyleInfo().getHorizontalAlignment());
+					style.setVerticalAlignment(mergeCell.getCellStyleInfo().getVerticalAlignment());
 					cell.setCellStyle(style);
 				} else if (rowData instanceof CellInfo) {
 					CellInfo cellInfo = (CellInfo) rowData;
@@ -56,33 +55,35 @@ public class GenerateExcelUtil {
 
 					CellStyle style = workbook.createCellStyle();
 					Font font = workbook.createFont();
-					font.setFontHeightInPoints(cellInfo.getCellInfoStyle().getFontSize());
-					font.setFontName(cellInfo.getCellInfoStyle().getFontName());
+					font.setFontHeightInPoints(cellInfo.getCellStyleInfo().getFontSize());
+					font.setFontName(cellInfo.getCellStyleInfo().getFontName());
 					style.setFont(font);
-					style.setAlignment(cellInfo.getCellInfoStyle().getHorizontalAlignment());
-					style.setVerticalAlignment(cellInfo.getCellInfoStyle().getVerticalAlignment());
-					style.setWrapText(cellInfo.getCellInfoStyle().isWrapText());
-					if (cellInfo.getCellInfoStyle().getBorderTop() != null) {
-						style.setBorderTop(cellInfo.getCellInfoStyle().getBorderTop());
+					style.setAlignment(cellInfo.getCellStyleInfo().getHorizontalAlignment());
+					style.setVerticalAlignment(cellInfo.getCellStyleInfo().getVerticalAlignment());
+					style.setWrapText(cellInfo.getCellStyleInfo().isWrapText());
+					if (cellInfo.getCellStyleInfo().getBorderTop() != null) {
+						style.setBorderTop(cellInfo.getCellStyleInfo().getBorderTop());
 					}
-					if (cellInfo.getCellInfoStyle().getBorderBottom() != null) {
-						style.setBorderBottom(cellInfo.getCellInfoStyle().getBorderBottom());
+					if (cellInfo.getCellStyleInfo().getBorderBottom() != null) {
+						style.setBorderBottom(cellInfo.getCellStyleInfo().getBorderBottom());
 					}
-					if (cellInfo.getCellInfoStyle().getBorderLeft() != null) {
-						style.setBorderLeft(cellInfo.getCellInfoStyle().getBorderLeft());
+					if (cellInfo.getCellStyleInfo().getBorderLeft() != null) {
+						style.setBorderLeft(cellInfo.getCellStyleInfo().getBorderLeft());
 					}
-					if (cellInfo.getCellInfoStyle().getBorderRight() != null) {
-						style.setBorderRight(cellInfo.getCellInfoStyle().getBorderRight());
+					if (cellInfo.getCellStyleInfo().getBorderRight() != null) {
+						style.setBorderRight(cellInfo.getCellStyleInfo().getBorderRight());
 					}
 					cell.setCellStyle(style);
 				}
 			}
 			if (reportInfo.getDataRowCount() < reportInfo.getMinRowCount()) {
+				int dataRowId = reportInfo.getDataRowCount();
 				for (int i = rowList.size(); i <= reportInfo.getMinRowCount(); i++) {
 					Row blankRow = sheet.createRow(i - 1);
+					dataRowId++;
 					for (int j = 1; j <= reportInfo.getColCount(); j++) {
 						Cell blankCell = blankRow.createCell(j);
-						String value = j == 1 ? String.format("%03d", reportInfo.getDataRowCount() + 1) : "";
+						String value = j == 1 ? String.format("%03d", dataRowId) : "";
 						blankCell.setCellValue(value);
 
 						CellStyle blankStyle = workbook.createCellStyle();

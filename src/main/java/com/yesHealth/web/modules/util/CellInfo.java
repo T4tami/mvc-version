@@ -1,6 +1,4 @@
-package com.yesHealth.web.modules.planning.domain.service.impl;
-
-import com.yesHealth.web.modules.util.ExcelCell;
+package com.yesHealth.web.modules.util;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,5 +10,5 @@ import lombok.ToString;
 public class CellInfo extends ExcelCell {
 	private String value;
 	private int colIndex;
-
+	private String cell;
 }
