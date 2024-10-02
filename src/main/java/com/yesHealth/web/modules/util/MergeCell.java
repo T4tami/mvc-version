@@ -8,10 +8,6 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class MergeCell extends ExcelCell {
-	private int startRowIndex;
-	private int endRowIndex;
-	private int startColIndex;
-	private int endColIndex;
 	private String startCell;
 	private String endCell;
 
