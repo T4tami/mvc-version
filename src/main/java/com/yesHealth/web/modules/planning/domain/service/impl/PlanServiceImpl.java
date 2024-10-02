@@ -2,15 +2,10 @@ package com.yesHealth.web.modules.planning.domain.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +30,7 @@ import com.yesHealth.web.modules.product.domain.entity.Product;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.product.domain.entity.Stock;
 import com.yesHealth.web.modules.product.domain.repository.ProductRepository;
+import com.yesHealth.web.modules.util.DateUtil;
 import com.yesHealth.web.modules.util.MessageService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +43,6 @@ public class PlanServiceImpl implements PlanService {
 	private ProductRepository productRepository;
 	private TransplantRecordRepository transplantRecordRepository;
 	private MessageService messageService;
-	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final String NOT_IMPLEMENTEDSTATUS = "0";
 	private static final String IMPLEMENTEDSTATUS = "1";
 
@@ -72,8 +67,10 @@ public class PlanServiceImpl implements PlanService {
 	@Override
 	public Page<ProductSchedule> findByHarvestDateBetweenAndStatus(String startDateStr, String endDateStr,
 			String Status, Pageable pageable) {
-		Date formateStartDate = startDateStr == null ? getStartOfNextWeek() : convertStringToDate(startDateStr);
-		Date formateEndDate = endDateStr == null ? getEndOfNextWeek() : convertStringToDate(endDateStr);
+		Date formateStartDate = startDateStr == null ? DateUtil.getStartOfNextWeek()
+				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
+		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
+				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
 		return planRepository.findByHarvestDateBetweenAndStatus(formateStartDate, formateEndDate, Status, pageable);
 	}
 
@@ -217,9 +214,9 @@ public class PlanServiceImpl implements PlanService {
 	private void validateGBoardCount(Date date, List<PlanForm> createPlanList, List<Stock> stocks, Long gStockId,
 			String specs, List<String> globalErrorList) {
 		Long formTotalGBoardCount = calculateTotalGBoardCount(createPlanList, gStockId);
-		Long planTotalGBoardCount = planRepository.sumGBoardCount(gStockId, getDateWithoutTime(date));
+		Long planTotalGBoardCount = planRepository.sumGBoardCount(gStockId, DateUtil.getDateWithoutTime(date));
 		Long actTotalGBoardCount = transplantRecordRepository.sumActGBoardCountByStage(gStockId,
-				getDateWithoutTime(date), "G");
+				DateUtil.getDateWithoutTime(date), "G");
 
 		if (Long.sum(formTotalGBoardCount, planTotalGBoardCount) > Long.valueOf(MAX_BOARD_COUNT)) {
 			globalErrorList.add(messageService.getMessage("plan.createForm.gPosition.limit1",
@@ -234,9 +231,9 @@ public class PlanServiceImpl implements PlanService {
 	private void validatePBoardCount(Date date, List<PlanForm> createPlanList, List<Stock> stocks, Long pStockId,
 			String specs, List<String> globalErrorList) {
 		Long formTotalPBoardCount = calculateTotalPBoardCount(createPlanList, pStockId);
-		Long planTotalPBoardCount = planRepository.sumPBoardCount(pStockId, getDateWithoutTime(date));
+		Long planTotalPBoardCount = planRepository.sumPBoardCount(pStockId, DateUtil.getDateWithoutTime(date));
 		Long actTotalPBoardCount = transplantRecordRepository.sumActPBoardCountByStage(pStockId,
-				getDateWithoutTime(date), "G");
+				DateUtil.getDateWithoutTime(date), "G");
 
 		if (Long.sum(formTotalPBoardCount, planTotalPBoardCount) > Long.valueOf(MAX_BOARD_COUNT)) {
 			globalErrorList.add(messageService.getMessage("plan.createForm.pPosition.limit1",
@@ -317,51 +314,6 @@ public class PlanServiceImpl implements PlanService {
 		return !valid;
 	}
 
-	// 获取下周的第一天（周一）
-	private Date getStartOfNextWeek() {
-		LocalDate today = LocalDate.now();
-		LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-		return convertToDate(nextMonday);
-	}
-
-	// 获取下周的最后一天（周五）
-	private Date getEndOfNextWeek() {
-		LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-		LocalDate nextFriday = nextMonday.plusDays(4);
-		return convertToDate(nextFriday);
-	}
-
-	// 将 LocalDate 转换为 Date
-	private Date convertToDate(LocalDate localDate) {
-		LocalDateTime localDateTime = localDate.atStartOfDay(); // 默认时间是 00:00:00
-		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-	}
-
-	private Date convertStringToDate(String dateString) {
-		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
-		try {
-			return formatter.parse(dateString);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null; // 或抛出自定义异常
-		}
-	}
-
-	private String convertDateToString(Date date) {
-		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
-		return formatter.format(date);
-	}
-
-	private Date getDateWithoutTime(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar.getTime();
-	}
-
 	private void validateLuxErrors(int index, Product product, PlanForm createPlanForm, List<String> globalErrorList) {
 		List<Stock> stocks = stockRepository.findAll();
 		Long sStockId = createPlanForm.getSStockId();
@@ -400,15 +352,15 @@ public class PlanServiceImpl implements PlanService {
 		return EditPlanForm.builder().id(ps.getId()).harvestStage(ps.getProduct().getHarvestStage())
 				.manuNo(ps.getManuNo()).targetWeight(ps.getTargetWeight()).productId(ps.getProduct().getId())
 				.sStockId(ps.getSStockId().getId()).gStockId(ps.getGStockId().getId())
-				.pStockId(ps.getPStockId().getId()).seedingDate(convertDateToString(ps.getSeedingDate()))
-				.wateringDate(convertDateToString(ps.getWateringDate()))
-				.headOutDate(convertDateToString(ps.getHeadOutDate()))
-				.growingDate(convertDateToString(ps.getGrowingDate()))
-				.matureDate(convertDateToString(ps.getMatureDate()))
-				.harvestDate(convertDateToString(ps.getHarvestDate())).seedingBoardCount(ps.getSeedingBoardCount())
-				.wateringBoardCount(ps.getWateringBoardCount()).headOutBoardCount(ps.getHeadOutBoardCount())
-				.growingBoardCount(ps.getGrowingBoardCount()).matureBoardCount(ps.getMatureBoardCount())
-				.harvestBoardCount(ps.getHarvestBoardCount()).build();
+				.pStockId(ps.getPStockId().getId()).seedingDate(DateUtil.convertDateToString(ps.getSeedingDate()))
+				.wateringDate(DateUtil.convertDateToString(ps.getWateringDate()))
+				.headOutDate(DateUtil.convertDateToString(ps.getHeadOutDate()))
+				.growingDate(DateUtil.convertDateToString(ps.getGrowingDate()))
+				.matureDate(DateUtil.convertDateToString(ps.getMatureDate()))
+				.harvestDate(DateUtil.convertDateToString(ps.getHarvestDate()))
+				.seedingBoardCount(ps.getSeedingBoardCount()).wateringBoardCount(ps.getWateringBoardCount())
+				.headOutBoardCount(ps.getHeadOutBoardCount()).growingBoardCount(ps.getGrowingBoardCount())
+				.matureBoardCount(ps.getMatureBoardCount()).harvestBoardCount(ps.getHarvestBoardCount()).build();
 	}
 
 	@Override
@@ -441,11 +393,11 @@ public class PlanServiceImpl implements PlanService {
 				.matureBoardCount(editPlanForm.getMatureBoardCount())
 				.harvestBoardCount(editPlanForm.getHarvestBoardCount()).sStockId(sStock).gStockId(gStock)
 				.pStockId(pStock).status(ps.get().getStatus())
-				.seedingDate(convertStringToDate(editPlanForm.getSeedingDate()))
-				.wateringDate(convertStringToDate(editPlanForm.getWateringDate()))
-				.headOutDate(convertStringToDate(editPlanForm.getHeadOutDate()))
-				.growingDate(convertStringToDate(editPlanForm.getGrowingDate()))
-				.matureDate(convertStringToDate(editPlanForm.getMatureDate()))
-				.harvestDate(convertStringToDate(editPlanForm.getHarvestDate())).build();
+				.seedingDate(DateUtil.convertStringToDate(editPlanForm.getSeedingDate(), "yyyy-MM-dd"))
+				.wateringDate(DateUtil.convertStringToDate(editPlanForm.getWateringDate(), "yyyy-MM-dd"))
+				.headOutDate(DateUtil.convertStringToDate(editPlanForm.getHeadOutDate(), "yyyy-MM-dd"))
+				.growingDate(DateUtil.convertStringToDate(editPlanForm.getGrowingDate(), "yyyy-MM-dd"))
+				.matureDate(DateUtil.convertStringToDate(editPlanForm.getMatureDate(), "yyyy-MM-dd"))
+				.harvestDate(DateUtil.convertStringToDate(editPlanForm.getHarvestDate(), "yyyy-MM-dd")).build();
 	}
 }

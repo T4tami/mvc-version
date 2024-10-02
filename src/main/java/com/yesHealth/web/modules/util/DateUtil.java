@@ -1,0 +1,58 @@
+package com.yesHealth.web.modules.util;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Calendar;
+import java.util.Date;
+
+public class DateUtil {
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
+
+	public static Date getStartOfNextWeek() {
+		LocalDate today = LocalDate.now();
+		LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+		return convertToDate(nextMonday);
+	}
+
+	public static Date getEndOfNextWeek() {
+		LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+		LocalDate nextFriday = nextMonday.plusDays(4);
+		return convertToDate(nextFriday);
+	}
+
+	public static Date convertToDate(LocalDate localDate) {
+		LocalDateTime localDateTime = localDate.atStartOfDay();
+		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+	}
+
+	public static Date convertStringToDate(String dateString, String format) {
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		try {
+			return formatter.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null; // 或抛出自定义异常
+		}
+	}
+
+	public static Date getDateWithoutTime(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
+	}
+
+	public static String convertDateToString(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+		return formatter.format(date);
+	}
+
+}
