@@ -13,4 +13,5 @@ public class ReportInfo {
 	private int minRowCount;
 	private int dataRowCount;
 	private int colCount;
+	private List<ExcelCell> cellList;
 }

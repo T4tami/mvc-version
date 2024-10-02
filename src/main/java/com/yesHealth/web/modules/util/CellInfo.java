@@ -9,6 +9,5 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class CellInfo extends ExcelCell {
 	private String value;
-	private int colIndex;
 	private String cell;
 }

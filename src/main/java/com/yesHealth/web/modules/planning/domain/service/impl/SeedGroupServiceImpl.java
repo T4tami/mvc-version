@@ -1,12 +1,6 @@
 package com.yesHealth.web.modules.planning.domain.service.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -25,12 +19,13 @@ import com.yesHealth.web.modules.util.GenerateExcelUtil;
 import com.yesHealth.web.modules.util.MergeCell;
 import com.yesHealth.web.modules.util.CellInfo;
 import com.yesHealth.web.modules.util.CellStyleInfo;
+import com.yesHealth.web.modules.util.DateUtil;
 import com.yesHealth.web.modules.util.ExcelCell;
 import com.yesHealth.web.modules.util.ReportInfo;
 
 @Service
 public class SeedGroupServiceImpl implements SeedGroupService {
-	private static final String DATE_FORMAT = "yyyy-MM-dd";
+
 	private static final String NOT_IMPLEMENTEDSTATUS = "0";
 	private static final String IMPLEMENTEDSTATUS = "1";
 	private PlanRepository planRepository;
@@ -41,54 +36,32 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 	@Override
 	public Page<ProductSchedule> findBySeedingGroupForm(String startDateStr, String endDateStr, Pageable pageable) {
-		Date formateStartDate = startDateStr == null ? getStartOfNextWeek() : convertStringToDate(startDateStr);
-		Date formateEndDate = endDateStr == null ? getEndOfNextWeek() : convertStringToDate(endDateStr);
+		Date formateStartDate = startDateStr == null ? DateUtil.getStartOfNextWeek()
+				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
+		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
+				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
 		return planRepository.findBySeedingDateBetweenAndStatus(formateStartDate, formateEndDate, NOT_IMPLEMENTEDSTATUS,
 				pageable);
 	}
 
 	@Override
 	public Page<ProductSchedule> getWateringForm(String startDateStr, String endDateStr, Pageable pageable) {
-		Date formateStartDate = startDateStr == null ? getStartOfNextWeek() : convertStringToDate(startDateStr);
-		Date formateEndDate = endDateStr == null ? getEndOfNextWeek() : convertStringToDate(endDateStr);
+		Date formateStartDate = startDateStr == null ? DateUtil.getStartOfNextWeek()
+				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
+		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
+				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
 		return planRepository.findByWateringDateBetweenAndStatus(formateStartDate, formateEndDate,
 				NOT_IMPLEMENTEDSTATUS, pageable);
 	}
 
 	@Override
 	public Page<ProductSchedule> getHeadOutForm(String startDateStr, String endDateStr, Pageable pageable) {
-		Date formateStartDate = startDateStr == null ? getStartOfNextWeek() : convertStringToDate(startDateStr);
-		Date formateEndDate = endDateStr == null ? getEndOfNextWeek() : convertStringToDate(endDateStr);
+		Date formateStartDate = startDateStr == null ? DateUtil.getStartOfNextWeek()
+				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
+		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
+				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
 		return planRepository.findByHeadOutDateBetweenAndStatus(formateStartDate, formateEndDate, NOT_IMPLEMENTEDSTATUS,
 				pageable);
-	}
-
-	private Date getStartOfNextWeek() {
-		LocalDate today = LocalDate.now();
-		LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-		return convertToDate(nextMonday);
-	}
-
-	// 获取下周的最后一天（周五）
-	private Date getEndOfNextWeek() {
-		LocalDate nextMonday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-		LocalDate nextFriday = nextMonday.plusDays(4);
-		return convertToDate(nextFriday);
-	}
-
-	private Date convertToDate(LocalDate localDate) {
-		LocalDateTime localDateTime = localDate.atStartOfDay(); // 默认时间是 00:00:00
-		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-	}
-
-	private Date convertStringToDate(String dateString) {
-		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
-		try {
-			return formatter.parse(dateString);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null; // 或抛出自定义异常
-		}
 	}
 
 	@Override
@@ -138,28 +111,32 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 		// b3
 		CellInfo b3 = new CellInfo();
-		b3.setColIndex(1);
+//		b3.setColIndex(1);
+		b3.setCell("B3");
 		b3.setValue("日期:");
 		b3.setCellStyleInfo(CellStyleInfo.CENTER);
 		tableRowData.add(b3);
 
 		// c3
 		CellInfo c3 = new CellInfo();
-		c3.setColIndex(2);
+//		c3.setColIndex(2);
+		c3.setCell("C3");
 		c3.setValue(getTodayString());
 		c3.setCellStyleInfo(CellStyleInfo.LEFT);
 		tableRowData.add(c3);
 
 		// L3
 		CellInfo l3 = new CellInfo();
-		l3.setColIndex(11);
+//		l3.setColIndex(11);
+		l3.setCell("L3");
 		l3.setValue(getWeekDayString());
 		l3.setCellStyleInfo(CellStyleInfo.CENTER);
 		tableRowData.add(l3);
 
 		// k3
 		CellInfo o3 = new CellInfo();
-		o3.setColIndex(14);
+//		o3.setColIndex(14);
+		o3.setCell("O3");
 		o3.setValue("總盤數：" + calculateTotalBoardCount(psList) + "盤");
 		o3.setCellStyleInfo(CellStyleInfo.RIGHT);
 		tableRowData.add(o3);
@@ -173,7 +150,9 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 				"播數", "工時預估", "備註" };
 		for (int i = 0; i < tableHeader.length; i++) {
 			CellInfo thCell = new CellInfo();
-			thCell.setColIndex(i + 1);
+			int charIndex = 65;
+			char letter = (char) (charIndex + i);
+			thCell.setCell(letter + "4");
 			thCell.setValue(tableHeader[i]);
 
 			thCell.setCellStyleInfo(CellStyleInfo.TH_CENTER);
@@ -189,7 +168,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			tdRowInfo.setRowIndex(4 + i);
 
 			CellInfo bCol = new CellInfo();
-			bCol.setColIndex(i + 1);
+			bCol.setCell("B" + i);
 			String formatIndex = String.format("%03d", i + 1);
 			bCol.setValue(formatIndex);
 			bCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
@@ -197,79 +176,79 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 			ProductSchedule ps = psList.get(i);
 			CellInfo cCol = new CellInfo();
-			cCol.setColIndex(i + 2);
+			cCol.setCell("C" + i);
 			cCol.setValue(ps.getManuNo());
 			cCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(cCol);
 
 			CellInfo dCol = new CellInfo();
-			dCol.setColIndex(i + 3);
+			dCol.setCell("D" + i);
 			dCol.setValue(ps.getProduct().getSpecs());
 			dCol.setCellStyleInfo(CellStyleInfo.TD_LEFT);
 			tdList.add(dCol);
 
 			CellInfo eCol = new CellInfo();
-			eCol.setColIndex(i + 4);
+			eCol.setCell("E" + i);
 			eCol.setValue(ps.getSeedingBoardCount().toString());
 			eCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(eCol);
 
 			CellInfo fCol = new CellInfo();
-			fCol.setColIndex(i + 5);
+			fCol.setCell("F" + i);
 			fCol.setValue(Integer.toString(ps.getSeedingBoardCount() * 3));
 			fCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(fCol);
 
 			CellInfo gCol = new CellInfo();
-			gCol.setColIndex(i + 6);
+			gCol.setCell("G" + i);
 			gCol.setValue("");
 			gCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(gCol);
 
 			CellInfo hCol = new CellInfo();
-			hCol.setColIndex(i + 7);
+			hCol.setCell("H" + i);
 			hCol.setValue("");
 			hCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(hCol);
 
 			CellInfo iCol = new CellInfo();
-			iCol.setColIndex(i + 8);
+			iCol.setCell("I" + i);
 			iCol.setValue("");
 			iCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(iCol);
 
 			CellInfo jCol = new CellInfo();
-			jCol.setColIndex(i + 9);
+			jCol.setCell("J" + i);
 			jCol.setValue("");
 			jCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(jCol);
 
 			CellInfo kCol = new CellInfo();
-			kCol.setColIndex(i + 10);
+			kCol.setCell("K" + i);
 			kCol.setValue("");
 			kCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(kCol);
 
 			CellInfo lCol = new CellInfo();
-			lCol.setColIndex(i + 11);
+			lCol.setCell("L" + i);
 			lCol.setValue("");
 			lCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(lCol);
 
 			CellInfo mCol = new CellInfo();
-			mCol.setColIndex(i + 12);
+			mCol.setCell("M" + i);
 			mCol.setValue("");
 			mCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(mCol);
 
 			CellInfo nCol = new CellInfo();
-			nCol.setColIndex(i + 13);
+			nCol.setCell("N" + i);
 			nCol.setValue("");
 			nCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(nCol);
 
 			CellInfo oCol = new CellInfo();
-			oCol.setColIndex(i + 14);
+			oCol.setCell("O" + i);
 			oCol.setValue("");
 			oCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(oCol);
@@ -331,28 +310,28 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 		// b3
 		CellInfo b3 = new CellInfo();
-		b3.setColIndex(1);
+		b3.setCell("B3");
 		b3.setValue("日期:");
 		b3.setCellStyleInfo(CellStyleInfo.CENTER);
 		tableRowData.add(b3);
 
 		// c3
 		CellInfo c3 = new CellInfo();
-		c3.setColIndex(2);
+		c3.setCell("C3");
 		c3.setValue(getTodayString());
 		c3.setCellStyleInfo(CellStyleInfo.LEFT);
 		tableRowData.add(c3);
 
 		// j3
 		CellInfo j3 = new CellInfo();
-		j3.setColIndex(9);
+		j3.setCell("J3");
 		j3.setValue(getWeekDayString());
 		j3.setCellStyleInfo(CellStyleInfo.CENTER);
 		tableRowData.add(j3);
 
 		// k3
 		CellInfo k3 = new CellInfo();
-		k3.setColIndex(10);
+		k3.setCell("K3");
 		k3.setValue("總盤數：" + calculateTotalBoardCount(psList) + "盤");
 		k3.setCellStyleInfo(CellStyleInfo.RIGHT);
 		tableRowData.add(k3);
@@ -365,7 +344,9 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		String[] tableHeader = { "序", "工單號碼", "品名", "壓水盤數", "壓水人數", "壓水時間起", "壓水時間止", "暗房儲位", "暗移見日期", "備註" };
 		for (int i = 0; i < tableHeader.length; i++) {
 			CellInfo thCell = new CellInfo();
-			thCell.setColIndex(i + 1);
+			int charIndex = 65;
+			char letter = (char) (charIndex + i);
+			thCell.setCell(letter + "4");
 			thCell.setValue(tableHeader[i]);
 
 			thCell.setCellStyleInfo(CellStyleInfo.TH_CENTER);
@@ -381,7 +362,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			tdRowInfo.setRowIndex(4 + i);
 
 			CellInfo bCol = new CellInfo();
-			bCol.setColIndex(i + 1);
+			bCol.setCell("B" + i);
 			String formatIndex = String.format("%03d", i + 1);
 			bCol.setValue(formatIndex);
 			bCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
@@ -389,55 +370,55 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 			ProductSchedule ps = psList.get(i);
 			CellInfo cCol = new CellInfo();
-			cCol.setColIndex(i + 2);
+			cCol.setCell("C" + i);
 			cCol.setValue(ps.getManuNo());
 			cCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(cCol);
 
 			CellInfo dCol = new CellInfo();
-			dCol.setColIndex(i + 3);
+			dCol.setCell("D" + i);
 			dCol.setValue(ps.getProduct().getSpecs());
 			dCol.setCellStyleInfo(CellStyleInfo.TD_LEFT);
 			tdList.add(dCol);
 
 			CellInfo eCol = new CellInfo();
-			eCol.setColIndex(i + 4);
+			eCol.setCell("E" + i);
 			eCol.setValue(ps.getWateringBoardCount().toString());
 			eCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(eCol);
 
 			CellInfo fCol = new CellInfo();
-			fCol.setColIndex(i + 5);
+			fCol.setCell("F" + i);
 			fCol.setValue("");
 			fCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(fCol);
 
 			CellInfo gCol = new CellInfo();
-			gCol.setColIndex(i + 6);
+			gCol.setCell("G" + i);
 			gCol.setValue("");
 			gCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(gCol);
 
 			CellInfo hCol = new CellInfo();
-			hCol.setColIndex(i + 7);
+			hCol.setCell("H" + i);
 			hCol.setValue("");
 			hCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(hCol);
 
 			CellInfo iCol = new CellInfo();
-			iCol.setColIndex(i + 8);
+			iCol.setCell("I" + i);
 			iCol.setValue("");
 			iCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(iCol);
 
 			CellInfo jCol = new CellInfo();
-			jCol.setColIndex(i + 9);
+			jCol.setCell("J" + i);
 			jCol.setValue(convertHeadOutDate(ps.getHeadOutDate()));
 			jCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(jCol);
 
 			CellInfo kCol = new CellInfo();
-			kCol.setColIndex(i + 10);
+			kCol.setCell("K" + i);
 			kCol.setValue("");
 			kCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(kCol);

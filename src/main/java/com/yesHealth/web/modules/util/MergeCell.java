@@ -12,5 +12,7 @@ public class MergeCell extends ExcelCell {
 	private int endRowIndex;
 	private int startColIndex;
 	private int endColIndex;
+	private String startCell;
+	private String endCell;
 
 }
