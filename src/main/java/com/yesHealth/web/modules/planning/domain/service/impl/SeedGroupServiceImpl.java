@@ -81,9 +81,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		}
 		ReportInfo reportInfo = new ReportInfo();
 		reportInfo.setSheetName("播種日報表");
-		reportInfo.setMinRowCount(22);
-		reportInfo.setDataRowCount(psList.size());
-		reportInfo.setColCount(14);
 		List<ExcelCell> cellList = new ArrayList<>();
 		// =======================公司標題====================
 		MergeCell companyHeader = new MergeCell();
@@ -255,11 +252,8 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 		ReportInfo reportInfo = new ReportInfo();
 		reportInfo.setSheetName("壓水日報表");
-		reportInfo.setMinRowCount(22);
-		reportInfo.setDataRowCount(psList.size());
-		reportInfo.setColCount(10);
 		List<ExcelCell> cellList = new ArrayList<>();
-
+		int row = 0;
 		// =======================公司標題====================
 		MergeCell companyHeader = new MergeCell();
 		companyHeader.setStartCell("A1");
@@ -267,6 +261,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		companyHeader.setValue("菜好吃股份有限公司");
 		companyHeader.setCellStyleInfo(CellStyleInfo.HEADER);
 		cellList.add(companyHeader);
+		row++;
 		// =======================報表標題=====================
 		MergeCell reportHeader = new MergeCell();
 		reportHeader.setStartCell("A2");
@@ -274,6 +269,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		reportHeader.setValue("壓水日報表");
 		reportHeader.setCellStyleInfo(CellStyleInfo.HEADER);
 		cellList.add(reportHeader);
+		row++;
 		// ========================一般欄位====================
 
 		// b3
@@ -300,6 +296,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		k3.setValue("總盤數：" + calculateTotalBoardCount(psList) + "盤");
 		k3.setCellStyleInfo(CellStyleInfo.RIGHT);
 		cellList.addAll(Arrays.asList(b3, c3, j3, k3));
+		row++;
 
 		List<CellInfo> thList = new ArrayList<>();
 		String[] tableHeader = { "序", "工單號碼", "品名", "壓水盤數", "壓水人數", "壓水時間起", "壓水時間止", "暗房儲位", "暗移見日期", "備註" };
@@ -315,12 +312,13 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			thList.add(thCell);
 		}
 		cellList.addAll(thList);
+		row++;
 
 		List<CellInfo> tdList = new ArrayList<>();
 		for (int i = 0; i < psList.size(); i++) {
-
+			int relocationRow = i + row + 1;
 			CellInfo bCol = new CellInfo();
-			bCol.setCell("B" + i);
+			bCol.setCell("B" + relocationRow);
 			String formatIndex = String.format("%03d", i + 1);
 			bCol.setValue(formatIndex);
 			bCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
@@ -328,61 +326,62 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 			ProductSchedule ps = psList.get(i);
 			CellInfo cCol = new CellInfo();
-			cCol.setCell("C" + i);
+			cCol.setCell("C" + relocationRow);
 			cCol.setValue(ps.getManuNo());
 			cCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(cCol);
 
 			CellInfo dCol = new CellInfo();
-			dCol.setCell("D" + i);
+			dCol.setCell("D" + relocationRow);
 			dCol.setValue(ps.getProduct().getSpecs());
 			dCol.setCellStyleInfo(CellStyleInfo.TD_LEFT);
 			tdList.add(dCol);
 
 			CellInfo eCol = new CellInfo();
-			eCol.setCell("E" + i);
+			eCol.setCell("E" + relocationRow);
 			eCol.setValue(ps.getWateringBoardCount().toString());
 			eCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(eCol);
 
 			CellInfo fCol = new CellInfo();
-			fCol.setCell("F" + i);
+			fCol.setCell("F" + relocationRow);
 			fCol.setValue("");
 			fCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(fCol);
 
 			CellInfo gCol = new CellInfo();
-			gCol.setCell("G" + i);
+			gCol.setCell("G" + relocationRow);
 			gCol.setValue("");
 			gCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(gCol);
 
 			CellInfo hCol = new CellInfo();
-			hCol.setCell("H" + i);
+			hCol.setCell("H" + relocationRow);
 			hCol.setValue("");
 			hCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(hCol);
 
 			CellInfo iCol = new CellInfo();
-			iCol.setCell("I" + i);
+			iCol.setCell("I" + relocationRow);
 			iCol.setValue("");
 			iCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(iCol);
 
 			CellInfo jCol = new CellInfo();
-			jCol.setCell("J" + i);
+			jCol.setCell("J" + relocationRow);
 			jCol.setValue(convertHeadOutDate(ps.getHeadOutDate()));
 			jCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(jCol);
 
 			CellInfo kCol = new CellInfo();
-			kCol.setCell("K" + i);
+			kCol.setCell("K" + relocationRow);
 			kCol.setValue("");
 			kCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(kCol);
 
 		}
 		cellList.addAll(tdList);
+		cellList.addAll(fillBlankRow(psList.size(), "B", "K", row));
 		reportInfo.setCellList(cellList);
 
 		return GenerateExcelUtil.genDailyReport(reportInfo);

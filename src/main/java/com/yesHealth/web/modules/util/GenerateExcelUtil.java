@@ -57,24 +57,6 @@ public class GenerateExcelUtil {
 				CellInfo cellInfo = (CellInfo) excelCell;
 				cellInfoList.add(cellInfo);
 			}
-//			if (reportInfo.getDataRowCount() < reportInfo.getMinRowCount()) {
-//				int dataRowId = reportInfo.getDataRowCount();
-//				for (int i = rowList.size(); i <= reportInfo.getMinRowCount(); i++) {
-//					Row blankRow = sheet.createRow(i - 1);
-//					dataRowId++;
-//					for (int j = 1; j <= reportInfo.getColCount(); j++) {
-//						Cell blankCell = blankRow.createCell(j);
-//						String value = j == 1 ? String.format("%03d", dataRowId) : "";
-//						blankCell.setCellValue(value);
-//
-//						CellStyle blankStyle = workbook.createCellStyle();
-//						blankStyle.setAlignment(HorizontalAlignment.CENTER);
-//						blankStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-//						setBorders(blankStyle);
-//
-//					}
-//				}
-//			}
 		}
 
 		if (cellInfoList != null && cellInfoList.size() > 0) {
