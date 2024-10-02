@@ -134,4 +134,34 @@ public class SeedGroupController {
 		}
 		return null;
 	}
+
+	@GetMapping("download/headingOutDailyExcel")
+	public String downloadheadingOutDailyExcel(HttpServletResponse response, RedirectAttributes redirectAttributes) {
+
+		byte[] excelData = null;
+		try {
+			excelData = seedGroupService.downloadheadingOutExcel();
+		} catch (YhNoDataException e) {
+			redirectAttributes.addFlashAttribute("errorMessage", "下載失敗：" + e.getMessage());
+			return "redirect:/production/group-seed/tabs/watering";
+		}
+		String fileName = "暗移見日報表.xlsx";
+		try {
+			String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+					"attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			response.getOutputStream().write(excelData);
+			response.getOutputStream().flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

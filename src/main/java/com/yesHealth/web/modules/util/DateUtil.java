@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
-	private static final String DATE_FORMAT = "yyyy-MM-dd";
 
 	public static Date getStartOfNextWeek() {
 		LocalDate today = LocalDate.now();
@@ -50,8 +49,8 @@ public class DateUtil {
 		return calendar.getTime();
 	}
 
-	public static String convertDateToString(Date date) {
-		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+	public static String convertDateToString(Date date, String formate) {
+		SimpleDateFormat formatter = new SimpleDateFormat(formate);
 		return formatter.format(date);
 	}
 

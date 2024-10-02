@@ -11,11 +11,12 @@ public interface SeedGroupService {
 
 	public byte[] downloadSeedExcel() throws YhNoDataException;
 
-
 	public byte[] downloadWateringExcel() throws YhNoDataException;
 
 	public Page<ProductSchedule> getWateringForm(String startDate, String endDate, Pageable pageable);
 
 	public Page<ProductSchedule> getHeadOutForm(String startDate, String endDate, Pageable pageable);
+
+	public byte[] downloadheadingOutExcel() throws YhNoDataException;
 
 }

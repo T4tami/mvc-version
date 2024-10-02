@@ -369,7 +369,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 			CellInfo jCol = new CellInfo();
 			jCol.setCell("J" + relocationRow);
-			jCol.setValue(convertHeadOutDate(ps.getHeadOutDate()));
+			jCol.setValue(DateUtil.convertDateToString(ps.getHeadOutDate(), "MM/dd"));
 			jCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(jCol);
 
@@ -382,6 +382,177 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		}
 		cellList.addAll(tdList);
 		cellList.addAll(fillBlankRow(psList.size(), "B", "K", row));
+		reportInfo.setCellList(cellList);
+
+		return GenerateExcelUtil.genDailyReport(reportInfo);
+	}
+
+	@Override
+	public byte[] downloadheadingOutExcel() throws YhNoDataException {
+		List<ProductSchedule> psList = planRepository.findByHeadOutDateBetweenAndStatus(getStartOfDay(), getEndOfDay(),
+				IMPLEMENTEDSTATUS);
+
+		if (psList == null || psList.isEmpty()) {
+			throw new YhNoDataException("無當日暗移見計畫");
+		}
+
+		ReportInfo reportInfo = new ReportInfo();
+		reportInfo.setSheetName("暗移見苗日報表");
+		List<ExcelCell> cellList = new ArrayList<>();
+		int row = 0;
+		// =======================公司標題====================
+		MergeCell companyHeader = new MergeCell();
+		companyHeader.setStartCell("B1");
+		companyHeader.setEndCell("O1");
+		companyHeader.setValue("菜好吃股份有限公司");
+		companyHeader.setCellStyleInfo(CellStyleInfo.HEADER);
+		cellList.add(companyHeader);
+		row++;
+		// =======================報表標題=====================
+		MergeCell reportHeader = new MergeCell();
+		reportHeader.setStartCell("B2");
+		reportHeader.setEndCell("O2");
+		reportHeader.setValue("暗移見苗日報表");
+		reportHeader.setCellStyleInfo(CellStyleInfo.HEADER);
+		cellList.add(reportHeader);
+		row++;
+		// ========================一般欄位====================
+
+		// b3
+		CellInfo b3 = new CellInfo();
+		b3.setCell("B3");
+		b3.setValue("日期:");
+		b3.setCellStyleInfo(CellStyleInfo.CENTER);
+
+		// c3
+		CellInfo c3 = new CellInfo();
+		c3.setCell("C3");
+		c3.setValue(getTodayString());
+		c3.setCellStyleInfo(CellStyleInfo.LEFT);
+
+		// N3
+		CellInfo n3 = new CellInfo();
+		n3.setCell("N3");
+		n3.setValue(getWeekDayString());
+		n3.setCellStyleInfo(CellStyleInfo.CENTER);
+
+		// k3
+		CellInfo o3 = new CellInfo();
+		o3.setCell("O3");
+		o3.setValue("總盤數：" + calculateTotalBoardCount(psList) + "盤");
+		o3.setCellStyleInfo(CellStyleInfo.RIGHT);
+		cellList.addAll(Arrays.asList(b3, c3, n3, o3));
+		row++;
+
+		List<CellInfo> thList = new ArrayList<>();
+		String[] tableHeader = { "序", "工單號碼", "品名", "計畫盤數", "計畫儲位", "實際盤數", "實際儲位", "開燈確認", "水道無水確認", "實際人數", "實際時間起",
+				"實際時間止", "育苗日期", "備註" };
+		for (int i = 0; i < tableHeader.length; i++) {
+			CellInfo thCell = new CellInfo();
+			int charIndex = 66;
+			char letter = (char) (charIndex + i);
+			thCell.setCell(letter + "4");
+			thCell.setValue(tableHeader[i]);
+
+			thCell.setCellStyleInfo(CellStyleInfo.TH_CENTER);
+
+			thList.add(thCell);
+		}
+		cellList.addAll(thList);
+		row++;
+
+		List<CellInfo> tdList = new ArrayList<>();
+		for (int i = 0; i < psList.size(); i++) {
+			int relocationRow = i + row + 1;
+			CellInfo bCol = new CellInfo();
+			bCol.setCell("B" + relocationRow);
+			String formatIndex = String.format("%03d", i + 1);
+			bCol.setValue(formatIndex);
+			bCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(bCol);
+
+			ProductSchedule ps = psList.get(i);
+			CellInfo cCol = new CellInfo();
+			cCol.setCell("C" + relocationRow);
+			cCol.setValue(ps.getManuNo());
+			cCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(cCol);
+
+			CellInfo dCol = new CellInfo();
+			dCol.setCell("D" + relocationRow);
+			dCol.setValue(ps.getProduct().getSpecs());
+			dCol.setCellStyleInfo(CellStyleInfo.TD_LEFT);
+			tdList.add(dCol);
+
+			CellInfo eCol = new CellInfo();
+			eCol.setCell("E" + relocationRow);
+			eCol.setValue(ps.getHeadOutBoardCount().toString());
+			eCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(eCol);
+
+			CellInfo fCol = new CellInfo();
+			fCol.setCell("F" + relocationRow);
+			fCol.setValue("");
+			fCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(fCol);
+
+			CellInfo gCol = new CellInfo();
+			gCol.setCell("G" + relocationRow);
+			gCol.setValue("");
+			gCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(gCol);
+
+			CellInfo hCol = new CellInfo();
+			hCol.setCell("H" + relocationRow);
+			hCol.setValue("");
+			hCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(hCol);
+
+			CellInfo iCol = new CellInfo();
+			iCol.setCell("I" + relocationRow);
+			iCol.setValue("");
+			iCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(iCol);
+
+			CellInfo jCol = new CellInfo();
+			jCol.setCell("J" + relocationRow);
+			jCol.setValue("");
+			jCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(jCol);
+
+			CellInfo kCol = new CellInfo();
+			kCol.setCell("K" + relocationRow);
+			kCol.setValue("");
+			kCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(kCol);
+
+			CellInfo lCol = new CellInfo();
+			lCol.setCell("L" + relocationRow);
+			lCol.setValue("");
+			lCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(lCol);
+
+			CellInfo mCol = new CellInfo();
+			mCol.setCell("M" + relocationRow);
+			mCol.setValue("");
+			mCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(mCol);
+
+			CellInfo nCol = new CellInfo();
+			nCol.setCell("N" + relocationRow);
+			nCol.setValue(DateUtil.convertDateToString(ps.getGrowingDate(), "MM/dd"));
+			nCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(nCol);
+
+			CellInfo oCol = new CellInfo();
+			oCol.setCell("O" + relocationRow);
+			oCol.setValue("");
+			oCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+			tdList.add(oCol);
+
+		}
+		cellList.addAll(tdList);
+		cellList.addAll(fillBlankRow(psList.size(), "B", "O", row));
 		reportInfo.setCellList(cellList);
 
 		return GenerateExcelUtil.genDailyReport(reportInfo);
@@ -430,11 +601,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		return calendar.getTime();
 	}
 
-	private String convertHeadOutDate(Date date) {
-		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd");
-		return formatter.format(date);
-	}
-
 	private List<? extends ExcelCell> fillBlankRow(int dataSize, String startCol, String endCol, int skipRow) {
 		List<CellInfo> cellInfoList = new ArrayList<>();
 		int startColIndex = GenerateExcelUtil.convertToColIndex(startCol, Boolean.FALSE);
@@ -444,8 +610,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 				CellInfo cellInfo = new CellInfo();
 				char col = (char) ('A' + j);
 				cellInfo.setCell(col + Integer.toString(i + skipRow + 1));
-				log.info(cellInfo.getCell());
-
 				cellInfo.setValue(col == 'B' ? String.format("%03d", i + 1) : "");
 				cellInfo.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 				cellInfoList.add(cellInfo);
@@ -453,4 +617,5 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		}
 		return cellInfoList;
 	}
+
 }
