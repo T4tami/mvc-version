@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
+import com.yesHealth.web.modules.util.entity.FileUploadRecords;
 
 import lombok.Data;
 
@@ -37,5 +38,8 @@ public class SeedReport {
 	private Integer countPerHole;
 	private Double estWorkTime;
 	private String Remark;
-
+	private String srcType;
+	@ManyToOne
+	@JoinColumn(name = "fur_id")
+	private FileUploadRecords fileUploadRecords;
 }
