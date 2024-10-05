@@ -1,6 +1,7 @@
 package com.yesHealth.web.modules.planning.domain.service.impl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -10,13 +11,18 @@ import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.yesHealth.web.global.security.model.CustomUserDetails;
 import com.yesHealth.web.modules.planning.domain.exception.YhNoDataException;
 import com.yesHealth.web.modules.planning.domain.respository.PlanRepository;
 import com.yesHealth.web.modules.planning.domain.service.SeedGroupService;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
+import com.yesHealth.web.modules.user.entity.UserEntity;
+import com.yesHealth.web.modules.user.repository.UserRepository;
 import com.yesHealth.web.modules.util.GenerateExcelUtil;
 import com.yesHealth.web.modules.util.MergeCell;
 import com.yesHealth.web.modules.util.CellInfo;
@@ -26,6 +32,7 @@ import com.yesHealth.web.modules.util.ExcelCell;
 import com.yesHealth.web.modules.util.ReportInfo;
 import com.yesHealth.web.modules.util.UploadFileUtil;
 import com.yesHealth.web.modules.util.entity.FileUploadRecords;
+import com.yesHealth.web.modules.util.entity.FileUploadStatus;
 import com.yesHealth.web.modules.util.exception.UplaodFileException;
 import com.yesHealth.web.modules.util.repository.FileUploadRecordsRepository;
 
@@ -37,11 +44,13 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 	private static final int MinDataRowCount = 18;
 	private PlanRepository planRepository;
 	private FileUploadRecordsRepository fileUploadRecordsRepository;
+	private UserRepository userRepository;
 
-	public SeedGroupServiceImpl(PlanRepository planRepository,
-			FileUploadRecordsRepository fileUploadRecordsRepository) {
+	public SeedGroupServiceImpl(PlanRepository planRepository, FileUploadRecordsRepository fileUploadRecordsRepository,
+			UserRepository userRepository) {
 		this.planRepository = planRepository;
 		this.fileUploadRecordsRepository = fileUploadRecordsRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -562,6 +571,14 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 	@Override
 	public void upload(MultipartFile uploadFile, String type) throws UplaodFileException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		CustomUserDetails customUserDetails = null;
+		if (auth.getPrincipal() instanceof CustomUserDetails) {
+			customUserDetails = (CustomUserDetails) auth.getPrincipal();
+		}
+
+		UserEntity user = userRepository.findByUsername(customUserDetails.getUsername());
 
 		File diskFile = UploadFileUtil.saveToTmpDisk(uploadFile);
 
@@ -570,12 +587,37 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		if (expectedHeader.length > 0 && expectedHeader != null) {
 			dataList = UploadFileUtil.readExcelFile(diskFile, expectedHeader);
 		}
-		validateContent();
+		String errMsg = validateContent();
 		saveData(dataList, type);
-		FileUploadRecords fileUploadRecords = FileUploadRecords.builder().createTime(null)
-				.description(type).errorMessage(type).fileName(type).fileSize(null).fileType(type).uploadedBy(null)
-				.build();
-		fileUploadRecordsRepository.save(fileUploadRecords);
+		try {
+			File file = UploadFileUtil.saveToDisk(diskFile);
+			FileUploadRecords fileUploadRecords = FileUploadRecords.builder().createTime(new Date())
+					.description(getType(type)).errorMessage(errMsg != null ? errMsg : null).fileName(file.getName())
+					.fileSize(file.length()).fileType("applicatoin/excel").status(FileUploadStatus.UPLOAD)
+					.uploadedBy(user).build();
+			fileUploadRecordsRepository.save(fileUploadRecords);
+		} catch (FileNotFoundException | UplaodFileException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String getType(String type) throws UplaodFileException {
+		String desc = "";
+		switch (type) {
+		case "seeding":
+			desc = "播種日報表";
+			break;
+		case "watering":
+			desc = "壓水日報表";
+			break;
+		case "headOut":
+			desc = "見苗日報表";
+			break;
+		}
+		if (desc.isEmpty()) {
+			throw new UplaodFileException("日報表種類不符合");
+		}
+		return desc;
 	}
 
 	private void saveData(List<?> dataList, String type) {
@@ -583,7 +625,8 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 	}
 
-	private void validateContent() {
+	private String validateContent() {
+		return null;
 		// TODO Auto-generated method stub
 
 	}

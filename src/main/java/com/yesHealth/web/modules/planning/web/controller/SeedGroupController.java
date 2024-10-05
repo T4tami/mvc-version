@@ -38,8 +38,13 @@ public class SeedGroupController {
 	}
 
 	@GetMapping("/group-seed")
-	public String getIndexTab() {
-		return "redirect:/production/group-seed/tabs/seeding";
+	public String getIndexTab(Model model, @RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String startDate,
+			@RequestParam(required = false) String endDate) {
+		model.addAttribute("startDate", startDate != null ? startDate : "");
+		model.addAttribute("endDate", endDate != null ? endDate : "");
+		model.addAttribute("size", size != null ? size : "");
+		return "redirect:/production/group-seed/tabs/seeding?startDate=" + startDate + "&endDate=" + endDate;
 	}
 
 	@GetMapping("group-seed/tabs/seeding")

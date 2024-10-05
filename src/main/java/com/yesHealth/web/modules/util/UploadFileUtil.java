@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -30,18 +32,47 @@ public class UploadFileUtil {
 		if (uploadFile.getSize() == 0) {
 			throw new UplaodFileException("請確認上傳檔案，檔案不可為空");
 		}
-		File directory = new File(UPLOAD_TMP_DIR);
+		File tmpDirectory = new File(UPLOAD_TMP_DIR);
+		if (!tmpDirectory.exists()) {
+			tmpDirectory.mkdirs(); // 創建目錄
+		}
+		String originalFileName = uploadFile.getOriginalFilename();
+		String extension = "";
+
+		if (originalFileName != null && originalFileName.lastIndexOf(".") > 0) {
+			extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+			originalFileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
+		}
+		Date date = new Date();
+		String newFileName = originalFileName + "_" + date.getTime() + extension;
+		File tmpFile = new File(tmpDirectory, newFileName);
+		try {
+			uploadFile.transferTo(tmpFile);
+		} catch (IllegalStateException | IOException e) {
+			log.error("username :" + "upload falied" + ",filename=" + newFileName);
+			e.printStackTrace();
+		}
+		return tmpFile;
+	}
+
+	public static File saveToDisk(File file) throws UplaodFileException, FileNotFoundException {
+		if (!file.exists()) {
+			throw new FileNotFoundException("查無此檔案");
+		}
+		if (file.length() == 0) {
+			throw new IllegalArgumentException("File is empty.");
+		}
+		File directory = new File(UPLOAD_DIR);
 		if (!directory.exists()) {
 			directory.mkdirs(); // 創建目錄
 		}
-		Date date = new Date();
-		String formatFileName = uploadFile.getOriginalFilename() + "_" + date.getTime();
-		File destinationFile = new File(directory, formatFileName);
+
+		File destinationFile = new File(directory, file.getName());
 		try {
-			uploadFile.transferTo(destinationFile);
-		} catch (IllegalStateException | IOException e) {
-			log.error("username :" + "upload falied" + ",filename=" + formatFileName);
-			e.printStackTrace();
+			Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			log.error("username: upload failed, filename=" + file.getName());
+			throw new UplaodFileException("文件上傳失敗", e);
 		}
 		return destinationFile;
 	}
