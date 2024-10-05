@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>種苗組管理</title>
+	<title>計劃排程</title>
 	<link rel="stylesheet" href="/css/style.css">
 	<link rel="stylesheet" type="text/css" th:href="@{/static/css/index.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/static/css/header.css}">
@@ -71,10 +71,10 @@
 						<li class="nav-item" role="presentation"><a class="nav-link" id="seeding-report-tab"
 								data-bs-toggle="tab" href="/production/group-seed/tabs/seeding" role="tab"
 								aria-controls="seeding-report" aria-selected="true">播種報表</a></li>
-						<li class="nav-item " role="presentation"><a class="nav-link active" id="watering-report-tab"
+						<li class="nav-item active" role="presentation"><a class="nav-link" id="watering-report-tab"
 								data-bs-toggle="tab" href="/production/group-seed/tabs/watering" role="tab"
 								aria-controls="watering-report" aria-selected="false">壓水報表</a></li>
-						<li class="nav-item" role="presentation"><a class="nav-link" id="dark-move-report-tab"
+						<li class="nav-item" role="presentation"><a class="nav-link active" id="dark-move-report-tab"
 								data-bs-toggle="tab" href="/production/group-seed/tabs/head-out" role="tab"
 								aria-controls="head-out-report" aria-selected="false">暗移見報表</a>
 						</li>
@@ -82,24 +82,24 @@
 
 					<div class="tab-content" id="myTabContent">
 
-						<div class="tab-pane fade show active" id="watering-report" role="tabpanel"
-							aria-labelledby="watering-report-tab">
-							<!-- 壓水報表內容 -->
+						<div class="tab-pane fade show active" id="dark-move-report" role="tabpanel"
+							aria-labelledby="dark-move-report-tab">
+							<!-- 暗移見報表內容 -->
 							<main class="container flex-column w-100">
 								<div th:if="${errorMessage != null}" class="alert alert-danger" role="alert">
 									<ul class="mb-0">
 										<li class="list-unstyled" th:text="${errorMessage}"></li>
 									</ul>
 								</div>
-								<form method="get" action="/production/group-seed/tabs/watering"
+								<form method="get" action="/production/group-seed"
 									class="container justify-content-end ">
 									<div class="date-filter d-flex">
 										<div class="d-flex flex-column">
-											<label for="startDate">壓水開始日期:</label> <input type="date" id="startDate"
+											<label for="startDate">見苗開始日期:</label> <input type="date" id="startDate"
 												name="startDate" th:value="${startDate}">
 										</div>
 										<div class="d-flex flex-column">
-											<label for="endDate">壓水結束日期:</label> <input type="date" id="endDate"
+											<label for="endDate">見苗結束日期:</label> <input type="date" id="endDate"
 												name="endDate" th:value="${endDate}">
 										</div>
 									</div>
@@ -115,24 +115,24 @@
 								<div class="d-flex justify-content-end">
 									<div class="d-flex mt-2 mb-2 pb-1 border border-secondary rounded">
 										<div>
-											<form method="get" action="/production/download/wateringDailyExcel"
+											<form method="get" action="/production/download/headingOutDailyExcel"
 												class="container justify-content-end mt-1 mb-1">
 												<button type="submit" class="btn btn-outline-secondary"
 													style="border: none; background: transparent; padding: 0;">
 													<img th:src="@{/static/images/file_download.png}" alt="下載"
-														title="下載壓水日報表" style="width: 30px; height: 30px;" />
+														title="下載暗移見日報表" style="width: 30px; height: 30px;" />
 												</button>
 											</form>
 										</div>
 										<div class="border-start border-secondary">
 											<!-- 上傳按鈕 -->
-											<form method="post" action="/production/upload/dailyReport/watering"
+											<form method="post" action="/production/upload/dailyReport/headOut"
 												enctype="multipart/form-data"
 												class="container justify-content-end mt-1 mb-1">
 												<label class="btn btn-outline-secondary"
 													style="cursor: pointer; border: none; background: transparent; padding: 0;">
 													<img th:src="@{/static/images/file_upload.png}" alt="上傳"
-														title="上傳壓水日報表" style="width: 30px; height: 30px;" /> <input
+														title="上傳暗移見日報表" style="width: 30px; height: 30px;" /> <input
 														type="file" name="uploadFile" style="display: none;" />
 												</label> <input type="submit" class="btn btn-outline-secondary btn-sm"
 													value="上傳" />
@@ -146,31 +146,30 @@
 											<tr>
 												<th>工單號</th>
 												<th>品項</th>
-												<th>壓水盤數</th>
-												<th>壓水日</th>
+												<th>見苗盤數</th>
+												<th>見苗日</th>
 											</tr>
 										</thead>
 										<tbody>
 											<tr th:each="plan : ${plans.content}">
 												<td th:text="${plan.manuNo}"></td>
 												<td th:text="${plan.product.specs}"></td>
-												<td th:text="${plan.wateringBoardCount}"></td>
-												<td th:text="${#dates.format(plan.wateringDate, 'yyyy-MM-dd')}"></td>
+												<td th:text="${plan.headOutBoardCount}"></td>
+												<td th:text="${#dates.format(plan.headOutDate, 'yyyy-MM-dd')}"></td>
 											</tr>
 										</tbody>
 									</table>
 								</div>
 								<div class="pagination">
 									<span th:if="${plans.hasPrevious()}"> <a
-											th:href="@{/production/group-seed/tabs/watering(page=${plans.number - 1}, size=${size}, startDate=${startDate}, endDate=${endDate})}">上一頁</a>
+											th:href="@{/production/group-seed/head-out(page=${plans.number - 1}, size=${size}, startDate=${startDate}, endDate=${endDate})}">上一頁</a>
 									</span> <span th:if="${plans.hasNext()}"> <a
-											th:href="@{/production/group-seed/tabs/watering(page=${plans.number + 1}, size=${size}, startDate=${startDate}, endDate=${endDate})}">下一頁</a>
+											th:href="@{/production/group-seed/head-out(page=${plans.number + 1}, size=${size}, startDate=${startDate}, endDate=${endDate})}">下一頁</a>
 									</span>
 								</div>
 							</main>
-							<!-- 這裡放入壓水報表的內容 -->
+							<!-- 這裡放入暗移見報表的內容 -->
 						</div>
-
 					</div>
 				</div>
 			</div>

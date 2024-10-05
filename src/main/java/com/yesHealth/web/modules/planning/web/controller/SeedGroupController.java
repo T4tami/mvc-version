@@ -73,7 +73,7 @@ public class SeedGroupController {
 		return "module/production/group-seed/watering-tab";
 	}
 
-	@GetMapping("group-seed/tabs/darkroom-moving-out")
+	@GetMapping("group-seed/tabs/head-out")
 	public String getDarkMovingOutTab(Model model, @RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String startDate,
 			@RequestParam(required = false) String endDate) {
@@ -83,7 +83,7 @@ public class SeedGroupController {
 		model.addAttribute("startDate", startDate != null ? startDate : "");
 		model.addAttribute("endDate", endDate != null ? endDate : "");
 		model.addAttribute("size", size != null ? size : "");
-		return "module/production/group-seed/darkroom-moving-out-tab";
+		return "module/production/group-seed/head-out-tab";
 	}
 
 	@GetMapping("download/seedDailyExcel")
