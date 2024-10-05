@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.planning.domain.exception;
+package com.yesHealth.web.modules.production.domain.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

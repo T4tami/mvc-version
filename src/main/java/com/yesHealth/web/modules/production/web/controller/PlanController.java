@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.planning.web.controller;
+package com.yesHealth.web.modules.production.web.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.yesHealth.web.modules.planning.domain.service.PlanService;
-import com.yesHealth.web.modules.planning.domain.service.StockService;
-import com.yesHealth.web.modules.planning.web.views.CreatePlansForm;
-import com.yesHealth.web.modules.planning.web.views.EditPlanForm;
 import com.yesHealth.web.modules.product.domain.entity.Product;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.product.domain.entity.Stock;
 import com.yesHealth.web.modules.product.domain.service.ProductService;
+import com.yesHealth.web.modules.production.domain.service.PlanService;
+import com.yesHealth.web.modules.production.domain.service.StockService;
+import com.yesHealth.web.modules.production.web.views.CreatePlansForm;
+import com.yesHealth.web.modules.production.web.views.EditPlanForm;
 
 @Controller
 @RequestMapping("/production")

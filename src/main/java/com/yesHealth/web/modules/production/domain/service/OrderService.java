@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.planning.domain.service;
+package com.yesHealth.web.modules.production.domain.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
-import com.yesHealth.web.modules.planning.domain.respository.PlanRepository;
+import com.yesHealth.web.modules.production.domain.respository.PlanRepository;
 
 @Service
 public class OrderService {

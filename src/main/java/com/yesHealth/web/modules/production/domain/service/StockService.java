@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.planning.domain.service;
+package com.yesHealth.web.modules.production.domain.service;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.planning.web.views;
+package com.yesHealth.web.modules.production.web.views;
 
 import javax.validation.constraints.NotNull;
 

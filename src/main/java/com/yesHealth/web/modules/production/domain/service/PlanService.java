@@ -1,13 +1,13 @@
-package com.yesHealth.web.modules.planning.domain.service;
+package com.yesHealth.web.modules.production.domain.service;
 
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.yesHealth.web.modules.planning.web.views.CreatePlansForm;
-import com.yesHealth.web.modules.planning.web.views.EditPlanForm;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
+import com.yesHealth.web.modules.production.web.views.CreatePlansForm;
+import com.yesHealth.web.modules.production.web.views.EditPlanForm;
 
 public interface PlanService {
 	public Page<ProductSchedule> findAll(Pageable pageable);
