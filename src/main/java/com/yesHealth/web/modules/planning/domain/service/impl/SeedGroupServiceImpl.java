@@ -1,9 +1,8 @@
 package com.yesHealth.web.modules.planning.domain.service.impl;
 
-import java.text.SimpleDateFormat;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +11,7 @@ import java.util.stream.IntStream;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yesHealth.web.modules.planning.domain.exception.YhNoDataException;
 import com.yesHealth.web.modules.planning.domain.respository.PlanRepository;
@@ -24,20 +24,24 @@ import com.yesHealth.web.modules.util.CellStyleInfo;
 import com.yesHealth.web.modules.util.DateUtil;
 import com.yesHealth.web.modules.util.ExcelCell;
 import com.yesHealth.web.modules.util.ReportInfo;
-
-import lombok.extern.slf4j.Slf4j;
+import com.yesHealth.web.modules.util.UploadFileUtil;
+import com.yesHealth.web.modules.util.entity.FileUploadRecords;
+import com.yesHealth.web.modules.util.exception.UplaodFileException;
+import com.yesHealth.web.modules.util.repository.FileUploadRecordsRepository;
 
 @Service
-@Slf4j
 public class SeedGroupServiceImpl implements SeedGroupService {
 
 	private static final String NOT_IMPLEMENTEDSTATUS = "0";
 	private static final String IMPLEMENTEDSTATUS = "1";
 	private static final int MinDataRowCount = 18;
 	private PlanRepository planRepository;
+	private FileUploadRecordsRepository fileUploadRecordsRepository;
 
-	public SeedGroupServiceImpl(PlanRepository planRepository) {
+	public SeedGroupServiceImpl(PlanRepository planRepository,
+			FileUploadRecordsRepository fileUploadRecordsRepository) {
 		this.planRepository = planRepository;
+		this.fileUploadRecordsRepository = fileUploadRecordsRepository;
 	}
 
 	@Override
@@ -73,8 +77,8 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 	@Override
 	public byte[] downloadSeedExcel() throws YhNoDataException {
 
-		List<ProductSchedule> psList = planRepository.findBySeedingDateBetweenAndStatus(getStartOfDay(), getEndOfDay(),
-				NOT_IMPLEMENTEDSTATUS);
+		List<ProductSchedule> psList = planRepository.findBySeedingDateBetweenAndStatus(DateUtil.getStartOfDay(),
+				DateUtil.getEndOfDay(), NOT_IMPLEMENTEDSTATUS);
 		int row = 0;
 		if (psList == null || psList.isEmpty()) {
 			throw new YhNoDataException("無當日播種計畫");
@@ -110,14 +114,14 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		CellInfo c3 = new CellInfo();
 //		c3.setColIndex(2);
 		c3.setCell("C3");
-		c3.setValue(getTodayString());
+		c3.setValue(DateUtil.convertDateToString(new Date(), "yyyy年MM月dd日"));
 		c3.setCellStyleInfo(CellStyleInfo.LEFT);
 
 		// L3
 		CellInfo l3 = new CellInfo();
 //		l3.setColIndex(11);
 		l3.setCell("L3");
-		l3.setValue(getWeekDayString());
+		l3.setValue(DateUtil.getWeekDayString());
 		l3.setCellStyleInfo(CellStyleInfo.CENTER);
 
 		// k3
@@ -129,8 +133,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		cellList.addAll(Arrays.asList(b3, c3, l3, o3));
 		row++;
 
-		String[] tableHeader = { "序", "工單號碼", "品名", "播種盤數", "播種片數", "播種日期", "播種人數", "播種時間起", "壓水時間止", "使用前克數", "使用後克數",
-				"播數", "工時預估", "備註" };
+		String[] tableHeader = getHeader("seeding");
 
 		List<CellInfo> thList = IntStream.range(0, tableHeader.length).mapToObj(i -> {
 			CellInfo thCell = new CellInfo();
@@ -243,8 +246,8 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 	@Override
 	public byte[] downloadWateringExcel() throws YhNoDataException {
 
-		List<ProductSchedule> psList = planRepository.findByWateringDateBetweenAndStatus(getStartOfDay(), getEndOfDay(),
-				IMPLEMENTEDSTATUS);
+		List<ProductSchedule> psList = planRepository.findByWateringDateBetweenAndStatus(DateUtil.getStartOfDay(),
+				DateUtil.getEndOfDay(), IMPLEMENTEDSTATUS);
 
 		if (psList == null || psList.isEmpty()) {
 			throw new YhNoDataException("無當日壓水計畫");
@@ -281,13 +284,13 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		// c3
 		CellInfo c3 = new CellInfo();
 		c3.setCell("C3");
-		c3.setValue(getTodayString());
+		c3.setValue(DateUtil.convertDateToString(new Date(), "yyyy年MM月dd日"));
 		c3.setCellStyleInfo(CellStyleInfo.LEFT);
 
 		// j3
 		CellInfo j3 = new CellInfo();
 		j3.setCell("J3");
-		j3.setValue(getWeekDayString());
+		j3.setValue(DateUtil.getWeekDayString());
 		j3.setCellStyleInfo(CellStyleInfo.CENTER);
 
 		// k3
@@ -299,7 +302,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		row++;
 
 		List<CellInfo> thList = new ArrayList<>();
-		String[] tableHeader = { "序", "工單號碼", "品名", "壓水盤數", "壓水人數", "壓水時間起", "壓水時間止", "暗房儲位", "暗移見日期", "備註" };
+		String[] tableHeader = getHeader("watering");
 		for (int i = 0; i < tableHeader.length; i++) {
 			CellInfo thCell = new CellInfo();
 			int charIndex = 66;
@@ -389,8 +392,8 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 	@Override
 	public byte[] downloadheadingOutExcel() throws YhNoDataException {
-		List<ProductSchedule> psList = planRepository.findByHeadOutDateBetweenAndStatus(getStartOfDay(), getEndOfDay(),
-				IMPLEMENTEDSTATUS);
+		List<ProductSchedule> psList = planRepository.findByHeadOutDateBetweenAndStatus(DateUtil.getStartOfDay(),
+				DateUtil.getEndOfDay(), IMPLEMENTEDSTATUS);
 
 		if (psList == null || psList.isEmpty()) {
 			throw new YhNoDataException("無當日暗移見計畫");
@@ -427,13 +430,13 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		// c3
 		CellInfo c3 = new CellInfo();
 		c3.setCell("C3");
-		c3.setValue(getTodayString());
+		c3.setValue(DateUtil.convertDateToString(new Date(), "yyyy年MM月dd日"));
 		c3.setCellStyleInfo(CellStyleInfo.LEFT);
 
 		// N3
 		CellInfo n3 = new CellInfo();
 		n3.setCell("N3");
-		n3.setValue(getWeekDayString());
+		n3.setValue(DateUtil.getWeekDayString());
 		n3.setCellStyleInfo(CellStyleInfo.CENTER);
 
 		// k3
@@ -445,8 +448,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		row++;
 
 		List<CellInfo> thList = new ArrayList<>();
-		String[] tableHeader = { "序", "工單號碼", "品名", "計畫盤數", "計畫儲位", "實際盤數", "實際儲位", "開燈確認", "水道無水確認", "實際人數", "實際時間起",
-				"實際時間止", "育苗日期", "備註" };
+		String[] tableHeader = getHeader("headOut");
 		for (int i = 0; i < tableHeader.length; i++) {
 			CellInfo thCell = new CellInfo();
 			int charIndex = 66;
@@ -558,6 +560,53 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		return GenerateExcelUtil.genDailyReport(reportInfo);
 	}
 
+	@Override
+	public void upload(MultipartFile uploadFile, String type) throws UplaodFileException {
+
+		File diskFile = UploadFileUtil.saveToTmpDisk(uploadFile);
+
+		String[] expectedHeader = getHeader(type);
+		List<?> dataList = null;
+		if (expectedHeader.length > 0 && expectedHeader != null) {
+			dataList = UploadFileUtil.readExcelFile(diskFile, expectedHeader);
+		}
+		validateContent();
+		saveData(dataList, type);
+		FileUploadRecords fileUploadRecords = FileUploadRecords.builder().createTime(null)
+				.description(type).errorMessage(type).fileName(type).fileSize(null).fileType(type).uploadedBy(null)
+				.build();
+		fileUploadRecordsRepository.save(fileUploadRecords);
+	}
+
+	private void saveData(List<?> dataList, String type) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void validateContent() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private String[] getHeader(String type) {
+		String[] expectedHeader = null;
+		switch (type) {
+		case "seeding":
+			expectedHeader = new String[] { "序", "工單號碼", "品名", "播種盤數", "播種片數", "播種日期", "播種人數", "播種時間起", "壓水時間止",
+					"使用前克數", "使用後克數", "播數", "工時預估", "備註" };
+			break;
+		case "watering":
+			expectedHeader = new String[] { "序", "工單號碼", "品名", "壓水盤數", "壓水人數", "壓水時間起", "壓水時間止", "暗房儲位", "暗移見日期",
+					"備註" };
+			break;
+		case "headOut":
+			expectedHeader = new String[] { "序", "工單號碼", "品名", "計畫盤數", "計畫儲位", "實際盤數", "實際儲位", "開燈確認", "水道無水確認", "實際人數",
+					"實際時間起", "實際時間止", "育苗日期", "備註" };
+			break;
+		}
+		return expectedHeader;
+	}
+
 	private Integer calculateTotalBoardCount(List<ProductSchedule> psList) {
 		Integer sum = 0;
 		for (ProductSchedule ps : psList) {
@@ -567,38 +616,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			}
 		}
 		return sum;
-	}
-
-	private String getTodayString() {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
-		return formatter.format(new Date());
-	}
-
-	private String getWeekDayString() {
-		String[] weekDays = { "一", "二", "三", "四", "五", "六", "日" };
-		int dayOfWeek = Integer.parseInt(new SimpleDateFormat("u").format(new Date()));
-		return "星期" + weekDays[dayOfWeek - 1];
-	}
-
-	private Date getStartOfDay() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar.getTime();
-	}
-
-	private Date getEndOfDay() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-
-		calendar.set(Calendar.HOUR_OF_DAY, 23);
-		calendar.set(Calendar.MINUTE, 59);
-		calendar.set(Calendar.SECOND, 59);
-		return calendar.getTime();
 	}
 
 	private List<? extends ExcelCell> fillBlankRow(int dataSize, String startCol, String endCol, int skipRow) {

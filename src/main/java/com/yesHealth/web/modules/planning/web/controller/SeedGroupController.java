@@ -3,6 +3,7 @@ package com.yesHealth.web.modules.planning.web.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,13 +15,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.yesHealth.web.modules.planning.domain.exception.YhNoDataException;
 import com.yesHealth.web.modules.planning.domain.service.SeedGroupService;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
+import com.yesHealth.web.modules.util.DateUtil;
+import com.yesHealth.web.modules.util.exception.UplaodFileException;
 
 @Controller
 @RequestMapping("/production")
@@ -85,7 +91,8 @@ public class SeedGroupController {
 			redirectAttributes.addFlashAttribute("errorMessage", "下載失敗：" + e.getMessage());
 			return "redirect:/production/group-seed/tabs/seeding";
 		}
-		String fileName = "播種日報表.xlsx";
+		String dateStr = DateUtil.convertDateToString(new Date(), "yyyyMMdd");
+		String fileName = dateStr + "_播種日報表.xlsx";
 		try {
 			String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -115,7 +122,8 @@ public class SeedGroupController {
 			redirectAttributes.addFlashAttribute("errorMessage", "下載失敗：" + e.getMessage());
 			return "redirect:/production/group-seed/tabs/watering";
 		}
-		String fileName = "壓水日報表.xlsx";
+		String dateStr = DateUtil.convertDateToString(new Date(), "yyyyMMdd");
+		String fileName = dateStr + "_壓水日報表.xlsx";
 		try {
 			String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -145,7 +153,8 @@ public class SeedGroupController {
 			redirectAttributes.addFlashAttribute("errorMessage", "下載失敗：" + e.getMessage());
 			return "redirect:/production/group-seed/tabs/watering";
 		}
-		String fileName = "暗移見日報表.xlsx";
+		String dateStr = DateUtil.convertDateToString(new Date(), "yyyyMMdd");
+		String fileName = dateStr + "_暗移見日報表.xlsx";
 		try {
 			String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -163,5 +172,15 @@ public class SeedGroupController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@PostMapping("upload/dailyReport/{type}")
+	public String uploadDailyReport(@RequestParam("uploadFile") MultipartFile uploadFile, @PathVariable String type) {
+		try {
+			seedGroupService.upload(uploadFile, type);
+		} catch (UplaodFileException e) {
+
+		}
+		return "redirect:/production/group-seed/tabs/seeding";
 	}
 }

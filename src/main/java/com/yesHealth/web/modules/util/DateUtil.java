@@ -54,4 +54,31 @@ public class DateUtil {
 		return formatter.format(date);
 	}
 
+	public static Date getEndOfDay() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+
+		calendar.set(Calendar.HOUR_OF_DAY, 23);
+		calendar.set(Calendar.MINUTE, 59);
+		calendar.set(Calendar.SECOND, 59);
+		return calendar.getTime();
+	}
+
+	public static Date getStartOfDay() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar.getTime();
+	}
+
+	public static String getWeekDayString() {
+		String[] weekDays = { "一", "二", "三", "四", "五", "六", "日" };
+		int dayOfWeek = Integer.parseInt(new SimpleDateFormat("u").format(new Date()));
+		return "星期" + weekDays[dayOfWeek - 1];
+	}
+
 }
