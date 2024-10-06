@@ -1,7 +1,7 @@
 package com.yesHealth.web.modules.report.domain.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +28,7 @@ public class WaterReport {
 	@JoinColumn(name = "ps_id")
 	private ProductSchedule ps;
 	private Long boardCount;
-	private Date workDate;
+	private LocalDate workDate;
 	private Long workMan;
 	private LocalDateTime workTimeStart;
 	private LocalDateTime workTimeEnd;

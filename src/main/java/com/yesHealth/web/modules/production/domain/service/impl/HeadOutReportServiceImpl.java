@@ -9,8 +9,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,14 +19,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.yesHealth.web.global.security.model.CustomUserDetails;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
+import com.yesHealth.web.modules.product.domain.entity.Stock;
 import com.yesHealth.web.modules.production.domain.exception.YhNoDataException;
 import com.yesHealth.web.modules.production.domain.model.DailyReportContent;
 import com.yesHealth.web.modules.production.domain.model.FileSrcType;
 import com.yesHealth.web.modules.production.domain.model.PlanStatus;
 import com.yesHealth.web.modules.production.domain.respository.PlanRepository;
+import com.yesHealth.web.modules.production.domain.respository.StockRepository;
 import com.yesHealth.web.modules.production.domain.service.DailyReportService;
-import com.yesHealth.web.modules.report.domain.entity.SeedReport;
-import com.yesHealth.web.modules.report.domain.repository.SeedReportRepository;
+import com.yesHealth.web.modules.report.domain.entity.HeadOutReport;
+import com.yesHealth.web.modules.report.domain.repository.HeadOutReportRepository;
 import com.yesHealth.web.modules.user.entity.UserEntity;
 import com.yesHealth.web.modules.user.repository.UserRepository;
 import com.yesHealth.web.modules.util.CellInfo;
@@ -44,19 +44,22 @@ import com.yesHealth.web.modules.util.entity.FileUploadStatus;
 import com.yesHealth.web.modules.util.exception.UplaodFileException;
 import com.yesHealth.web.modules.util.repository.FileUploadRecordsRepository;
 
-@Service("seedReportService")
-public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
+@Service("headOutReportService")
+public class HeadOutReportServiceImpl implements DailyReportService<HeadOutReport> {
 	private PlanRepository planRepository;
 	private UserRepository userRepository;
 	private FileUploadRecordsRepository fileUploadRecordsRepository;
-	private SeedReportRepository seedReportRepository;
+	private HeadOutReportRepository headOutReportRepository;
+	private StockRepository stockRepository;
 
-	public SeedReportServiceImpl(PlanRepository planRepository, UserRepository userRepository,
-			FileUploadRecordsRepository fileUploadRecordsRepository, SeedReportRepository seedReportRepository) {
+	public HeadOutReportServiceImpl(PlanRepository planRepository, UserRepository userRepository,
+			FileUploadRecordsRepository fileUploadRecordsRepository, HeadOutReportRepository headOutReportRepository,
+			StockRepository stockRepository) {
 		this.planRepository = planRepository;
 		this.userRepository = userRepository;
 		this.fileUploadRecordsRepository = fileUploadRecordsRepository;
-		this.seedReportRepository = seedReportRepository;
+		this.headOutReportRepository = headOutReportRepository;
+		this.stockRepository = stockRepository;
 	}
 
 	@Override
@@ -65,21 +68,23 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
 		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
 				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
-		return planRepository.findBySeedingDateBetweenAndStatus(formateStartDate, formateEndDate,
+		return planRepository.findByHeadOutDateBetweenAndStatus(formateStartDate, formateEndDate,
 				PlanStatus.NOT_IMPLEMENTED.getStatus(), pageable);
 	}
 
 	@Override
 	public byte[] downloadDailyExcel() throws YhNoDataException {
-		List<ProductSchedule> psList = planRepository.findBySeedingDateBetweenAndStatus(DateUtil.getStartOfDay(),
+		List<ProductSchedule> psList = planRepository.findByHeadOutDateBetweenAndStatus(DateUtil.getStartOfDay(),
 				DateUtil.getEndOfDay(), PlanStatus.NOT_IMPLEMENTED.getStatus());
-		int row = 0;
+
 		if (psList == null || psList.isEmpty()) {
-			throw new YhNoDataException("無當日播種計畫");
+			throw new YhNoDataException("無當日暗移見計畫");
 		}
+
 		ReportInfo reportInfo = new ReportInfo();
-		reportInfo.setSheetName(DailyReportContent.Seed.getType());
+		reportInfo.setSheetName(DailyReportContent.HeadOut.getType());
 		List<ExcelCell> cellList = new ArrayList<>();
+		int row = 0;
 		// =======================公司標題====================
 		MergeCell companyHeader = new MergeCell();
 		companyHeader.setStartCell("B1");
@@ -92,58 +97,58 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 		MergeCell reportHeader = new MergeCell();
 		reportHeader.setStartCell("B2");
 		reportHeader.setEndCell("O2");
-		reportHeader.setValue(DailyReportContent.Seed.getType());
+		reportHeader.setValue(DailyReportContent.HeadOut.getType());
 		reportHeader.setCellStyleInfo(CellStyleInfo.HEADER);
 		cellList.add(reportHeader);
 		row++;
 		// ========================一般欄位====================
+
 		// b3
 		CellInfo b3 = new CellInfo();
-//		b3.setColIndex(1);
 		b3.setCell("B3");
 		b3.setValue("日期:");
 		b3.setCellStyleInfo(CellStyleInfo.CENTER);
 
 		// c3
 		CellInfo c3 = new CellInfo();
-//		c3.setColIndex(2);
 		c3.setCell("C3");
 		c3.setValue(DateUtil.convertDateToString(new Date(), "yyyy年MM月dd日"));
 		c3.setCellStyleInfo(CellStyleInfo.LEFT);
 
-		// L3
-		CellInfo l3 = new CellInfo();
-//		l3.setColIndex(11);
-		l3.setCell("L3");
-		l3.setValue(DateUtil.getWeekDayString());
-		l3.setCellStyleInfo(CellStyleInfo.CENTER);
+		// N3
+		CellInfo n3 = new CellInfo();
+		n3.setCell("N3");
+		n3.setValue(DateUtil.getWeekDayString());
+		n3.setCellStyleInfo(CellStyleInfo.CENTER);
 
 		// k3
 		CellInfo o3 = new CellInfo();
-//		o3.setColIndex(14);
 		o3.setCell("O3");
 		o3.setValue("總盤數：" + DailyReportService.calculateTotalBoardCount(psList) + "盤");
 		o3.setCellStyleInfo(CellStyleInfo.RIGHT);
-		cellList.addAll(Arrays.asList(b3, c3, l3, o3));
+		cellList.addAll(Arrays.asList(b3, c3, n3, o3));
 		row++;
 
-		String[] tableHeader = DailyReportContent.Seed.getHeader();
-
-		List<CellInfo> thList = IntStream.range(0, tableHeader.length).mapToObj(i -> {
+		List<CellInfo> thList = new ArrayList<>();
+		String[] tableHeader = DailyReportContent.HeadOut.getHeader();
+		for (int i = 0; i < tableHeader.length; i++) {
 			CellInfo thCell = new CellInfo();
-			char letter = (char) ('B' + i);
+			int charIndex = 66;
+			char letter = (char) (charIndex + i);
 			thCell.setCell(letter + "4");
 			thCell.setValue(tableHeader[i]);
+
 			thCell.setCellStyleInfo(CellStyleInfo.TH_CENTER);
-			return thCell;
-		}).collect(Collectors.toList());
+
+			thList.add(thCell);
+		}
 		cellList.addAll(thList);
 		row++;
 
 		List<CellInfo> tdList = new ArrayList<>();
 		for (int i = 0; i < psList.size(); i++) {
-			CellInfo bCol = new CellInfo();
 			int relocationRow = i + row + 1;
+			CellInfo bCol = new CellInfo();
 			bCol.setCell("B" + relocationRow);
 			String formatIndex = String.format("%03d", i + 1);
 			bCol.setValue(formatIndex);
@@ -165,13 +170,13 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 
 			CellInfo eCol = new CellInfo();
 			eCol.setCell("E" + relocationRow);
-			eCol.setValue(ps.getSeedingBoardCount().toString());
+			eCol.setValue(ps.getHeadOutBoardCount().toString());
 			eCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(eCol);
 
 			CellInfo fCol = new CellInfo();
 			fCol.setCell("F" + relocationRow);
-			fCol.setValue(Integer.toString(ps.getSeedingBoardCount() * 3));
+			fCol.setValue("");
 			fCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(fCol);
 
@@ -219,7 +224,7 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 
 			CellInfo nCol = new CellInfo();
 			nCol.setCell("N" + relocationRow);
-			nCol.setValue("");
+			nCol.setValue(DateUtil.convertDateToString(ps.getGrowingDate(), "MM/dd"));
 			nCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(nCol);
 
@@ -266,52 +271,54 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 		} catch (FileNotFoundException | UplaodFileException e) {
 			e.printStackTrace();
 		}
-		seedReportRepository.saveAll(mapDataListToSeedReportList(dataList, fileUploadRecords));
-	}
-
-	@Override
-	public void update(SeedReport seedReport) {
-		// TODO Auto-generated method stub
+		headOutReportRepository.saveAll(mapDataListToHeadOutReportList(dataList, fileUploadRecords));
 
 	}
 
-	private Iterable<SeedReport> mapDataListToSeedReportList(List<Map<String, String>> dataList,
+	private Iterable<HeadOutReport> mapDataListToHeadOutReportList(List<Map<String, String>> dataList,
 			FileUploadRecords fileUploadRecords) {
-		List<SeedReport> seedReports = dataList.stream().map(map -> mapToSeedReport(map, fileUploadRecords)).toList();
-		return seedReports;
+		List<HeadOutReport> headOutReport = dataList.stream().map(map -> mapToHeadOutReport(map, fileUploadRecords))
+				.toList();
+		return headOutReport;
 	}
 
-	private SeedReport mapToSeedReport(Map<String, String> map, FileUploadRecords fileUploadRecords) {
-		SeedReport seedReport = new SeedReport();
+	private HeadOutReport mapToHeadOutReport(Map<String, String> map, FileUploadRecords fileUploadRecords) {
+		HeadOutReport headOutReport = new HeadOutReport();
 		String[] header = DailyReportContent.Water.getHeader();
-		seedReport.setSeqNo(map.get(header[0]));
+		headOutReport.setSeqNo(map.get(header[0]));
 
 		String manuNo = map.get(header[1]);
 		if (manuNo != null) {
 			ProductSchedule ps = planRepository.findByManuNo(manuNo).get(0);
-			seedReport.setPs(ps);
+			headOutReport.setPs(ps);
 		}
 
-		seedReport.setBoardCount(Long.valueOf(map.get(header[3])));
-		seedReport.setBoardPiece(Long.valueOf(map.get(header[4])));
+		headOutReport.setBoardCount(Long.valueOf(map.get(header[5])));
 
 		// 使用 LocalDate 代替 Date
-		seedReport.setWorkDate(LocalDate.parse(map.get(header[5]))); // 假設日期格式為 "yyyy-MM-dd"
+		Stock stock = stockRepository.findByPosition(map.get(header[6]));
+		headOutReport.setStock(stock);
+		headOutReport.setLightStatus(header[7]);
+		headOutReport.setWaterChannelStatus(header[8]);
 
-		seedReport.setWorkMan(Long.valueOf(map.get(header[6])));
-		seedReport.setWorkTimeStart(LocalDateTime.parse(map.get(header[7]))); // 假設格式為 "yyyy-MM-dd'T'HH:mm:ss"
-		seedReport.setWorkTimeEnd(LocalDateTime.parse(map.get(header[8])));
+		headOutReport.setWorkDate(LocalDate.parse(map.get(header[4]))); // 假設日期格式為 "yyyy-MM-dd"
 
-		seedReport.setGramBeforeUse(Integer.valueOf(map.get(header[9])));
-		seedReport.setGramAfterUse(Integer.valueOf(map.get(header[10])));
-		seedReport.setCountPerHole(Integer.valueOf(map.get(header[11])));
-		seedReport.setEstWorkTime(Double.valueOf(map.get(header[12])));
-		seedReport.setRemark(map.get(header[13]));
-		seedReport.setSrcType(FileSrcType.FILE.toString());
+		headOutReport.setWorkMan(Long.valueOf(map.get(header[9])));
+		headOutReport.setWorkTimeStart(LocalDateTime.parse(map.get(header[10]))); // 假設格式為 "yyyy-MM-dd'T'HH:mm:ss"
+		headOutReport.setWorkTimeEnd(LocalDateTime.parse(map.get(header[11])));
 
-		seedReport.setFileUploadRecords(fileUploadRecords);
+		headOutReport.setRemark(map.get(header[13]));
+		headOutReport.setSrcType(FileSrcType.FILE.toString());
 
-		return seedReport;
+		headOutReport.setFileUploadRecords(fileUploadRecords);
+
+		return headOutReport;
+	}
+
+	@Override
+	public void update(HeadOutReport element) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

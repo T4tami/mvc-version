@@ -9,8 +9,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +25,8 @@ import com.yesHealth.web.modules.production.domain.model.FileSrcType;
 import com.yesHealth.web.modules.production.domain.model.PlanStatus;
 import com.yesHealth.web.modules.production.domain.respository.PlanRepository;
 import com.yesHealth.web.modules.production.domain.service.DailyReportService;
-import com.yesHealth.web.modules.report.domain.entity.SeedReport;
-import com.yesHealth.web.modules.report.domain.repository.SeedReportRepository;
+import com.yesHealth.web.modules.report.domain.entity.WaterReport;
+import com.yesHealth.web.modules.report.domain.repository.WaterReportRepository;
 import com.yesHealth.web.modules.user.entity.UserEntity;
 import com.yesHealth.web.modules.user.repository.UserRepository;
 import com.yesHealth.web.modules.util.CellInfo;
@@ -44,19 +42,19 @@ import com.yesHealth.web.modules.util.entity.FileUploadStatus;
 import com.yesHealth.web.modules.util.exception.UplaodFileException;
 import com.yesHealth.web.modules.util.repository.FileUploadRecordsRepository;
 
-@Service("seedReportService")
-public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
+@Service("waterReportService")
+public class WaterReportServiceImpl implements DailyReportService<WaterReport> {
 	private PlanRepository planRepository;
 	private UserRepository userRepository;
 	private FileUploadRecordsRepository fileUploadRecordsRepository;
-	private SeedReportRepository seedReportRepository;
+	private WaterReportRepository waterReportRepository;
 
-	public SeedReportServiceImpl(PlanRepository planRepository, UserRepository userRepository,
-			FileUploadRecordsRepository fileUploadRecordsRepository, SeedReportRepository seedReportRepository) {
+	public WaterReportServiceImpl(PlanRepository planRepository, UserRepository userRepository,
+			FileUploadRecordsRepository fileUploadRecordsRepository, WaterReportRepository waterReportRepository) {
 		this.planRepository = planRepository;
 		this.userRepository = userRepository;
 		this.fileUploadRecordsRepository = fileUploadRecordsRepository;
-		this.seedReportRepository = seedReportRepository;
+		this.waterReportRepository = waterReportRepository;
 	}
 
 	@Override
@@ -65,85 +63,87 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
 		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
 				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
-		return planRepository.findBySeedingDateBetweenAndStatus(formateStartDate, formateEndDate,
+		return planRepository.findByWateringDateBetweenAndStatus(formateStartDate, formateEndDate,
 				PlanStatus.NOT_IMPLEMENTED.getStatus(), pageable);
 	}
 
 	@Override
 	public byte[] downloadDailyExcel() throws YhNoDataException {
-		List<ProductSchedule> psList = planRepository.findBySeedingDateBetweenAndStatus(DateUtil.getStartOfDay(),
+		List<ProductSchedule> psList = planRepository.findByWateringDateBetweenAndStatus(DateUtil.getStartOfDay(),
 				DateUtil.getEndOfDay(), PlanStatus.NOT_IMPLEMENTED.getStatus());
-		int row = 0;
+
 		if (psList == null || psList.isEmpty()) {
-			throw new YhNoDataException("無當日播種計畫");
+			throw new YhNoDataException("無當日壓水計畫");
 		}
+
 		ReportInfo reportInfo = new ReportInfo();
-		reportInfo.setSheetName(DailyReportContent.Seed.getType());
+		reportInfo.setSheetName("壓水日報表");
 		List<ExcelCell> cellList = new ArrayList<>();
+		int row = 0;
 		// =======================公司標題====================
 		MergeCell companyHeader = new MergeCell();
-		companyHeader.setStartCell("B1");
-		companyHeader.setEndCell("O1");
+		companyHeader.setStartCell("A1");
+		companyHeader.setEndCell("K1");
 		companyHeader.setValue("菜好吃股份有限公司");
 		companyHeader.setCellStyleInfo(CellStyleInfo.HEADER);
 		cellList.add(companyHeader);
 		row++;
 		// =======================報表標題=====================
 		MergeCell reportHeader = new MergeCell();
-		reportHeader.setStartCell("B2");
-		reportHeader.setEndCell("O2");
-		reportHeader.setValue(DailyReportContent.Seed.getType());
+		reportHeader.setStartCell("A2");
+		reportHeader.setEndCell("K2");
+		reportHeader.setValue("壓水日報表");
 		reportHeader.setCellStyleInfo(CellStyleInfo.HEADER);
 		cellList.add(reportHeader);
 		row++;
 		// ========================一般欄位====================
+
 		// b3
 		CellInfo b3 = new CellInfo();
-//		b3.setColIndex(1);
 		b3.setCell("B3");
 		b3.setValue("日期:");
 		b3.setCellStyleInfo(CellStyleInfo.CENTER);
 
 		// c3
 		CellInfo c3 = new CellInfo();
-//		c3.setColIndex(2);
 		c3.setCell("C3");
 		c3.setValue(DateUtil.convertDateToString(new Date(), "yyyy年MM月dd日"));
 		c3.setCellStyleInfo(CellStyleInfo.LEFT);
 
-		// L3
-		CellInfo l3 = new CellInfo();
-//		l3.setColIndex(11);
-		l3.setCell("L3");
-		l3.setValue(DateUtil.getWeekDayString());
-		l3.setCellStyleInfo(CellStyleInfo.CENTER);
+		// j3
+		CellInfo j3 = new CellInfo();
+		j3.setCell("J3");
+		j3.setValue(DateUtil.getWeekDayString());
+		j3.setCellStyleInfo(CellStyleInfo.CENTER);
 
 		// k3
-		CellInfo o3 = new CellInfo();
-//		o3.setColIndex(14);
-		o3.setCell("O3");
-		o3.setValue("總盤數：" + DailyReportService.calculateTotalBoardCount(psList) + "盤");
-		o3.setCellStyleInfo(CellStyleInfo.RIGHT);
-		cellList.addAll(Arrays.asList(b3, c3, l3, o3));
+		CellInfo k3 = new CellInfo();
+		k3.setCell("K3");
+		k3.setValue("總盤數：" + DailyReportService.calculateTotalBoardCount(psList) + "盤");
+		k3.setCellStyleInfo(CellStyleInfo.RIGHT);
+		cellList.addAll(Arrays.asList(b3, c3, j3, k3));
 		row++;
 
-		String[] tableHeader = DailyReportContent.Seed.getHeader();
-
-		List<CellInfo> thList = IntStream.range(0, tableHeader.length).mapToObj(i -> {
+		List<CellInfo> thList = new ArrayList<>();
+		String[] tableHeader = DailyReportContent.Water.getHeader();
+		for (int i = 0; i < tableHeader.length; i++) {
 			CellInfo thCell = new CellInfo();
-			char letter = (char) ('B' + i);
+			int charIndex = 66;
+			char letter = (char) (charIndex + i);
 			thCell.setCell(letter + "4");
 			thCell.setValue(tableHeader[i]);
+
 			thCell.setCellStyleInfo(CellStyleInfo.TH_CENTER);
-			return thCell;
-		}).collect(Collectors.toList());
+
+			thList.add(thCell);
+		}
 		cellList.addAll(thList);
 		row++;
 
 		List<CellInfo> tdList = new ArrayList<>();
 		for (int i = 0; i < psList.size(); i++) {
-			CellInfo bCol = new CellInfo();
 			int relocationRow = i + row + 1;
+			CellInfo bCol = new CellInfo();
 			bCol.setCell("B" + relocationRow);
 			String formatIndex = String.format("%03d", i + 1);
 			bCol.setValue(formatIndex);
@@ -165,13 +165,13 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 
 			CellInfo eCol = new CellInfo();
 			eCol.setCell("E" + relocationRow);
-			eCol.setValue(ps.getSeedingBoardCount().toString());
+			eCol.setValue(ps.getWateringBoardCount().toString());
 			eCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(eCol);
 
 			CellInfo fCol = new CellInfo();
 			fCol.setCell("F" + relocationRow);
-			fCol.setValue(Integer.toString(ps.getSeedingBoardCount() * 3));
+			fCol.setValue("");
 			fCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(fCol);
 
@@ -195,7 +195,7 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 
 			CellInfo jCol = new CellInfo();
 			jCol.setCell("J" + relocationRow);
-			jCol.setValue("");
+			jCol.setValue(DateUtil.convertDateToString(ps.getHeadOutDate(), "MM/dd"));
 			jCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(jCol);
 
@@ -205,33 +205,9 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 			kCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
 			tdList.add(kCol);
 
-			CellInfo lCol = new CellInfo();
-			lCol.setCell("L" + relocationRow);
-			lCol.setValue("");
-			lCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
-			tdList.add(lCol);
-
-			CellInfo mCol = new CellInfo();
-			mCol.setCell("M" + relocationRow);
-			mCol.setValue("");
-			mCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
-			tdList.add(mCol);
-
-			CellInfo nCol = new CellInfo();
-			nCol.setCell("N" + relocationRow);
-			nCol.setValue("");
-			nCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
-			tdList.add(nCol);
-
-			CellInfo oCol = new CellInfo();
-			oCol.setCell("O" + relocationRow);
-			oCol.setValue("");
-			oCol.setCellStyleInfo(CellStyleInfo.TD_CENTER);
-			tdList.add(oCol);
-
 		}
 		cellList.addAll(tdList);
-		cellList.addAll(GenerateExcelUtil.fillBlankRow(psList.size(), "B", "O", row));
+		cellList.addAll(GenerateExcelUtil.fillBlankRow(psList.size(), "B", "K", row));
 		reportInfo.setCellList(cellList);
 
 		return GenerateExcelUtil.genDailyReport(reportInfo);
@@ -266,52 +242,48 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 		} catch (FileNotFoundException | UplaodFileException e) {
 			e.printStackTrace();
 		}
-		seedReportRepository.saveAll(mapDataListToSeedReportList(dataList, fileUploadRecords));
+		waterReportRepository.saveAll(mapDataListToWaterReportList(dataList, fileUploadRecords));
 	}
 
 	@Override
-	public void update(SeedReport seedReport) {
+	public void update(WaterReport waterReport) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private Iterable<SeedReport> mapDataListToSeedReportList(List<Map<String, String>> dataList,
+	private Iterable<WaterReport> mapDataListToWaterReportList(List<Map<String, String>> dataList,
 			FileUploadRecords fileUploadRecords) {
-		List<SeedReport> seedReports = dataList.stream().map(map -> mapToSeedReport(map, fileUploadRecords)).toList();
-		return seedReports;
+		List<WaterReport> waterReport = dataList.stream().map(map -> mapToWaterReport(map, fileUploadRecords)).toList();
+		return waterReport;
 	}
 
-	private SeedReport mapToSeedReport(Map<String, String> map, FileUploadRecords fileUploadRecords) {
-		SeedReport seedReport = new SeedReport();
+	private WaterReport mapToWaterReport(Map<String, String> map, FileUploadRecords fileUploadRecords) {
+		WaterReport waterReport = new WaterReport();
 		String[] header = DailyReportContent.Water.getHeader();
-		seedReport.setSeqNo(map.get(header[0]));
+		waterReport.setSeqNo(map.get(header[0]));
 
 		String manuNo = map.get(header[1]);
 		if (manuNo != null) {
 			ProductSchedule ps = planRepository.findByManuNo(manuNo).get(0);
-			seedReport.setPs(ps);
+			waterReport.setPs(ps);
 		}
 
-		seedReport.setBoardCount(Long.valueOf(map.get(header[3])));
-		seedReport.setBoardPiece(Long.valueOf(map.get(header[4])));
+		waterReport.setBoardCount(Long.valueOf(map.get(header[3])));
 
 		// 使用 LocalDate 代替 Date
-		seedReport.setWorkDate(LocalDate.parse(map.get(header[5]))); // 假設日期格式為 "yyyy-MM-dd"
+		waterReport.setWorkDate(LocalDate.parse(map.get(header[4]))); // 假設日期格式為 "yyyy-MM-dd"
 
-		seedReport.setWorkMan(Long.valueOf(map.get(header[6])));
-		seedReport.setWorkTimeStart(LocalDateTime.parse(map.get(header[7]))); // 假設格式為 "yyyy-MM-dd'T'HH:mm:ss"
-		seedReport.setWorkTimeEnd(LocalDateTime.parse(map.get(header[8])));
+		waterReport.setWorkMan(Long.valueOf(map.get(header[4])));
+		waterReport.setWorkTimeStart(LocalDateTime.parse(map.get(header[5]))); // 假設格式為 "yyyy-MM-dd'T'HH:mm:ss"
+		waterReport.setWorkTimeEnd(LocalDateTime.parse(map.get(header[6])));
+		waterReport.setDarkRoomPosition(header[7]);
 
-		seedReport.setGramBeforeUse(Integer.valueOf(map.get(header[9])));
-		seedReport.setGramAfterUse(Integer.valueOf(map.get(header[10])));
-		seedReport.setCountPerHole(Integer.valueOf(map.get(header[11])));
-		seedReport.setEstWorkTime(Double.valueOf(map.get(header[12])));
-		seedReport.setRemark(map.get(header[13]));
-		seedReport.setSrcType(FileSrcType.FILE.toString());
+		waterReport.setRemark(map.get(header[9]));
+		waterReport.setSrcType(FileSrcType.FILE.toString());
 
-		seedReport.setFileUploadRecords(fileUploadRecords);
+		waterReport.setFileUploadRecords(fileUploadRecords);
 
-		return seedReport;
+		return waterReport;
 	}
 
 }

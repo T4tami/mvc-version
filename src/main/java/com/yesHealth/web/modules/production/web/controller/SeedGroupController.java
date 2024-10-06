@@ -27,20 +27,29 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.production.domain.exception.YhNoDataException;
 import com.yesHealth.web.modules.production.domain.service.DailyReportService;
-import com.yesHealth.web.modules.production.domain.service.SeedGroupService;
+import com.yesHealth.web.modules.report.domain.entity.HeadOutReport;
 import com.yesHealth.web.modules.report.domain.entity.SeedReport;
+import com.yesHealth.web.modules.report.domain.entity.WaterReport;
 import com.yesHealth.web.modules.util.DateUtil;
 import com.yesHealth.web.modules.util.exception.UplaodFileException;
 
 @Controller
 @RequestMapping("/production")
 public class SeedGroupController {
-	private SeedGroupService seedGroupService;
 	@Qualifier("seedReportService")
 	private DailyReportService<SeedReport> seedReportService;
+	@Qualifier("waterReportService")
+	private DailyReportService<WaterReport> waterReportService;
+	@Qualifier("headOutReportService")
+	private DailyReportService<HeadOutReport> headOutReportService;
 
-	public SeedGroupController(SeedGroupService seedGroupService) {
-		this.seedGroupService = seedGroupService;
+	public SeedGroupController(DailyReportService<SeedReport> seedReportService,
+			DailyReportService<WaterReport> waterReportService,
+			DailyReportService<HeadOutReport> headOutReportService) {
+		super();
+		this.seedReportService = seedReportService;
+		this.waterReportService = waterReportService;
+		this.headOutReportService = headOutReportService;
 	}
 
 	@GetMapping("/group-seed")
@@ -53,145 +62,107 @@ public class SeedGroupController {
 		return "redirect:/production/group-seed/tabs/seeding?startDate=" + startDate + "&endDate=" + endDate;
 	}
 
-	@GetMapping("group-seed/tabs/seeding")
-	public String getSeedingTab(Model model, @RequestParam(defaultValue = "0") Integer page,
+	@GetMapping("group-seed/tabs/{tabType}")
+	public String getTab(Model model, @PathVariable String tabType, @RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String startDate,
 			@RequestParam(required = false) String endDate) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<ProductSchedule> plans = seedReportService.getForm(startDate, endDate, pageable);
-		model.addAttribute("plans", plans);
+		Page<ProductSchedule> plans;
+
+		// 這裡的屬性可以統一設置
 		model.addAttribute("startDate", startDate != null ? startDate : "");
 		model.addAttribute("endDate", endDate != null ? endDate : "");
 		model.addAttribute("size", size != null ? size : "");
-		return "module/production/group-seed/seed-tab";
+		switch (tabType) {
+		case "seeding":
+			plans = seedReportService.getForm(startDate, endDate, pageable);
+			model.addAttribute("plans", plans);
+			return "module/production/group-seed/seed-tab";
+		case "watering":
+			plans = waterReportService.getForm(startDate, endDate, pageable);
+			model.addAttribute("plans", plans);
+			return "module/production/group-seed/watering-tab";
+		case "head-out":
+			plans = headOutReportService.getForm(startDate, endDate, pageable);
+			model.addAttribute("plans", plans);
+			return "module/production/group-seed/head-out-tab";
+		default:
+			// 可以根據需要處理未知類型的情況
+			return "redirect:/error"; // 假設有一個錯誤頁面
+		}
 	}
 
-	@GetMapping("group-seed/tabs/watering")
-	public String getWateringTab(Model model, @RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String startDate,
-			@RequestParam(required = false) String endDate) {
-		Pageable pageable = PageRequest.of(page, size);
-		Page<ProductSchedule> plans = seedGroupService.getWateringForm(startDate, endDate, pageable);
-		model.addAttribute("plans", plans);
-		model.addAttribute("startDate", startDate != null ? startDate : "");
-		model.addAttribute("endDate", endDate != null ? endDate : "");
-		model.addAttribute("size", size != null ? size : "");
-		return "module/production/group-seed/watering-tab";
-	}
+	@GetMapping("download/{reportType}Excel")
+	public String downloadExcel(@PathVariable String reportType, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		byte[] excelData;
+		String fileName;
 
-	@GetMapping("group-seed/tabs/head-out")
-	public String getDarkMovingOutTab(Model model, @RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String startDate,
-			@RequestParam(required = false) String endDate) {
-		Pageable pageable = PageRequest.of(page, size);
-		Page<ProductSchedule> plans = seedGroupService.getHeadOutForm(startDate, endDate, pageable);
-		model.addAttribute("plans", plans);
-		model.addAttribute("startDate", startDate != null ? startDate : "");
-		model.addAttribute("endDate", endDate != null ? endDate : "");
-		model.addAttribute("size", size != null ? size : "");
-		return "module/production/group-seed/head-out-tab";
-	}
-
-	@GetMapping("download/seedDailyExcel")
-	public String downloadSeedExcel(HttpServletResponse response, RedirectAttributes redirectAttributes) {
-
-		byte[] excelData = null;
 		try {
-			excelData = seedReportService.downloadDailyExcel();
+			switch (reportType) {
+			case "seedDaily":
+				excelData = seedReportService.downloadDailyExcel();
+				fileName = DateUtil.convertDateToString(new Date(), "yyyyMMdd") + "_播種日報表.xlsx";
+				break;
+			case "wateringDaily":
+				excelData = waterReportService.downloadDailyExcel();
+				fileName = DateUtil.convertDateToString(new Date(), "yyyyMMdd") + "_壓水日報表.xlsx";
+				break;
+			case "headingOutDaily":
+				excelData = headOutReportService.downloadDailyExcel();
+				fileName = DateUtil.convertDateToString(new Date(), "yyyyMMdd") + "_暗移見日報表.xlsx";
+				break;
+			default:
+				redirectAttributes.addFlashAttribute("errorMessage", "未知的報表類型");
+				return "redirect:/production/group-seed/tabs/" + reportType;
+			}
 		} catch (YhNoDataException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", "下載失敗：" + e.getMessage());
-			return "redirect:/production/group-seed/tabs/seeding";
+			return "redirect:/production/group-seed/tabs/" + reportType; // 根據報表類型進行重定向
 		}
-		String dateStr = DateUtil.convertDateToString(new Date(), "yyyyMMdd");
-		String fileName = dateStr + "_播種日報表.xlsx";
+
 		try {
 			String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
 					"attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
+
 			response.getOutputStream().write(excelData);
 			response.getOutputStream().flush();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return null;
 	}
 
-	@GetMapping("download/wateringDailyExcel")
-	public String downloadWateringExcel(HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	@PostMapping("upload/dailyReport/{reportType}")
+	public String uploadDailyReport(@RequestParam("uploadFile") MultipartFile uploadFile,
+			@PathVariable String reportType, RedirectAttributes redirectAttributes) {
+		try {
 
-		byte[] excelData = null;
-		try {
-			excelData = seedGroupService.downloadWateringExcel();
-		} catch (YhNoDataException e) {
-			redirectAttributes.addFlashAttribute("errorMessage", "下載失敗：" + e.getMessage());
-			return "redirect:/production/group-seed/tabs/watering";
-		}
-		String dateStr = DateUtil.convertDateToString(new Date(), "yyyyMMdd");
-		String fileName = dateStr + "_壓水日報表.xlsx";
-		try {
-			String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
-			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-					"attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			response.getOutputStream().write(excelData);
-			response.getOutputStream().flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@GetMapping("download/headingOutDailyExcel")
-	public String downloadheadingOutDailyExcel(HttpServletResponse response, RedirectAttributes redirectAttributes) {
-
-		byte[] excelData = null;
-		try {
-			excelData = seedGroupService.downloadheadingOutExcel();
-		} catch (YhNoDataException e) {
-			redirectAttributes.addFlashAttribute("errorMessage", "下載失敗：" + e.getMessage());
-			return "redirect:/production/group-seed/tabs/watering";
-		}
-		String dateStr = DateUtil.convertDateToString(new Date(), "yyyyMMdd");
-		String fileName = dateStr + "_暗移見日報表.xlsx";
-		try {
-			String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
-			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-					"attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			response.getOutputStream().write(excelData);
-			response.getOutputStream().flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@PostMapping("upload/dailyReport/{type}")
-	public String uploadDailyReport(@RequestParam("uploadFile") MultipartFile uploadFile, @PathVariable String type) {
-		try {
-			seedGroupService.upload(uploadFile, type);
+			switch (reportType) {
+			case "seedDaily":
+				seedReportService.uploadDailyExcel(uploadFile);
+				break;
+			case "wateringDaily":
+				waterReportService.uploadDailyExcel(uploadFile);
+				break;
+			case "headingOutDaily":
+				headOutReportService.uploadDailyExcel(uploadFile);
+				break;
+			default:
+				redirectAttributes.addFlashAttribute("errorMessage", "未知的報表類型");
+				return "redirect:/production/group-seed/tabs/" + reportType;
+			}
 		} catch (UplaodFileException e) {
 
+		} catch (YhNoDataException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return "redirect:/production/group-seed/tabs/seeding";
+		return "redirect:/production/group-seed";
 	}
 }
