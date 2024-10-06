@@ -41,7 +41,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 	private static final String NOT_IMPLEMENTEDSTATUS = "0";
 	private static final String IMPLEMENTEDSTATUS = "1";
-	private static final int MinDataRowCount = 18;
 	private PlanRepository planRepository;
 	private FileUploadRecordsRepository fileUploadRecordsRepository;
 	private UserRepository userRepository;
@@ -246,7 +245,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 		}
 		cellList.addAll(tdList);
-		cellList.addAll(fillBlankRow(psList.size(), "B", "O", row));
+		cellList.addAll(GenerateExcelUtil.fillBlankRow(psList.size(), "B", "O", row));
 		reportInfo.setCellList(cellList);
 
 		return GenerateExcelUtil.genDailyReport(reportInfo);
@@ -393,7 +392,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 		}
 		cellList.addAll(tdList);
-		cellList.addAll(fillBlankRow(psList.size(), "B", "K", row));
+		cellList.addAll(GenerateExcelUtil.fillBlankRow(psList.size(), "B", "K", row));
 		reportInfo.setCellList(cellList);
 
 		return GenerateExcelUtil.genDailyReport(reportInfo);
@@ -563,7 +562,7 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 
 		}
 		cellList.addAll(tdList);
-		cellList.addAll(fillBlankRow(psList.size(), "B", "O", row));
+		cellList.addAll(GenerateExcelUtil.fillBlankRow(psList.size(), "B", "O", row));
 		reportInfo.setCellList(cellList);
 
 		return GenerateExcelUtil.genDailyReport(reportInfo);
@@ -587,14 +586,12 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 		if (expectedHeader.length > 0 && expectedHeader != null) {
 			dataList = UploadFileUtil.readExcelFile(diskFile, expectedHeader);
 		}
-		String errMsg = validateContent();
 		saveData(dataList, type);
 		try {
 			File file = UploadFileUtil.saveToDisk(diskFile);
 			FileUploadRecords fileUploadRecords = FileUploadRecords.builder().createTime(new Date())
-					.description(getType(type)).errorMessage(errMsg != null ? errMsg : null).fileName(file.getName())
-					.fileSize(file.length()).fileType("applicatoin/excel").status(FileUploadStatus.UPLOAD)
-					.uploadedBy(user).build();
+					.description(getType(type)).fileName(file.getName()).fileSize(file.length())
+					.fileType("applicatoin/excel").status(FileUploadStatus.UPLOAD).uploadedBy(user).build();
 			fileUploadRecordsRepository.save(fileUploadRecords);
 		} catch (FileNotFoundException | UplaodFileException e) {
 			e.printStackTrace();
@@ -621,7 +618,15 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 	}
 
 	private void saveData(List<?> dataList, String type) {
-		// TODO Auto-generated method stub
+		validateContent();
+		switch (type) {
+		case "seeding":
+			// todo
+		case "watering":
+			// todo
+		case "headOut":
+			// todo
+		}
 
 	}
 
@@ -659,23 +664,6 @@ public class SeedGroupServiceImpl implements SeedGroupService {
 			}
 		}
 		return sum;
-	}
-
-	private List<? extends ExcelCell> fillBlankRow(int dataSize, String startCol, String endCol, int skipRow) {
-		List<CellInfo> cellInfoList = new ArrayList<>();
-		int startColIndex = GenerateExcelUtil.convertToColIndex(startCol, Boolean.FALSE);
-		int enColdIndex = GenerateExcelUtil.convertToColIndex(endCol, Boolean.FALSE);
-		for (int i = dataSize; i < MinDataRowCount; i++) {
-			for (int j = startColIndex; j <= enColdIndex; j++) {
-				CellInfo cellInfo = new CellInfo();
-				char col = (char) ('A' + j);
-				cellInfo.setCell(col + Integer.toString(i + skipRow + 1));
-				cellInfo.setValue(col == 'B' ? String.format("%03d", i + 1) : "");
-				cellInfo.setCellStyleInfo(CellStyleInfo.TD_CENTER);
-				cellInfoList.add(cellInfo);
-			}
-		}
-		return cellInfoList;
 	}
 
 }

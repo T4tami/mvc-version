@@ -20,6 +20,9 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class GenerateExcelUtil {
+
+	private static final int MinDataRowCount = 18;
+
 	public static void genDailySeedingReport(ReportInfo reportInfo) {
 
 	}
@@ -136,5 +139,22 @@ public class GenerateExcelUtil {
 		style.setBorderBottom(BorderStyle.THIN);
 		style.setBorderLeft(BorderStyle.THIN);
 		style.setBorderRight(BorderStyle.THIN);
+	}
+
+	public static List<? extends ExcelCell> fillBlankRow(int dataSize, String startCol, String endCol, int skipRow) {
+		List<CellInfo> cellInfoList = new ArrayList<>();
+		int startColIndex = GenerateExcelUtil.convertToColIndex(startCol, Boolean.FALSE);
+		int enColdIndex = GenerateExcelUtil.convertToColIndex(endCol, Boolean.FALSE);
+		for (int i = dataSize; i < MinDataRowCount; i++) {
+			for (int j = startColIndex; j <= enColdIndex; j++) {
+				CellInfo cellInfo = new CellInfo();
+				char col = (char) ('A' + j);
+				cellInfo.setCell(col + Integer.toString(i + skipRow + 1));
+				cellInfo.setValue(col == 'B' ? String.format("%03d", i + 1) : "");
+				cellInfo.setCellStyleInfo(CellStyleInfo.TD_CENTER);
+				cellInfoList.add(cellInfo);
+			}
+		}
+		return cellInfoList;
 	}
 }

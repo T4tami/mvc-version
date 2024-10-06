@@ -8,6 +8,8 @@ import java.util.Date;
 import javax.servlet.http.HttpServletResponse;
 
 import java.net.URLEncoder;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +26,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.production.domain.exception.YhNoDataException;
+import com.yesHealth.web.modules.production.domain.service.DailyReportService;
 import com.yesHealth.web.modules.production.domain.service.SeedGroupService;
+import com.yesHealth.web.modules.report.domain.entity.SeedReport;
 import com.yesHealth.web.modules.util.DateUtil;
 import com.yesHealth.web.modules.util.exception.UplaodFileException;
 
@@ -32,6 +36,8 @@ import com.yesHealth.web.modules.util.exception.UplaodFileException;
 @RequestMapping("/production")
 public class SeedGroupController {
 	private SeedGroupService seedGroupService;
+	@Qualifier("seedReportService")
+	private DailyReportService<SeedReport> seedReportService;
 
 	public SeedGroupController(SeedGroupService seedGroupService) {
 		this.seedGroupService = seedGroupService;
@@ -52,7 +58,7 @@ public class SeedGroupController {
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String startDate,
 			@RequestParam(required = false) String endDate) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<ProductSchedule> plans = seedGroupService.findBySeedingGroupForm(startDate, endDate, pageable);
+		Page<ProductSchedule> plans = seedReportService.getForm(startDate, endDate, pageable);
 		model.addAttribute("plans", plans);
 		model.addAttribute("startDate", startDate != null ? startDate : "");
 		model.addAttribute("endDate", endDate != null ? endDate : "");
@@ -91,7 +97,7 @@ public class SeedGroupController {
 
 		byte[] excelData = null;
 		try {
-			excelData = seedGroupService.downloadSeedExcel();
+			excelData = seedReportService.downloadDailyExcel();
 		} catch (YhNoDataException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", "下載失敗：" + e.getMessage());
 			return "redirect:/production/group-seed/tabs/seeding";

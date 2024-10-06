@@ -16,10 +16,12 @@ import javax.persistence.Table;
 import com.yesHealth.web.modules.user.entity.UserEntity;
 
 import lombok.Builder;
+import lombok.Data;
 
 @Entity
 @Table(name = "FileUploadRecords")
 @Builder
+@Data
 public class FileUploadRecords {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
