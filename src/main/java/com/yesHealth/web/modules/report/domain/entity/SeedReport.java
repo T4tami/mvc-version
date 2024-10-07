@@ -31,10 +31,10 @@ public class SeedReport {
 	private Long boardPiece;
 	private LocalDate workDate;
 	private Long workMan;
-	private LocalDateTime workTimeStart;
-	private LocalDateTime workTimeEnd;
-	private Integer gramBeforeUse;
-	private Integer gramAfterUse;
+	private String workTimeStart;
+	private String workTimeEnd;
+	private Double gramBeforeUse;
+	private Double gramAfterUse;
 	private Integer countPerHole;
 	private Double estWorkTime;
 	private String Remark;

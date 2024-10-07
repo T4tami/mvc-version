@@ -110,12 +110,23 @@ public class UploadFileUtil {
 			}
 			// 根據表頭索引填充 dataList
 			for (int i = headerRowIndex + 1; i < rowList.size(); i++) {
-				Map<String, String> dataMap = new HashMap<>();
 				List<String> rowData = rowList.get(i);
-				for (int j = 0; j < expectedHeader.length; j++) {
-					dataMap.put(expectedHeader[j], j < rowData.size() ? rowData.get(j) : null);
+
+				boolean hasData = false;
+				for (int j = 1; j < rowData.size(); j++) { // 假設序號在第一欄
+					if (rowData.get(j) != null && !rowData.get(j).isEmpty()) {
+						hasData = true;
+						break;
+					}
 				}
-				dataList.add(dataMap);
+
+				if (hasData) {
+					Map<String, String> dataMap = new HashMap<>();
+					for (int j = 0; j < expectedHeader.length; j++) {
+						dataMap.put(expectedHeader[j], j < rowData.size() ? rowData.get(j) : null);
+					}
+					dataList.add(dataMap);
+				}
 			}
 		} catch (FileNotFoundException e) {
 			log.error("file not found");

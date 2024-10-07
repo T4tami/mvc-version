@@ -144,13 +144,13 @@ public class SeedGroupController {
 		try {
 
 			switch (reportType) {
-			case "seedDaily":
+			case "seed":
 				seedReportService.uploadDailyExcel(uploadFile);
 				break;
-			case "wateringDaily":
+			case "water":
 				waterReportService.uploadDailyExcel(uploadFile);
 				break;
-			case "headingOutDaily":
+			case "head-out":
 				headOutReportService.uploadDailyExcel(uploadFile);
 				break;
 			default:

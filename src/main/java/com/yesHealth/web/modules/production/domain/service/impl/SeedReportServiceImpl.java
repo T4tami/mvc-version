@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -283,7 +285,7 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 
 	private SeedReport mapToSeedReport(Map<String, String> map, FileUploadRecords fileUploadRecords) {
 		SeedReport seedReport = new SeedReport();
-		String[] header = DailyReportContent.Water.getHeader();
+		String[] header = DailyReportContent.Seed.getHeader();
 		seedReport.setSeqNo(map.get(header[0]));
 
 		String manuNo = map.get(header[1]);
@@ -296,15 +298,17 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 		seedReport.setBoardPiece(Long.valueOf(map.get(header[4])));
 
 		// 使用 LocalDate 代替 Date
-		seedReport.setWorkDate(LocalDate.parse(map.get(header[5]))); // 假設日期格式為 "yyyy-MM-dd"
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM月-yyyy", Locale.CHINESE);
+		seedReport.setWorkDate(LocalDate.parse(map.get(header[5]), formatter)); // 假設日期格式為 "yyyy-MM-dd"
 
-		seedReport.setWorkMan(Long.valueOf(map.get(header[6])));
-		seedReport.setWorkTimeStart(LocalDateTime.parse(map.get(header[7]))); // 假設格式為 "yyyy-MM-dd'T'HH:mm:ss"
-		seedReport.setWorkTimeEnd(LocalDateTime.parse(map.get(header[8])));
+		seedReport.setWorkMan(Math.round(Double.parseDouble(map.get(header[6]))));
 
-		seedReport.setGramBeforeUse(Integer.valueOf(map.get(header[9])));
-		seedReport.setGramAfterUse(Integer.valueOf(map.get(header[10])));
-		seedReport.setCountPerHole(Integer.valueOf(map.get(header[11])));
+		seedReport.setWorkTimeStart(map.get(header[7])); // 假設格式為 "yyyy-MM-dd'T'HH:mm:ss"
+		seedReport.setWorkTimeEnd(map.get(header[8]));
+
+		seedReport.setGramBeforeUse(Double.valueOf(map.get(header[9])));
+		seedReport.setGramAfterUse(Double.valueOf(map.get(header[10])));
+		seedReport.setCountPerHole((int) Math.round(Double.parseDouble(map.get(header[11]))));
 		seedReport.setEstWorkTime(Double.valueOf(map.get(header[12])));
 		seedReport.setRemark(map.get(header[13]));
 		seedReport.setSrcType(FileSrcType.FILE.toString());
