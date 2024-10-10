@@ -2,7 +2,6 @@ package com.yesHealth.web.modules.production.domain.service.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,13 +62,12 @@ public class HeadOutReportServiceImpl implements DailyReportService<HeadOutRepor
 	}
 
 	@Override
-	public Page<ProductSchedule> getForm(String startDateStr, String endDateStr, Pageable pageable) {
+	public Page<HeadOutReport> getForm(String startDateStr, String endDateStr, Pageable pageable) {
 		Date formateStartDate = startDateStr == null ? DateUtil.getStartOfNextWeek()
 				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
 		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
 				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
-		return planRepository.findByHeadOutDateBetweenAndStatus(formateStartDate, formateEndDate,
-				PlanStatus.NOT_IMPLEMENTED.getStatus(), pageable);
+		return headOutReportRepository.findByWorkDateBetween(formateStartDate, formateEndDate, pageable);
 	}
 
 	@Override
@@ -295,21 +293,16 @@ public class HeadOutReportServiceImpl implements DailyReportService<HeadOutRepor
 
 		headOutReport.setBoardCount(Long.valueOf(map.get(header[5])));
 
-		// 使用 LocalDate 代替 Date
 		Stock stock = stockRepository.findByPosition(map.get(header[6]));
 		headOutReport.setStock(stock);
 		headOutReport.setLightStatus(header[7]);
 		headOutReport.setWaterChannelStatus(header[8]);
-
-		headOutReport.setWorkDate(LocalDate.parse(map.get(header[4]))); // 假設日期格式為 "yyyy-MM-dd"
-
+		headOutReport.setWorkDate(DateUtil.convertStringToDate(map.get(header[4]), "dd-MM月-yyyy"));
 		headOutReport.setWorkMan(Long.valueOf(map.get(header[9])));
 		headOutReport.setWorkTimeStart(LocalDateTime.parse(map.get(header[10]))); // 假設格式為 "yyyy-MM-dd'T'HH:mm:ss"
 		headOutReport.setWorkTimeEnd(LocalDateTime.parse(map.get(header[11])));
-
 		headOutReport.setRemark(map.get(header[13]));
 		headOutReport.setSrcType(FileSrcType.FILE.toString());
-
 		headOutReport.setFileUploadRecords(fileUploadRecords);
 
 		return headOutReport;

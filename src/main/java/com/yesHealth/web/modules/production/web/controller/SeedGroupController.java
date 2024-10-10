@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.production.domain.exception.YhNoDataException;
 import com.yesHealth.web.modules.production.domain.service.DailyReportService;
 import com.yesHealth.web.modules.report.domain.entity.HeadOutReport;
@@ -67,7 +66,6 @@ public class SeedGroupController {
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(required = false) String startDate,
 			@RequestParam(required = false) String endDate) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<ProductSchedule> plans;
 
 		// 這裡的屬性可以統一設置
 		model.addAttribute("startDate", startDate != null ? startDate : "");
@@ -75,16 +73,16 @@ public class SeedGroupController {
 		model.addAttribute("size", size != null ? size : "");
 		switch (tabType) {
 		case "seeding":
-			plans = seedReportService.getForm(startDate, endDate, pageable);
-			model.addAttribute("plans", plans);
+			Page<SeedReport> seedReports = seedReportService.getForm(startDate, endDate, pageable);
+			model.addAttribute("seedReports", seedReports);
 			return "module/production/group-seed/seed-tab";
 		case "watering":
-			plans = waterReportService.getForm(startDate, endDate, pageable);
-			model.addAttribute("plans", plans);
+			Page<WaterReport> waterReports = waterReportService.getForm(startDate, endDate, pageable);
+			model.addAttribute("waterReports", waterReports);
 			return "module/production/group-seed/watering-tab";
 		case "head-out":
-			plans = headOutReportService.getForm(startDate, endDate, pageable);
-			model.addAttribute("plans", plans);
+			Page<HeadOutReport> headOutReports = headOutReportService.getForm(startDate, endDate, pageable);
+			model.addAttribute("headOutReports", headOutReports);
 			return "module/production/group-seed/head-out-tab";
 		default:
 			// 可以根據需要處理未知類型的情況

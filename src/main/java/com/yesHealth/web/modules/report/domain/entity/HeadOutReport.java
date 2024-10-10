@@ -1,7 +1,7 @@
 package com.yesHealth.web.modules.report.domain.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +34,7 @@ public class HeadOutReport {
 	private Stock stock;
 	private String lightStatus;
 	private String waterChannelStatus;
-	private LocalDate workDate;
+	private Date workDate;
 	private Long workMan;
 	private LocalDateTime workTimeStart;
 	private LocalDateTime workTimeEnd;

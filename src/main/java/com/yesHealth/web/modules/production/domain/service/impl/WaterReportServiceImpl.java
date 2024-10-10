@@ -2,7 +2,6 @@ package com.yesHealth.web.modules.production.domain.service.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,13 +57,12 @@ public class WaterReportServiceImpl implements DailyReportService<WaterReport> {
 	}
 
 	@Override
-	public Page<ProductSchedule> getForm(String startDateStr, String endDateStr, Pageable pageable) {
+	public Page<WaterReport> getForm(String startDateStr, String endDateStr, Pageable pageable) {
 		Date formateStartDate = startDateStr == null ? DateUtil.getStartOfNextWeek()
 				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
 		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
 				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
-		return planRepository.findByWateringDateBetweenAndStatus(formateStartDate, formateEndDate,
-				PlanStatus.NOT_IMPLEMENTED.getStatus(), pageable);
+		return waterReportRepository.findByWorkDateBetween(formateStartDate, formateEndDate, pageable);
 	}
 
 	@Override
@@ -267,14 +265,10 @@ public class WaterReportServiceImpl implements DailyReportService<WaterReport> {
 			ProductSchedule ps = planRepository.findByManuNo(manuNo).get(0);
 			waterReport.setPs(ps);
 		}
-
 		waterReport.setBoardCount(Long.valueOf(map.get(header[3])));
-
-		// 使用 LocalDate 代替 Date
-		waterReport.setWorkDate(LocalDate.parse(map.get(header[4]))); // 假設日期格式為 "yyyy-MM-dd"
-
+		waterReport.setWorkDate(new Date());
 		waterReport.setWorkMan(Long.valueOf(map.get(header[4])));
-		waterReport.setWorkTimeStart(LocalDateTime.parse(map.get(header[5]))); // 假設格式為 "yyyy-MM-dd'T'HH:mm:ss"
+		waterReport.setWorkTimeStart(LocalDateTime.parse(map.get(header[5])));
 		waterReport.setWorkTimeEnd(LocalDateTime.parse(map.get(header[6])));
 		waterReport.setDarkRoomPosition(header[7]);
 

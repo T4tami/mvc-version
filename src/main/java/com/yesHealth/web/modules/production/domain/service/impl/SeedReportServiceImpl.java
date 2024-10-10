@@ -2,14 +2,10 @@ package com.yesHealth.web.modules.production.domain.service.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -62,13 +58,12 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 	}
 
 	@Override
-	public Page<ProductSchedule> getForm(String startDateStr, String endDateStr, Pageable pageable) {
+	public Page<SeedReport> getForm(String startDateStr, String endDateStr, Pageable pageable) {
 		Date formateStartDate = startDateStr == null ? DateUtil.getStartOfNextWeek()
 				: DateUtil.convertStringToDate(startDateStr, "yyyy-MM-dd");
 		Date formateEndDate = endDateStr == null ? DateUtil.getEndOfNextWeek()
 				: DateUtil.convertStringToDate(endDateStr, "yyyy-MM-dd");
-		return planRepository.findBySeedingDateBetweenAndStatus(formateStartDate, formateEndDate,
-				PlanStatus.NOT_IMPLEMENTED.getStatus(), pageable);
+		return seedReportRepository.findByWorkDateBetween(formateStartDate, formateEndDate, pageable);
 	}
 
 	@Override
@@ -297,9 +292,8 @@ public class SeedReportServiceImpl implements DailyReportService<SeedReport> {
 		seedReport.setBoardCount(Long.valueOf(map.get(header[3])));
 		seedReport.setBoardPiece(Long.valueOf(map.get(header[4])));
 
-		// 使用 LocalDate 代替 Date
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM月-yyyy", Locale.CHINESE);
-		seedReport.setWorkDate(LocalDate.parse(map.get(header[5]), formatter)); // 假設日期格式為 "yyyy-MM-dd"
+		// 使用 Date
+		seedReport.setWorkDate(DateUtil.convertStringToDate(map.get(header[5]), "dd-MM月-yyyy"));
 
 		seedReport.setWorkMan(Math.round(Double.parseDouble(map.get(header[6]))));
 

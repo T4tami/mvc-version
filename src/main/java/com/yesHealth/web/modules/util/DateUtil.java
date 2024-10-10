@@ -39,6 +39,10 @@ public class DateUtil {
 		}
 	}
 
+	public static LocalDate convertLocalDate(Date date) {
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	}
+
 	public static Date getDateWithoutTime(Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);

@@ -11,7 +11,7 @@ import com.yesHealth.web.modules.production.domain.exception.YhNoDataException;
 import com.yesHealth.web.modules.util.exception.UplaodFileException;
 
 public interface DailyReportService<T> {
-	public Page<ProductSchedule> getForm(String startDateStr, String endDateStr, Pageable pageable);
+	public Page<T> getForm(String startDateStr, String endDateStr, Pageable pageable);
 
 	public byte[] downloadDailyExcel() throws YhNoDataException;
 

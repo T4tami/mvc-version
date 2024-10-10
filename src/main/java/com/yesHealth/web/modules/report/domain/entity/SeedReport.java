@@ -1,7 +1,6 @@
 package com.yesHealth.web.modules.report.domain.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +28,7 @@ public class SeedReport {
 	private ProductSchedule ps;
 	private Long boardCount;
 	private Long boardPiece;
-	private LocalDate workDate;
+	private Date workDate;
 	private Long workMan;
 	private String workTimeStart;
 	private String workTimeEnd;

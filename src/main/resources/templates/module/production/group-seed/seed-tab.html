@@ -148,7 +148,7 @@
 												<th>工單號</th>
 												<th>品項</th>
 												<th>播種盤數</th>
-												<th>見苗盤數</th>
+												<th>播種片數</th>
 												<th>見苗儲位</th>
 												<th>播種日</th>
 												<th>壓水日</th>
@@ -156,27 +156,32 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:if="${#lists.isEmpty(plans.content)}">
+											<tr th:if="${#lists.isEmpty(seedReports.content)}">
 												<td colspan="8" style="text-align: center;">沒有資料</td>
 											</tr>
-											<tr th:each="plan : ${plans.content}">
-												<td th:text="${plan.manuNo}"></td>
-												<td th:text="${plan.product.specs}"></td>
-												<td th:text="${plan.seedingBoardCount}"></td>
-												<td th:text="${plan.headOutBoardCount}"></td>
-												<td th:text="${plan.sStockId!=null?plan.sStockId.position:''}"></td>
-												<td th:text="${#dates.format(plan.seedingDate, 'yyyy-MM-dd')}"></td>
-												<td th:text="${#dates.format(plan.wateringDate, 'yyyy-MM-dd')}"></td>
-												<td th:text="${#dates.format(plan.headOutDate, 'yyyy-MM-dd')}"></td>
+											<tr th:each="seedReport : ${seedReports.content}">
+												<td th:text="${seedReport.ps.manuNo}"></td>
+												<td th:text="${seedReport.ps.product.specs}"></td>
+												<td th:text="${seedReport.boardCount}"></td>
+												<td th:text="${seedReport.boardPiece}"></td>
+												<td
+													th:text="${seedReport.ps.sStockId!=null?seedReport.ps.sStockId.position:''}">
+												</td>
+												<td th:text="${#dates.format(seedReport.workDate, 'yyyy-MM-dd')}"></td>
+												<td
+													th:text="${#dates.format(seedReport.ps.wateringDate, 'yyyy-MM-dd')}">
+												</td>
+												<td th:text="${#dates.format(seedReport.ps.headOutDate, 'yyyy-MM-dd')}">
+												</td>
 											</tr>
 										</tbody>
 									</table>
 								</div>
 								<div class="pagination">
-									<span th:if="${plans.hasPrevious()}"> <a
-											th:href="@{/production/group-seed/tabs/seeding(page=${plans.number - 1}, size=${size}, startDate=${startDate}, endDate=${endDate})}">上一頁</a>
-									</span> <span th:if="${plans.hasNext()}"> <a
-											th:href="@{/production/group-seed/tabs/seeding(page=${plans.number + 1}, size=${size}, startDate=${startDate}, endDate=${endDate})}">下一頁</a>
+									<span th:if="${seedReports.hasPrevious()}"> <a
+											th:href="@{/production/group-seed/tabs/seeding(page=${seedReports.number - 1}, size=${size}, startDate=${startDate}, endDate=${endDate})}">上一頁</a>
+									</span> <span th:if="${seedReports.hasNext()}"> <a
+											th:href="@{/production/group-seed/tabs/seeding(page=${seedReports.number + 1}, size=${size}, startDate=${startDate}, endDate=${endDate})}">下一頁</a>
 									</span>
 								</div>
 							</main>
