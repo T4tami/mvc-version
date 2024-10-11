@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.util;
+package com.yesHealth.web.modules.util.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

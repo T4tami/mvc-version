@@ -28,9 +28,6 @@ import com.yesHealth.web.modules.report.domain.entity.WaterReport;
 import com.yesHealth.web.modules.report.domain.repository.WaterReportRepository;
 import com.yesHealth.web.modules.user.entity.UserEntity;
 import com.yesHealth.web.modules.user.repository.UserRepository;
-import com.yesHealth.web.modules.util.DateUtil;
-import com.yesHealth.web.modules.util.GenerateExcelUtil;
-import com.yesHealth.web.modules.util.UploadFileUtil;
 import com.yesHealth.web.modules.util.entity.FileUploadRecords;
 import com.yesHealth.web.modules.util.entity.FileUploadStatus;
 import com.yesHealth.web.modules.util.exception.UplaodFileException;
@@ -40,6 +37,9 @@ import com.yesHealth.web.modules.util.model.ExcelCell;
 import com.yesHealth.web.modules.util.model.MergeCell;
 import com.yesHealth.web.modules.util.model.ReportInfo;
 import com.yesHealth.web.modules.util.repository.FileUploadRecordsRepository;
+import com.yesHealth.web.modules.util.service.DateUtil;
+import com.yesHealth.web.modules.util.service.GenerateExcelUtil;
+import com.yesHealth.web.modules.util.service.UploadFileUtil;
 
 @Service("waterReportService")
 public class WaterReportServiceImpl implements DailyReportService<WaterReport> {

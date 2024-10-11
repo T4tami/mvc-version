@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.util;
+package com.yesHealth.web.modules.util.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
