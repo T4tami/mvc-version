@@ -30,6 +30,8 @@ import com.yesHealth.web.modules.production.domain.service.PlanService;
 import com.yesHealth.web.modules.production.web.views.CreatePlansForm;
 import com.yesHealth.web.modules.production.web.views.EditPlanForm;
 import com.yesHealth.web.modules.production.web.views.PlanForm;
+import com.yesHealth.web.modules.report.domain.entity.SeedReport;
+import com.yesHealth.web.modules.report.domain.repository.SeedReportRepository;
 import com.yesHealth.web.modules.util.DateUtil;
 import com.yesHealth.web.modules.util.MessageService;
 
@@ -43,6 +45,7 @@ public class PlanServiceImpl implements PlanService {
 	private ProductRepository productRepository;
 	private TransplantRecordRepository transplantRecordRepository;
 	private MessageService messageService;
+	private SeedReportRepository seedReportRepository;
 	private static final String NOT_IMPLEMENTEDSTATUS = "0";
 	private static final String IMPLEMENTEDSTATUS = "1";
 
@@ -50,12 +53,13 @@ public class PlanServiceImpl implements PlanService {
 
 	public PlanServiceImpl(PlanRepository planRepository, StockRepository stockRepository,
 			ProductRepository productRepository, TransplantRecordRepository transplantRecordRepository,
-			MessageService messageService) {
+			MessageService messageService, SeedReportRepository seedReportRepository) {
 		this.planRepository = planRepository;
 		this.stockRepository = stockRepository;
 		this.productRepository = productRepository;
 		this.transplantRecordRepository = transplantRecordRepository;
 		this.messageService = messageService;
+		this.seedReportRepository = seedReportRepository;
 	}
 
 	@Override
@@ -147,6 +151,10 @@ public class PlanServiceImpl implements PlanService {
 						.harvestDate(format.parse(createPlanForm.getHarvestDate())).createDate(new Date()).build();
 				ProductSchedule savePlan = planRepository.save(productSchedule);
 				log.info(savePlan.toString());
+
+				SeedReport seedReport = SeedReport.builder().ps(productSchedule).workDate(new Date()).Remark(null)
+						.build();
+				seedReportRepository.save(seedReport);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

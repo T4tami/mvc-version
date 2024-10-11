@@ -13,11 +13,17 @@ import javax.persistence.Table;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.util.entity.FileUploadRecords;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "seedReport")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SeedReport {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
