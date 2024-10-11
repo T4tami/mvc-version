@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.util;
+package com.yesHealth.web.modules.util.model;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;

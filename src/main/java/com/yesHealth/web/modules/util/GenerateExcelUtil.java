@@ -19,6 +19,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.yesHealth.web.modules.util.model.CellInfo;
+import com.yesHealth.web.modules.util.model.CellStyleInfo;
+import com.yesHealth.web.modules.util.model.ExcelCell;
+import com.yesHealth.web.modules.util.model.MergeCell;
+import com.yesHealth.web.modules.util.model.ReportInfo;
+
 public class GenerateExcelUtil {
 
 	private static final int MinDataRowCount = 18;

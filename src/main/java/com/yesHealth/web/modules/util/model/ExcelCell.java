@@ -1,4 +1,4 @@
-package com.yesHealth.web.modules.util;
+package com.yesHealth.web.modules.util.model;
 
 import lombok.Data;
 

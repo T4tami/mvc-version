@@ -28,17 +28,17 @@ import com.yesHealth.web.modules.report.domain.entity.WaterReport;
 import com.yesHealth.web.modules.report.domain.repository.WaterReportRepository;
 import com.yesHealth.web.modules.user.entity.UserEntity;
 import com.yesHealth.web.modules.user.repository.UserRepository;
-import com.yesHealth.web.modules.util.CellInfo;
-import com.yesHealth.web.modules.util.CellStyleInfo;
 import com.yesHealth.web.modules.util.DateUtil;
-import com.yesHealth.web.modules.util.ExcelCell;
 import com.yesHealth.web.modules.util.GenerateExcelUtil;
-import com.yesHealth.web.modules.util.MergeCell;
-import com.yesHealth.web.modules.util.ReportInfo;
 import com.yesHealth.web.modules.util.UploadFileUtil;
 import com.yesHealth.web.modules.util.entity.FileUploadRecords;
 import com.yesHealth.web.modules.util.entity.FileUploadStatus;
 import com.yesHealth.web.modules.util.exception.UplaodFileException;
+import com.yesHealth.web.modules.util.model.CellInfo;
+import com.yesHealth.web.modules.util.model.CellStyleInfo;
+import com.yesHealth.web.modules.util.model.ExcelCell;
+import com.yesHealth.web.modules.util.model.MergeCell;
+import com.yesHealth.web.modules.util.model.ReportInfo;
 import com.yesHealth.web.modules.util.repository.FileUploadRecordsRepository;
 
 @Service("waterReportService")
