@@ -6,12 +6,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "stock")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Stock {
+	public Stock(Long sStockId) {
+		this.id = sStockId;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -21,5 +29,6 @@ public class Stock {
 	private String floor;
 	private String position;
 	private String lux;
+	private Integer boardCount;
 
 }

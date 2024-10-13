@@ -1,8 +1,7 @@
 package com.yesHealth.web.modules.production.web.controller;
 
-import java.util.ArrayList;
+import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -24,13 +23,17 @@ import com.yesHealth.web.modules.product.domain.entity.Product;
 import com.yesHealth.web.modules.product.domain.entity.ProductSchedule;
 import com.yesHealth.web.modules.product.domain.entity.Stock;
 import com.yesHealth.web.modules.product.domain.service.ProductService;
+import com.yesHealth.web.modules.production.domain.exception.YhValidateException;
 import com.yesHealth.web.modules.production.domain.service.PlanService;
 import com.yesHealth.web.modules.production.domain.service.StockService;
 import com.yesHealth.web.modules.production.web.views.CreatePlansForm;
 import com.yesHealth.web.modules.production.web.views.EditPlanForm;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/production")
+@Slf4j
 public class PlanController {
 
 	private PlanService planService;
@@ -61,7 +64,6 @@ public class PlanController {
 		model.addAttribute("size", size != null ? size : "");
 		return BASE_FILEPATH + "plan";
 	}
-
 	@GetMapping("plans/not-implemented/create-form")
 	public String createForm(HttpSession session, Model model) {
 		List<Stock> stockList = stockService.findAll();
@@ -81,18 +83,18 @@ public class PlanController {
 			model.addAttribute("createPlansForm", createPlansForm);
 			return "module/plans/create-form"; // 返回失敗的創建表單
 		}
-		Map<String, Object> businessErrors = planService.validateCreatePlan(createPlansForm);
-		ArrayList<?> list = null;
-		if (businessErrors.containsKey("globalError")) {
-			list = (ArrayList<?>) businessErrors.get("globalError");
-			if (!list.isEmpty()) {
-				model.addAttribute("globalError", list);
-				model.addAttribute("createPlansForm", createPlansForm);
-				return BASE_FILEPATH + "create-form"; // 返回失敗的創建表單
-			}
+		try {
+			planService.saveProductSchedule(createPlansForm);
+		} catch (ParseException e) {
+			log.error("saveProductSchedule() CATCHS A Exception:  " + e.getMessage());
+			e.printStackTrace();
+		} catch (YhValidateException e) {
+			log.error("saveProductSchedule() CATCHS A Exception:  " + e.getMessage());
+			model.addAttribute("globalError", e.getBusinessErrors());
+			model.addAttribute("createPlansForm", createPlansForm);
+			return BASE_FILEPATH + "create-form";
 		}
 
-		planService.saveProductSchedule(createPlansForm);
 		return REDIRECT_PREFIX + "not-implemented";
 	}
 

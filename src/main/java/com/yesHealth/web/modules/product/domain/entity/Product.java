@@ -6,12 +6,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "product")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
+	public Product(Long productId) {
+		this.id = productId;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -35,7 +43,7 @@ public class Product {
 	private Double sRate;
 	private Double gRate;
 	private Double pRate;
-	
+
 	private String sLux;
 	private String gLux;
 	private String pLux;
